@@ -1,0 +1,27 @@
+node.js 설치
+
+pjax 기반 spa 작성
+	> pushState 기반 동작으로 인해 서버는 모든 url에 index.html로 리다이렉트
+
+route 기능 구현하기
+	> 즉시 import 지향, 미 사용 대상 까지 호출하는 현상으로 인해 차후 성능 이슈가 발생할 가능성 있음
+
+CustomElement 사용을 한 컴포넌트 기능 구현
+	> core
+		> element
+		> component
+		> view
+
+model 사용
+	> rest api 사용으로 인해 jwt 사용할 것
+	> api 호출 후 jwt 상시 저장
+		> localStorage
+
+특정 기반을 사용하여 제작 예정
+	> 단순 event 호출 방식
+	> redux, flux를 구현하여 사용
+		> store를 사용한 상태 관리
+			> pjax를 사용하면 의미가 있을까...
+
+
+개발 과정에서 객체 삭제 시 메모리 해제를 해주어야함
