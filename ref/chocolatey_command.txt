@@ -1,0 +1,29 @@
+install window package manager chocolatey command
+
+* install
+    powershell
+        > Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    cmd
+        > @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+
+    install check
+        > choco
+
+* version upgrade
+    choco upgrade chocolatey
+
+* package
+    * remote search
+        > choco list [-a] <package>
+    * detail info
+        > choco info <package>
+    * install
+        > choco install [-y] <package> [--version <version>]
+    * upgrade
+        > choco upgrade <package>
+    * check
+        choco list -l
+    * uninstall
+        choco uninstall <package>
+
+
