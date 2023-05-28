@@ -18,11 +18,15 @@ class CanvasBuilder {
         this.#container.appendChild(this.#canvas);
     }
 
+    get canvas() {
+        return this.#canvas;
+    }
+
     get ctx() {
         return this.#ctx;
     }
 
-    drawLine(pointList = [], type = "stroke", options = {}) {
+    lines(pointList = [], type = "stroke", options = {}) {
         const [first, ...list] = [...pointList];
 
         const [x1, y1, option] = [...first];
@@ -41,17 +45,31 @@ class CanvasBuilder {
         type === "stroke" ? this.#ctx.stroke() : this.#ctx.fill();
     }
 
-    drawCircle(point, size, type, options) {
-        const [x, y] = [...point];
-
-        this.#ctx.beginPath();
-        this.#ctx.arc(x, y, size, 0, Math.PI * 2);
-        this.#ctx.closePath();
-        
-        type !== "fill" ? this.#ctx.stroke() : this.#ctx.fill();
+    circle(point, size, type, options) {
+        this.arc(point, size, [0, Math.PI], type, options);
     }
 
-    setCtxStyle(option) {
+    arc(point, size, angle, type, options) {
+        const [x, y] = [...point];
+        const [st, ed] = [...angle];
+        
+        this.#ctx.beginPath();
+        this.setCtxStyle(options);
+        this.#ctx.moveTo(x, y);
+        this.#ctx.arc(x, y, size, st, ed);
+        type !== "fill" ? this.#ctx.stroke() : this.#ctx.fill();
+        this.#ctx.closePath();
+        
+    }
+
+    text(text, point, type = "stroke", options) {
+        this.setCtxStyle(options);
+        const fn = type === "fill" ? this.#ctx.fillText : this.#ctx.strokeText;
+        console.log(text, point);
+        fn.call(this.#ctx, text, ...point);
+    }
+
+    setCtxStyle(option = {}) {
         Object.entries(option).forEach(([k, v]) => {
             this.#ctx[k] = v;
         });
@@ -104,7 +122,6 @@ const figure = {
 
 export default {
     init: (target, options) => {
-        const canvas = new CanvasBuilder(target, options);
-        return canvas;
+        return new CanvasBuilder(target, options);;
     }
 };

@@ -2,13 +2,14 @@ import CanvasUtil from "../util/CanvasUtil.js";
 
 class Chart {
     #container;
-    #canvas;
+    #builder;
     #data;
+    #chartData;
     #isDraw = false;
 
     constructor(target, data, options) {
         this.#container = target;
-        this.#canvas = CanvasUtil.init(this.#container);
+        this.#builder = CanvasUtil.init(this.#container, options);
         this.#data = data;
         this.init();
     }
@@ -17,27 +18,47 @@ class Chart {
         return this.#container;
     }
 
+    get builder() {
+        return this.#builder;
+    }
+
+    get data() {
+        return this.#data;
+    }
+
+    get chartData() {
+        return this.#chartData;
+    }
+
     init() {
-        this.#data && this.draw();
+        this.#data && this.#draw();
     }
 
     setChartData(data) {
         this.#data = data;
-        const fn = (this.#isDraw === true) ? this.refresh.bind(this) : this.draw.bind(this);
+        const fn = (this.#isDraw === true) ? this.refresh.bind(this) : this.#draw.bind(this);
+        fn();
+    }
+
+    parseChartData() {}
+
+    #draw() {
         this.#isDraw = false;
-        fn.then(() => (this.#isDraw = true));
+        this.#chartData = this.parseChartData();
+        this.draw();
+        this.#isDraw = true;
     }
 
     // abstract
-    async draw() {}
+    draw() {}
 
-    async refresh() {
-        await this.clear();
-        await this.draw();
+    refresh() {
+        this.clear();
+        this.#draw();
     }
 
-    async clear() {
-        this.#canvas.clear();
+    clear() {
+        this.#builder.clear();
     }
 }
 

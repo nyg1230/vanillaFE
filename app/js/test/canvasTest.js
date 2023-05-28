@@ -1,4 +1,5 @@
 import CanvasUtil from "../util/CanvasUtil";
+import PieChart from "../chart/PieChart";
 
 export default class CanvasTest {
     #container;
@@ -12,13 +13,19 @@ export default class CanvasTest {
         body.append(this.#container);
         console.log("Canvas Test~");
 
-        const canvas = CanvasUtil.init(this.#container, {
+        const pieChart = new PieChart(this.#container, null, {
             attr: {
                 width: 700,
                 height: 400,
                 style: "border: solid 1px gray;"
             }
         });
-        window.qqq = canvas;
+        pieChart.setChartData([
+            { name: "amy", value: 600 },
+            { name: "ban", value: 2000 },
+            { name: "charly", value: 800 },
+            { name: "deny", value: 700 },
+            { name: "emma", value: 300 },
+        ])
     }
 }
