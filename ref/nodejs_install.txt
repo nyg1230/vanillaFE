@@ -4,3 +4,8 @@ https://nodejs.org/ko
     > lts 18.16.0
         > node -v ~ 18.16.0
         > npm -v ~ 9.5.1
+
+> node install -g yarn
+[ps - Set-ExecutionPolicy RemoteSigned]
+> yarn -v
+> yarn install

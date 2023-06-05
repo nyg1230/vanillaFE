@@ -1,4 +1,4 @@
-import CommonUtil from "./CommonUtil";
+import CommonUtil from "./CommonUtil.js";
 
 export {
     CommonUtil

@@ -75,6 +75,15 @@ class CanvasBuilder {
         });
     }
 
+	getTextSize(text, option) {
+		const textMatrics = this.#ctx.measureText(text);
+		const { width, actualBoundingBoxAscent, actualBoundingBoxDescent } = textMatrics;
+		return {
+			width: width,
+			height: actualBoundingBoxAscent + actualBoundingBoxDescent
+		}
+	}
+
     clear() {
         this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
     }

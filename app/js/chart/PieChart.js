@@ -55,7 +55,7 @@ class PieChart extends Chart {
         const point = [_width / 2, height / 2];
 
         let cnt = 0;
-        let repeat = 200;
+        let repeat = 15;
         let color = ["red", "orange", "yellow", "green", "blue", "navy", "purple"];
 
         const fn = () => {
@@ -77,11 +77,16 @@ class PieChart extends Chart {
         const createDataLabel = () => {
             data.forEach((d) => {
                 const { name, value, ratio, st, ag } = { ...d };
+
+				const text = `${name} (${value}, ${Math.floor(ratio * 100)}%)`;
+				const fSize = this.builder.getTextSize(text);
+				const { width: fw, height: fh } = { ...fSize };
+
                 const [x, y] = [...point];
                 const tmp = st + ag / 2;
-                const tx = Math.cos(tmp) * size * 0.7 + x;
-                const ty = Math.sin(tmp) * size * 0.7 + y;
-                const text = `${name} (${value}, ${Math.floor(ratio * 100)}%)`;
+                const tx = Math.cos(tmp) * size * 0.7 + x - (fw / 2);
+                const ty = Math.sin(tmp) * size * 0.7 + y - (fh / 2);
+                
                 this.builder.text(text, [tx, ty]);
             });
         }
