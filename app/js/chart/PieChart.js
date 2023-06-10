@@ -2,6 +2,7 @@ import Chart from "./Chart.js";
 import * as util from "../util/Utils.js";
 
 class PieChart extends Chart {
+    #info;
 
     get startAngle() {
         return -Math.PI / 2;
@@ -22,7 +23,11 @@ class PieChart extends Chart {
                 value: value,
                 ratio: ratio,
                 st: stAngle,
-                ag: angle
+                ag: angle,
+                degree: {
+                    st: (stAngle - this.startAngle) * 180 / Math.PI,
+                    ed: (stAngle + angle - this.startAngle) * 180 / Math.PI
+                }
             };
             data.push(tmp);
         });
@@ -68,6 +73,12 @@ class PieChart extends Chart {
 
             if (cnt++ > repeat) {
                 createDataLabel();
+                const [x, y] = [...point];
+                this.#info = {
+                    x: x,
+                    y: y,
+                    r: size
+                };
                 window.cancelAnimationFrame(fn);
             } else {
                 window.requestAnimationFrame(fn);
@@ -108,6 +119,47 @@ class PieChart extends Chart {
             [x, 0],
             [x, height]
         ], "stroke", { strokeStyle: "black"} );
+    }
+
+    
+    getTooltipData(x, y) {
+        let data;
+        if (this.#isInnerPie(x, y)) {
+            const degree = this.#getDegree(x, y);
+            const { data: _data } = { ...this.chartData };
+            data = _data.find((d) => {
+                const { degree: { st, ed } } = { ...d };
+                return st <= degree && degree < ed;
+            });
+            console.log(data);
+        }
+    }
+
+    #isInnerPie(x, y) {
+        const { x: _x, y: _y, r } = { ...this.#info };
+        const gapX = Math.abs(x - _x);
+        const gapY = Math.abs(y - _y);
+
+        let result = false;
+        if (gapX + gapY <= r) {
+            result = true;
+        } else if (gapX > r || gapY > r) {
+        } else if (gapX ** 2 + gapY ** 2 <= r ** 2) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    #getDegree(x, y) {
+        const { x: _x, y: _y } = { ...this.#info };
+        const radian = (Math.atan2(y - _y, x - _x) - this.startAngle) * 180 / Math.PI;
+        return radian < 0 ? radian + 360 : radian;
+    }
+
+    gotTooltipHtml(data) {
+        console.log(data);
+        return ``;
     }
 }
 

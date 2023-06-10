@@ -1,4 +1,5 @@
 import CanvasUtil from "../util/CanvasUtil.js";
+import * as util from "../util/Utils.js";
 
 class Chart {
     #container;
@@ -40,17 +41,56 @@ class Chart {
         fn();
     }
 
-    parseChartData() {}
-
     #draw() {
         this.#isDraw = false;
         this.#chartData = this.parseChartData();
         this.draw();
+        this.#setTooltip();
         this.#isDraw = true;
     }
 
     // abstract
+    parseChartData() {}
+
+    // abstract
     draw() {}
+
+    #setTooltip() {
+        const canvas = this.#builder.canvas;
+
+        const mouseEnter = (e) => {
+            canvas.addEventListener("mousemove", mouseMove);
+            canvas.addEventListener("mouseleave", mouseLeave);
+        };
+
+        const mouseMove = (e) => {
+            const data = this.#getTooltipData(e);
+            if (data) {
+                console.log(data);
+            }
+        };
+
+        const mouseLeave = (e) => {
+            canvas.removeEventListener("mouseleave", mouseLeave);
+            canvas.removeEventListener("mousemove", mouseMove);
+            canvas.addEventListener("mouseenter", mouseEnter);
+        };
+
+        canvas.addEventListener("mouseenter", mouseEnter);
+    }
+
+    #getTooltipData(e) {
+        const rect = this.#builder.canvas.getBoundingClientRect();
+        const { left, top } = rect;
+        const { clientX, clientY } = e;
+        const x = clientX - left;
+        const y = clientY - top;
+        return this.getTooltipData(x, y);
+    }
+    
+    getTooltipData() {}
+
+    gotTooltipHtml() {}
 
     refresh() {
         this.clear();
