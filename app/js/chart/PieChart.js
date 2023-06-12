@@ -3,6 +3,10 @@ import * as util from "../util/Utils.js";
 
 class PieChart extends Chart {
     #info;
+	#option = {
+		useLegend: false,
+		useTooltip: true
+	}
 
     get startAngle() {
         return -Math.PI / 2;
