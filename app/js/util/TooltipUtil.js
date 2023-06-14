@@ -5,7 +5,18 @@ export default {
 	setTooltip(target, content, options = {}) {
 		!this.tooltip && (this.tooltip = getTooltip());
 
-		const onMouseMove = (e) => {};
+		const tooltip = getTooltip();
+		const target = util.DomUtil.querySelector(tooltip);
+
+		const setContent = (e) => {
+			const detail = util.CommonUtil.isFunction(content) ? content(e) : content;
+			target.innerHTML = "";
+			util.DomUtil.insertAdjacentHTML(target, detail);
+		}
+
+		const onMouseMove = (e) => {
+			setContent(e);
+		};
 
 		const onMouseOver = (e) => {
 			target.addEventListener("mouseout", onMouseOut)
