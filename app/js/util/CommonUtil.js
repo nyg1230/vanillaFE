@@ -8,6 +8,9 @@ const CommonUtil = {
     isObject(obj) {
         return typeof obj === "object";
     },
+    isString(obj) {
+        return typeof obj === "string";
+    },
     isNull(obj) {
         return obj === null || obj === undefined;
     },
@@ -54,7 +57,29 @@ const CommonUtil = {
 
         target[name] && window.cancelAnimationFrame(target[name]);
         window.cancelAnimationFrame(target[prop]);
-    }
+    },
+
+    find(obj, key, defaultValue) {
+		let result;
+		if (this.isString(key)) key = key.split(".");
+
+		if (this.isNull(obj)) {
+			obj = result;
+		} else {
+			result = obj;
+			for (let idx = 0; idx < key.length; idx++) {
+				const k = key[idx];
+
+				result = result[k];
+
+				if (this.isNull(result)) {
+					result = defaultValue;
+					break;
+				}
+			}
+		}
+		return result;
+	}
 };
 
 export default CommonUtil;

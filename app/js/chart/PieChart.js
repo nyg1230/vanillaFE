@@ -1,6 +1,7 @@
 import Chart from "./Chart.js";
 import * as util from "../util/Utils.js";
 
+const color = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#000080", "#6A0DAD"];
 class PieChart extends Chart {
     #info;
 	#option = {
@@ -16,9 +17,9 @@ class PieChart extends Chart {
         const totalCount = this.data.reduce((acc, val) => acc += Number(val.value), 0);
         const data = [];
         let tmpAngle = this.startAngle;
-        this.data.sort((a, b) => (a.value < b.value)).forEach((d) => {
+        this.data.sort((a, b) => (a.value < b.value)).forEach((d, idx) => {
             const { name, value } = { ...d };
-            const ratio = util.CommonUtil.round(value / totalCount, 2);
+            const ratio = util.CommonUtil.round(value / totalCount, 5);
             const stAngle = tmpAngle;
             const angle = Math.PI * 2 * ratio;
             tmpAngle = stAngle + angle;
@@ -31,7 +32,8 @@ class PieChart extends Chart {
                 degree: {
                     st: (stAngle - this.startAngle) * 180 / Math.PI,
                     ed: (stAngle + angle - this.startAngle) * 180 / Math.PI
-                }
+                },
+                index: idx
             };
             data.push(tmp);
         });
@@ -46,16 +48,15 @@ class PieChart extends Chart {
 
     draw() {
         window.qqq = this;
-        window.ctx = this.builder.ctx;
-        console.log(this.chartData);
-
         this.drawChart();
     }
 
-    drawChart(n) {
+    drawChart(useAnimation = true, option) {
         this.clear();
 
         const { data } = { ...this.chartData };
+        const { pie, label } = { ...option };
+        const { all: commonPieOption } = { ...pie };
 
         const { width, height } = this.builder.canvas;
         const _width = width * 0.8;
@@ -63,54 +64,73 @@ class PieChart extends Chart {
         size = size / 2 * 0.9;
         const point = [_width / 2, height / 2];
 
-        let cnt = 0;
-        let repeat = 15;
-        let color = ["red", "orange", "yellow", "green", "blue", "navy", "purple"];
+        let cnt = 1;
+        let repeat = useAnimation ? 70 : 1;
 
         const fn = () => {
             this.clear();
             this.drawLabel();
             data.forEach((d, idx) => {
                 const { st, ag } = { ...d };
-                this.builder.arc(point, size, [st, st + ag * cnt / repeat], "fill", { fillStyle: color[idx] });
+                const pieOption = util.CommonUtil.find(pie, `${idx}`);
+                const opt = { ...commonPieOption, ...pieOption };
+                this.builder.arc(point, size, [st, st + ag * cnt / repeat], "fill", { fillStyle: color[idx], ...opt });
             });
 
-            if (cnt++ > repeat) {
-                createDataLabel();
+            if (++cnt > repeat) {
                 const [x, y] = [...point];
-                this.#info = {
-                    x: x,
-                    y: y,
-                    r: size
-                };
+                this.#info = { x: x, y: y, r: size };
+                this.drawDataLabel(data, label);
                 window.cancelAnimationFrame(fn);
             } else {
                 window.requestAnimationFrame(fn);
             }
         }
 
-        const createDataLabel = () => {
-            data.forEach((d) => {
-                const { name, value, ratio, st, ag } = { ...d };
-
-				const text = `${name} (${value}, ${Math.floor(ratio * 100)}%)`;
-				const fSize = this.builder.getTextSize(text);
-				const { width: fw, height: fh } = { ...fSize };
-
-                const [x, y] = [...point];
-                const tmp = st + ag / 2;
-                const tx = Math.cos(tmp) * size * 0.7 + x - (fw / 2);
-                const ty = Math.sin(tmp) * size * 0.7 + y - (fh / 2);
-                
-                this.builder.text(text, [tx, ty]);
-            });
-        }
-
         window.requestAnimationFrame(fn);
     }
 
-    drawPiece() {
-        
+    drawDataLabel(data = [], option) {
+        const { x, y, r } = { ...this.#info };
+        const { all } = { ...option };
+
+        data.forEach((d, idx) => {
+            const { name, value, ratio, st, ag } = { ...d };
+            const labelOption = util.CommonUtil.find(option, `${idx}`);
+            const opt = { ...all, ...labelOption };
+
+            const text = this.getDataLabelText(d);
+            const fSize = this.builder.getTextSize(text, opt);
+            const { width: fw, height: fh } = { ...fSize };
+
+            const tmp = st + ag / 2;
+            const tx = Math.cos(tmp) * r * 0.7 + x - (fw / 2);
+            const ty = Math.sin(tmp) * r * 0.7 + y - (fh / 2);
+            
+            this.builder.text(text, [tx, ty], "stroke", opt);
+        });
+    }
+
+    getDataLabelText(data) {
+        const { name, value, ratio = 0} = { ...data };
+        return `${name}`;
+    }
+
+    drawPiece(data, option) {
+        const { x, y, r } = { ...this.#info };
+        const { index, st, ag } = { ...data };
+        const point = [x, y];
+
+        const text = this.getDataLabelText(data);
+        const fSize = this.builder.getTextSize(text);
+        const { width: fw, height: fh } = { ...fSize };
+
+        const tmp = st + ag / 2;
+        const tx = Math.cos(tmp) * r * 0.7 + x - (fw / 2);
+        const ty = Math.sin(tmp) * r * 0.7 + y - (fh / 2);
+
+        this.builder.arc(point, r, [st, st + ag], "fill", { fillStyle: color[index], ...option });
+        this.builder.text(text, [tx, ty]);
     }
 
     drawLabel() {
@@ -125,21 +145,43 @@ class PieChart extends Chart {
         ], "stroke", { strokeStyle: "black"} );
     }
 
-    
-    getTooltipData(x, y) {
-        let data;
-        if (this.#isInnerPie(x, y)) {
-            const degree = this.#getDegree(x, y);
-            const { data: _data } = { ...this.chartData };
-            data = _data.find((d) => {
-                const { degree: { st, ed } } = { ...d };
-                return st <= degree && degree < ed;
-            });
-            console.log(data);
+    setTooltipContent(e, x, y) {
+        let html;
+
+        if (this.checkInPie(x, y)) {
+            const data = this.#getTooltipData(x, y);
+            const { name, value, ratio, index } = { ...data };
+            const { name: oName } = { ...this._old };
+            const percentage = (ratio * 100).toFixed(1);
+
+            html = `<div>
+                        <span>${value}</span>
+                        <span>${percentage}%</span>
+                    </div>`;
+            
+            if (name !== oName) {
+                const option = {
+                    pie : {
+                        [`${index}`]: {
+                            fillStyle: `rgba(${util.StyleUtil.getHexColorToDecimal(color[index])}, 0.6)`
+                        }
+                    }
+                };
+                this.drawChart(false, option);
+                this._old = data;
+            }
+        } else {
+            if (this._old) {
+                this.drawChart(false);
+                this._old = null;
+            }
         }
+        
+
+        return html
     }
 
-    #isInnerPie(x, y) {
+    checkInPie(x, y) {
         const { x: _x, y: _y, r } = { ...this.#info };
         const gapX = Math.abs(x - _x);
         const gapY = Math.abs(y - _y);
@@ -155,15 +197,22 @@ class PieChart extends Chart {
         return result;
     }
 
+    
+    #getTooltipData(x, y) {
+        const degree = this.#getDegree(x, y);
+        const { data: _data } = { ...this.chartData };
+        const data = _data.find((d) => {
+            const { degree: { st, ed } } = { ...d };
+            return st <= degree && degree < ed;
+        });
+
+        return data;
+    }
+
     #getDegree(x, y) {
         const { x: _x, y: _y } = { ...this.#info };
         const radian = (Math.atan2(y - _y, x - _x) - this.startAngle) * 180 / Math.PI;
         return radian < 0 ? radian + 360 : radian;
-    }
-
-    gotTooltipHtml(data) {
-        console.log(data);
-        return ``;
     }
 }
 

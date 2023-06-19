@@ -59,13 +59,11 @@ class CanvasBuilder {
         this.#ctx.arc(x, y, size, st, ed);
         type !== "fill" ? this.#ctx.stroke() : this.#ctx.fill();
         this.#ctx.closePath();
-        
     }
 
-    text(text, point, type = "stroke", options) {
+    text(text, point, type = "fill", options) {
         this.setCtxStyle(options);
-        const fn = type === "fill" ? this.#ctx.fillText : this.#ctx.strokeText;
-        console.log(text, point);
+        const fn = type !== "stroke" ? this.#ctx.fillText : this.#ctx.strokeText;
         fn.call(this.#ctx, text, ...point);
     }
 
