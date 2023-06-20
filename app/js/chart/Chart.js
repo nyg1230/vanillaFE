@@ -33,7 +33,12 @@ class Chart {
 
     init() {
         this.#data && this.#draw();
+		this.addEvent();
     }
+
+	addEvent() {
+		window.addEventListener("resize", this.onResize.bind(this));
+	}
 
     setChartData(data) {
         this.#data = data;
@@ -85,6 +90,8 @@ class Chart {
     clear() {
         this.#builder.clear();
     }
+
+	onResize() {}
 }
 
 export default Chart;

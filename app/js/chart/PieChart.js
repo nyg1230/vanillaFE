@@ -47,7 +47,6 @@ class PieChart extends Chart {
     }
 
     draw() {
-        window.qqq = this;
         this.drawChart();
     }
 
@@ -59,7 +58,7 @@ class PieChart extends Chart {
         const { all: commonPieOption } = { ...pie };
 
         const { width, height } = this.builder.canvas;
-        const _width = width * 0.8;
+        const _width = width;
         let size = _width > height ? height : _width;
         size = size / 2 * 0.9;
         const point = [_width / 2, height / 2];
@@ -69,12 +68,12 @@ class PieChart extends Chart {
 
         const fn = () => {
             this.clear();
-            this.drawLabel();
             data.forEach((d, idx) => {
                 const { st, ag } = { ...d };
-                const pieOption = util.CommonUtil.find(pie, `${idx}`);
+                const _pieOption = util.CommonUtil.find(pie, `${idx}`);
+				const { mag = 1, ...pieOption } = { ..._pieOption };
                 const opt = { ...commonPieOption, ...pieOption };
-                this.builder.arc(point, size, [st, st + ag * cnt / repeat], "fill", { fillStyle: color[idx], ...opt });
+                this.builder.arc(point, size * mag, [st, st + ag * cnt / repeat], "fill", { fillStyle: color[idx], ...opt });
             });
 
             if (++cnt > repeat) {
@@ -133,7 +132,7 @@ class PieChart extends Chart {
         this.builder.text(text, [tx, ty]);
     }
 
-    drawLabel() {
+    drawDataLegend() {
         const canvas = this.builder.canvas;
         const height = canvas.height;
         const width = canvas.width;
@@ -163,7 +162,8 @@ class PieChart extends Chart {
                 const option = {
                     pie : {
                         [`${index}`]: {
-                            fillStyle: `rgba(${util.StyleUtil.getHexColorToDecimal(color[index])}, 0.6)`
+                            fillStyle: `rgba(${util.StyleUtil.getHexColorToDecimal(color[index])}, 0.6)`,
+							mag: 1.05
                         }
                     }
                 };
@@ -214,6 +214,10 @@ class PieChart extends Chart {
         const radian = (Math.atan2(y - _y, x - _x) - this.startAngle) * 180 / Math.PI;
         return radian < 0 ? radian + 360 : radian;
     }
+
+	onResize(e) {
+		console.log(e);
+	}
 }
 
 export default PieChart;

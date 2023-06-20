@@ -1,0 +1,17 @@
+{
+	"use": {
+		"tooltip": true,
+		"legend": true
+	},
+	"foramt": {
+		"pie": {
+			"all": {}
+		},
+		"label": {
+			"all": {}
+		},
+		"legend": {
+			"all": {}
+		}
+	}
+}
