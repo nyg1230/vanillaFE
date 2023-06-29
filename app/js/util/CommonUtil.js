@@ -79,7 +79,40 @@ const CommonUtil = {
 			}
 		}
 		return result;
-	}
+	},
+
+    debounce(target, prop, param, option) {
+        const { delay = 300 } = { ...option };
+        const key = `__debounce_${prop}`;
+
+        
+        const fn = () => {
+            target[key] = window.setTimeout(() => {
+                target[key] = null;
+                target[prop].apply(target, param);
+            }, delay);
+        };
+        
+        if (!target[key]) {
+            fn();
+        } else {
+            window.clearTimeout(target[key]);
+            fn();
+        }
+    },
+
+    throttle(target, prop, param, option) {
+        const key = `__throttle_${prop}`;
+
+        if (!target[key]) {
+            const fn = () => {
+                target[key] = true;
+                target[prop].apply(target, param);
+                target[key] = null;
+            };
+            fn();
+        }
+    }
 };
 
 export default CommonUtil;

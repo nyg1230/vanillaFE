@@ -15,17 +15,17 @@ export default class CanvasTest {
 
         const pieChart = new PieChart(this.#container, null, {
             attr: {
-                width: 700,
+                width: 600,
                 height: 400,
                 style: "border: solid 1px gray;"
             }
         });
         pieChart.setChartData([
             { name: "amy", value: 600 },
-            { name: "ban", value: 2000 },
+            { name: "ban", value: 1500 },
             { name: "charly", value: 800 },
-            { name: "deny", value: 700 },
-            { name: "emma", value: 300 },
+            { name: "deny", value: 1234 },
+            { name: "emma", value: 1000 },
         ])
     }
 }

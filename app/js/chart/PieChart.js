@@ -57,7 +57,8 @@ class PieChart extends Chart {
         const { pie, label } = { ...option };
         const { all: commonPieOption } = { ...pie };
 
-        const { width, height } = this.builder.canvas;
+        const canvasRect = util.StyleUtil.getBoundingClientRect(this.builder.canvas);
+        const { width, height } = canvasRect;
         const _width = width;
         let size = _width > height ? height : _width;
         size = size / 2 * 0.9;
@@ -154,6 +155,7 @@ class PieChart extends Chart {
             const percentage = (ratio * 100).toFixed(1);
 
             html = `<div>
+                        <span>${name}</span>
                         <span>${value}</span>
                         <span>${percentage}%</span>
                     </div>`;
@@ -214,10 +216,6 @@ class PieChart extends Chart {
         const radian = (Math.atan2(y - _y, x - _x) - this.startAngle) * 180 / Math.PI;
         return radian < 0 ? radian + 360 : radian;
     }
-
-	onResize(e) {
-		console.log(e);
-	}
 }
 
 export default PieChart;

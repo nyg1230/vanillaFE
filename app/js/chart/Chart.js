@@ -7,6 +7,8 @@ class Chart {
     #data;
     #chartData;
     #isDraw = false;
+    #tooltip;
+    #observer;
 
     constructor(target, data, options) {
         this.#container = target;
@@ -31,14 +33,35 @@ class Chart {
         return this.#chartData;
     }
 
-    init() {
-        this.#data && this.#draw();
-		this.addEvent();
+    get #observerConfig() {
+        return {
+            attributeFilter: ["width", "height"]
+        };
     }
 
-	addEvent() {
-		window.addEventListener("resize", this.onResize.bind(this));
-	}
+    init() {
+        this.#data && this.#draw();
+        this.#addObserver();
+    }
+
+    #addObserver() {
+        if (this.#observer) return;
+
+        const callback = (ml) => {
+            for (const m of ml) {
+                const { type, attributeName } = m;
+
+                if (type === "attributes") {
+                    if (this.#observerConfig.attributeFilter.includes(attributeName)) {
+                        this.refresh();
+                    }
+                }
+            }
+        }
+
+        this.#observer = new MutationObserver(callback);
+        this.#observer.observe(this.#builder.canvas, this.#observerConfig);
+    }
 
     setChartData(data) {
         this.#data = data;
@@ -62,8 +85,7 @@ class Chart {
 
     #setTooltip() {
         const canvas = this.#builder.canvas;
-        console.log("#setTooltip");
-        util.TooltipUtil.setTooltip(canvas, this.#setTooltipContent.bind(this));
+        this.#tooltip = util.TooltipUtil.setTooltip(canvas, this.#setTooltipContent.bind(this));
     }
 
     // interface
@@ -90,8 +112,6 @@ class Chart {
     clear() {
         this.#builder.clear();
     }
-
-	onResize() {}
 }
 
 export default Chart;
