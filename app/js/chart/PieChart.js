@@ -96,6 +96,9 @@ class PieChart extends Chart {
 
         data.forEach((d, idx) => {
             const { name, value, ratio, st, ag } = { ...d };
+
+            if (ratio < 0.05) return;
+
             const labelOption = util.CommonUtil.find(option, `${idx}`);
             const opt = { ...all, ...labelOption };
 
