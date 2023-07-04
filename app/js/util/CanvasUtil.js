@@ -1,3 +1,5 @@
+import * as util from "../util/Utils.js";
+
 class CanvasBuilder {
     #container;
     #canvas;
@@ -27,22 +29,32 @@ class CanvasBuilder {
     }
 
     lines(pointList = [], type = "stroke", options = {}) {
+        this.#ctx.save();
         const [first, ...list] = [...pointList];
 
         const [x1, y1, option] = [...first];
 
         this.#ctx.beginPath();
-        this.setCtxStyle(option || options);
+        this.setContext(option || options);
         this.#ctx.moveTo(x1, y1);
 
         list.forEach((p) => {
             const [x, y, opt] = [...p];
-            this.setCtxStyle(opt || options);
+            this.setContext(opt || options);
             this.#ctx.lineTo(x, y);
         });
         this.#ctx.closePath();
 
         type === "stroke" ? this.#ctx.stroke() : this.#ctx.fill();
+        this.#ctx.restore();
+    }
+
+    rect(point, width, height, type = "fill", option) {
+        this.#ctx.save();
+        this.setContext(option);
+        const fn = type !== "fill" ? this.#ctx.strokeRect : this.#ctx.fillRect;
+        fn.call(this.#ctx, ...point, width, height);
+        this.#ctx.restore();
     }
 
     circle(point, size, type, options) {
@@ -50,26 +62,37 @@ class CanvasBuilder {
     }
 
     arc(point, size, angle, type, options) {
+        this.#ctx.save();
         const [x, y] = [...point];
         const [st, ed] = [...angle];
         
         this.#ctx.beginPath();
-        this.setCtxStyle(options);
+        this.setContext(options);
         this.#ctx.moveTo(x, y);
         this.#ctx.arc(x, y, size, st, ed);
         type !== "fill" ? this.#ctx.stroke() : this.#ctx.fill();
         this.#ctx.closePath();
+        this.#ctx.restore();
     }
 
     text(text, point, type = "fill", options) {
-        this.setCtxStyle(options);
+        this.#ctx.save();
+        this.setContext(options);
         const fn = type !== "stroke" ? this.#ctx.fillText : this.#ctx.strokeText;
         fn.call(this.#ctx, text, ...point);
+        this.#ctx.restore();
     }
 
-    setCtxStyle(option = {}) {
-        Object.entries(option).forEach(([k, v]) => {
+    setContext(option = {}) {
+        const { style = {} , setting = [] } = { ...option };
+
+        Object.entries(style).forEach(([k, v]) => {
             this.#ctx[k] = v;
+        });
+
+        setting.forEach((s) => {
+            const { prop, value } = { ...s };
+            this.#ctx[prop].apply(this.#ctx, value);
         });
     }
 
@@ -83,7 +106,9 @@ class CanvasBuilder {
 	}
 
     clear() {
-        this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+        const canvasRect = util.StyleUtil.getBoundingClientRect(this.#canvas);
+		const { width, height } = canvasRect;
+        this.#ctx.clearRect(0, 0, width, height);
     }
 }
 

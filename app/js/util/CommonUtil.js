@@ -36,13 +36,25 @@ const CommonUtil = {
         return len;
     },
 
-    round(num, round = 1, isPercent = false) {
+    approximation(type, num, round, isPercent = false) {
         let result = 0;
         const corr = 10 ** round;
         const tmp = num * corr;
-        result = Math.round(tmp) / corr;
+        result = Math[type](tmp) / corr;
         result = isPercent === true ? result * 100 : result;
         return result;
+    },
+
+    round(num, round = 1, isPercent = false) {
+        return this.approximation("round", num, round, isPercent);
+    },
+
+    ceil(num, round = 1, isPercent = false) {
+        return this.approximation("ceil", num, round, isPercent);
+    },
+
+    floor(num, round = 1, isPercent = false) {
+        return this.approximation("floor", num, round, isPercent);
     },
 
     requestAnimationFrame(target, prop) {

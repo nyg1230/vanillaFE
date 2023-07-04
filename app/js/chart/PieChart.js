@@ -74,7 +74,7 @@ class PieChart extends Chart {
                 const _pieOption = util.CommonUtil.find(pie, `${idx}`);
 				const { mag = 1, ...pieOption } = { ..._pieOption };
                 const opt = { ...commonPieOption, ...pieOption };
-                this.builder.arc(point, size * mag, [st, st + ag * cnt / repeat], "fill", { fillStyle: color[idx], ...opt });
+                this.builder.arc(point, size * mag, [st, st + ag * cnt / repeat], "fill", { style: { fillStyle: color[idx], ...opt } });
             });
 
             if (++cnt > repeat) {

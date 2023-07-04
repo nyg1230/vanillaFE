@@ -14,20 +14,20 @@ export default class CanvasTest {
         body.append(this.#container);
         console.log("Canvas Test~");
 
-        // const pieChart = new PieChart(this.#container, null, {
-        //     attr: {
-        //         width: 600,
-        //         height: 400,
-        //         style: "border: solid 1px gray;"
-        //     }
-        // });
-        // pieChart.setChartData([
-        //     { name: "amy", value: 200 },
-        //     { name: "ban", value: 1500 },
-        //     { name: "charly", value: 800 },
-        //     { name: "deny", value: 1234 },
-        //     { name: "emma", value: 1000 },
-        // ]);
+        const pieChart = new PieChart(this.#container, null, {
+            attr: {
+                width: 600,
+                height: 400,
+                style: "border: solid 1px gray;"
+            }
+        });
+        pieChart.setChartData([
+            { name: "amy", value: 200 },
+            { name: "ban", value: 1500 },
+            { name: "charly", value: 800 },
+            { name: "deny", value: 1234 },
+            { name: "emma", value: 1000 },
+        ]);
 
 		const barChart = new BarChart(this.#container, null, {
 			    attr: {
@@ -37,11 +37,12 @@ export default class CanvasTest {
             }
 		});
 		const barData = [
-			{ name: "amy", value: 200 },
-            { name: "ban", value: 1500 },
+			{ name: "amy", value: 1730 },
+            { name: "ban", value: 50 },
             { name: "charly", value: 800 },
-            { name: "deny", value: 1234 },
+            { name: "deny", value: 2600 },
             { name: "emma", value: 1000 },
+            { name: "emma", value: 1790 },
 		]
 		barChart.setChartData(barData);
     }
