@@ -54,8 +54,6 @@ class BarChart extends Chart {
 
 		const fn = () => {
 			this.clear();
-			xAxis(x, y, xl);
-			yAxis(x, y, yl);
 
 			data.forEach((d, idx) => {
 				const { ratio } = { ...d };
@@ -64,6 +62,9 @@ class BarChart extends Chart {
 				const sy = y - h;
 				this.builder.rect([sx, sy], barWidth, h, "fill", { style: { fillStyle: color[0] } })
 			});
+
+			xAxis(x, y, xl);
+			yAxis(x, y, yl);
 
 			if (++cnt > repeat) {
 				this.#info = {
