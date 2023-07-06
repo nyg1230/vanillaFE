@@ -4,20 +4,31 @@ import * as util from "../util/Utils.js";
 const color = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#000080", "#6A0DAD"];
 class PieChart extends Chart {
     #info;
-	#option = {
-		useLegend: false,
-		useTooltip: true
-	}
+    #data;
+    #option;
 
     get startAngle() {
         return -Math.PI / 2;
     }
 
-    parseChartData() {
-        const totalCount = this.data.reduce((acc, val) => acc += Number(val.value), 0);
-        const data = [];
+    initOption() {
+        const option = {
+            chart: {
+                startAngle: -Math.PI / 2,
+                scale: 0.9
+            }
+        };
+
+        return option;
+    }
+
+    parseOption(param) {}
+
+    parseChartData(data, option) {
+        const totalCount = data.reduce((acc, val) => acc += Number(val.value), 0);
+        const parseData = [];
         let tmpAngle = this.startAngle;
-        this.data.sort((a, b) => (a.value < b.value)).forEach((d, idx) => {
+        data.sort((a, b) => (a.value < b.value)).forEach((d, idx) => {
             const { name, value } = { ...d };
             const ratio = util.CommonUtil.round(value / totalCount, 5);
             const stAngle = tmpAngle;
@@ -35,49 +46,54 @@ class PieChart extends Chart {
                 },
                 index: idx
             };
-            data.push(tmp);
+            parseData.push(tmp);
         });
 
         const chartData = {
             total: totalCount,
-            data: data
+            data: parseData
         };
 
         return chartData;
     }
 
-    draw() {
-        this.drawChart();
+    draw(data, option) {
+        this.#data = data;
+        this.#option = option;
+        this.drawChart(true, option);
     }
 
     drawChart(useAnimation = true, option) {
         this.clear();
 
-        const { data } = { ...this.chartData };
+        const { data } = { ...this.#data };
         const { pie, label } = { ...option };
+        const scale = util.CommonUtil.find(this.#option, "chart.scale", 0.9);
+        const { animation: { type, speed } } = { ...this.#option };
         const { all: commonPieOption } = { ...pie };
+
+        const animation = util.AnimationUtil.getAnimation(type, speed, useAnimation);
 
         const canvasRect = util.StyleUtil.getBoundingClientRect(this.builder.canvas);
         const { width, height } = canvasRect;
         const _width = width;
         let size = _width > height ? height : _width;
-        size = size / 2 * 0.9;
+        size = size / 2 * scale;
         const point = [_width / 2, height / 2];
-
-        let cnt = 1;
-        let repeat = useAnimation ? 70 : 1;
 
         const fn = () => {
             this.clear();
+            const progressRate = animation.shift();
+
             data.forEach((d, idx) => {
                 const { st, ag } = { ...d };
                 const _pieOption = util.CommonUtil.find(pie, `${idx}`);
 				const { mag = 1, ...pieOption } = { ..._pieOption };
                 const opt = { ...commonPieOption, ...pieOption };
-                this.builder.arc(point, size * mag, [st, st + ag * cnt / repeat], "fill", { style: { fillStyle: color[idx], ...opt } });
+                this.builder.arc(point, size * mag, [st, st + ag * progressRate], "fill", { style: { fillStyle: color[idx], ...opt } });
             });
 
-            if (++cnt > repeat) {
+            if (util.CommonUtil.isEmpty(animation)) {
                 const [x, y] = [...point];
                 this.#info = { x: x, y: y, r: size };
                 this.drawDataLabel(data, label);
@@ -181,7 +197,6 @@ class PieChart extends Chart {
                 this._old = null;
             }
         }
-        
 
         return html
     }

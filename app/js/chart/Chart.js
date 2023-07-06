@@ -8,13 +8,15 @@ class Chart {
     #chartData;
     #isDraw = false;
     #tooltip;
+    #option;
+    #commonOption;
     #observer;
 
     constructor(target, data, options) {
         this.#container = target;
         this.#builder = CanvasUtil.init(this.#container, options);
         this.#data = data;
-        this.init();
+        this.#init();
     }
 
     get container() {
@@ -39,9 +41,57 @@ class Chart {
         };
     }
 
-    init() {
-        this.#data && this.#draw();
+    #init() {
+        this.#initOption();
+        if (util.CommonUtil.isNotEmpty(this.#data)) {
+            this.#parseOption();
+            this.#parseChartData();
+        }
         this.#addObserver();
+    }
+
+    // abstract
+    initOption() {}
+    #initOption() {
+        const option = {
+            animation: {
+                type: "constant",
+                speed: "normal"
+            }
+        };
+        this.#commonOption = util.CommonUtil.shallowMerge(option, this.initOption());
+    }
+
+    // abstract
+    parseOption() {}
+    #parseOption(param) {
+        if (util.CommonUtil.isNull(param)) {
+            if (util.CommonUtil.isNull(this.#option)) {
+                util.CommonUtil.shallowMerge(this.#commonOption, {});
+            }
+        } else {
+            this.#option = util.CommonUtil.shallowMerge(this.#commonOption, this.parseOption(param));
+        }
+    }
+
+    // abstract
+    parseChartData() {}
+    #parseChartData() {
+        this.#chartData = this.parseChartData(this.#data, this.#option);
+        this.#isDraw = false;
+        this.#draw();
+    }
+
+
+    // abstract
+    draw() {}
+    #draw() {
+        if (this.#draw !== true) {
+            this.clear();
+            this.draw(this.#chartData, this.#option);
+            this.#setTooltip();
+            this.#isDraw = true;
+        }
     }
 
     #addObserver() {
@@ -63,25 +113,12 @@ class Chart {
         this.#observer.observe(this.#builder.canvas, this.#observerConfig);
     }
 
-    setChartData(data) {
+    setChartData(param) {
+        const { data, option } = { ...param };
         this.#data = data;
-        const fn = (this.#isDraw === true) ? this.refresh.bind(this) : this.#draw.bind(this);
-        fn();
+        this.#parseOption(option);
+        this.#parseChartData();
     }
-
-    #draw() {
-        this.#isDraw = false;
-        this.#chartData = this.parseChartData();
-        this.draw();
-        this.#setTooltip();
-        this.#isDraw = true;
-    }
-
-    // abstract
-    parseChartData() {}
-
-    // abstract
-    draw() {}
 
     #setTooltip() {
         const canvas = this.#builder.canvas;
@@ -91,7 +128,8 @@ class Chart {
     // interface
     setTooltipContent() {}
     #setTooltipContent(e) {
-        return this.setTooltipContent.call(this, e, ...this.#getXY(e));
+        const content = this.setTooltipContent(e, ...this.#getXY(e));
+        return content;
     }
 
     #getXY(e) {
@@ -105,7 +143,6 @@ class Chart {
     }
 
     refresh() {
-        this.clear();
         this.#draw();
     }
 

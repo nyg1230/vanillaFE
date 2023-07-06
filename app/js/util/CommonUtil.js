@@ -124,6 +124,39 @@ const CommonUtil = {
             };
             fn();
         }
+    },
+
+    merge(o0, o1) {
+        if (this.isNotNull(o1)) {
+            Object.keys(o1).forEach((k) => {
+                const v0 = o0[k];
+                const v1 = o1[k];
+    
+                if (this.isNotNull(v0) && (this.isArray(v1) || this.isObject(v1))) {
+                    this.merge(o0[k], o1[k]);
+                } else {
+                    o0[k] = v1;
+                }
+            });
+        }
+    },
+
+    deepMerge(obj, ...objs) {
+        objs.forEach((o) => {
+            this.merge(obj, o);
+        });
+
+        return obj;
+    },
+
+    shallowMerge(obj, ...objs) {
+        const tmp = { ...obj };
+
+        objs.forEach((o) => {
+            this.merge(tmp, o);
+        });
+
+        return tmp;
     }
 };
 
