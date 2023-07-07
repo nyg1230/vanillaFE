@@ -5,6 +5,24 @@ const color = ["#EFD1C6"];
 class BarChart extends Chart {
 	#info;
 
+	initOption() {
+		const option = {
+			space: {
+				l: 0.075, r: 0.025, t: 0.05, b: 0.1
+			},
+			axis: {}
+		};
+
+		return option;
+	}
+	
+    parseOption(param) {}
+
+	/**
+     * 현 차트를 그리기 위한 데이터로 파싱하는 함수
+     * @param {Array} data 전처리 이전 데이터
+     * @returns 차트에 사용할 파싱 데이터
+     */
 	parseChartData() {
 		const dataArray = this.data.map((d) => d.value || 0);
 		let maxValue = Math.max.apply(null, dataArray);
@@ -28,20 +46,32 @@ class BarChart extends Chart {
 		return chartData;
 	}
 
+	/**
+     * wrapping 함수
+     */
 	draw() {
 		this.drawChart();
 	}
 
+	/**
+     * 바 차트
+     * @param {Boolean} useAnimation 에니메이션 사용 여부
+     * @param {Object} option 단발성으로 사용할 옵션
+     */
 	drawChart(useAnimation = true, option) {
+		option = util.CommonUtil.shallowMerge(option, this.option);
+
+		const { space, axis, animation: { type, speed } } = { ...option };
+		const animation = util.AnimationUtil.getAnimation(type, speed, useAnimation);
+
 		const canvasRect = util.StyleUtil.getBoundingClientRect(this.builder.canvas);
 		const { width, height } = canvasRect;
-		const wRatio = 0.075;
-		const hRatio = 0.13;
+		const { l, r, t, b } = { ...space };
 
-		const x = width * wRatio;
-		const y = height * (1 - hRatio);
-		const xl = width * (1 - wRatio * 2);
-		const yl = height * (1 - hRatio * 2);
+		const x = width * l;
+		const y = height * (1 - b);
+		const xl = width * (1 - (l + r));
+		const yl = height * (1 - (b + t));
 
 		const { data } = { ...this.chartData };
 		const spaceRatio = 0.1;
@@ -49,16 +79,14 @@ class BarChart extends Chart {
 		const spaceWidth = xDataAxis * spaceRatio;
 		const barWidth = xDataAxis * (1 - spaceRatio * 2);
 
-		let cnt = 1;
-		let repeat = useAnimation ? 50 : 1;
-
 		const fn = () => {
 			this.clear();
+			const progressRate = animation.shift();
 
 			data.forEach((d, idx) => {
 				const { ratio } = { ...d };
 				const sx = (x + spaceWidth) + (xDataAxis * idx);
-				const h = yl * ratio * cnt / repeat;
+				const h = yl * ratio * progressRate;
 				const sy = y - h;
 				this.builder.rect([sx, sy], barWidth, h, "fill", { style: { fillStyle: color[0] } })
 			});
@@ -66,11 +94,11 @@ class BarChart extends Chart {
 			xAxis(x, y, xl);
 			yAxis(x, y, yl);
 
-			if (++cnt > repeat) {
-				this.#info = {
-					x, y, xl, yl, spaceRatio, xDataAxis
-				}
-				this.drawDataLabel();
+			this.#info = {
+				x, y, xl, yl, spaceRatio, xDataAxis
+			}
+			this.drawDataLabel(true, progressRate);
+			if (util.CommonUtil.isEmpty(animation)) {
 				window.cancelAnimationFrame(fn);
 			} else {
 				window.requestAnimationFrame(fn);
@@ -83,16 +111,21 @@ class BarChart extends Chart {
 			this.builder.lines([st, ed]);
 		};
 
-		const yAxis = (x, y, ey) => {
+		const yAxis = (x, y, l) => {
 			const st = [x, y];
-			const ed = [x, height - y];
+			const ed = [x, y - l];
 			this.builder.lines([st, ed]);
 		};
 
 		window.requestAnimationFrame(fn);
 	}
 
-	drawDataLabel() {
+	/**
+     * 차트의 각 바 머리 위에 데이터 라벨을 그리는 함수
+     * @param {Array} data 차트를 그리기 위한 파싱이 완료된 데이터
+     * @param {Object} option 추가 옵션
+     */
+	drawDataLabel(useAni, progressRate) {
 		const { data, max, major } = { ...this.chartData };
 		const { x, y, xl, yl, spaceRatio, xDataAxis } = { ...this.#info };
 
@@ -116,7 +149,7 @@ class BarChart extends Chart {
 				const vText = `${value}`;
 				const vSize = this.builder.getTextSize(vText);
 				const { width: vw, height: vh } = { ...vSize };
-				const vPoint = [cx - vw / 2, y - yl * ratio - vh];
+				const vPoint = [cx - vw / 2, y - (yl * ratio * (useAni ? progressRate : 1)) - vh];
 				this.builder.text(vText, vPoint);
 			});
 		};

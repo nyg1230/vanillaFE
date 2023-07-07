@@ -1,6 +1,6 @@
 import * as util from "../util/Utils.js";
 
-const defaultCount = 70;
+const defaultCount = 100;
 
 const AnimationUtil = {
     getAnimation(type, speed, use = true) {
@@ -10,7 +10,6 @@ const AnimationUtil = {
             ani = this.constant(1);
         } else {
             const fn = this[type] || this.constant;
-            console.log(this[type]);
             
             let corr;
             if (speed === "slow") {
