@@ -16,7 +16,9 @@ class PieChart extends Chart {
         return option;
     }
 
-    parseOption(param) {}
+    parseOption(param) {
+        return param;
+    }
 
     /**
      * 현 차트를 그리기 위한 데이터로 파싱하는 함수
