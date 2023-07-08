@@ -21,7 +21,7 @@ const CommonUtil = {
         return this.isNull(obj) || this.length(obj) === 0;
     },
     isNotEmpty(obj) {
-        !this.isEmpty(obj)
+        return !this.isEmpty(obj)
     },
     length(obj) {
         let len = 0;
@@ -29,7 +29,7 @@ const CommonUtil = {
         if (this.isNull(obj)) {
         } else if (obj.hasOwnProperty("length")) {
             len = obj.length;
-        } else if (this.isObject(len)) {
+        } else if (this.isObject(obj)) {
             len = Object.keys(obj).length;
         }
 

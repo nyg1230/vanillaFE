@@ -15,8 +15,7 @@ class Chart {
     constructor(target, data, options) {
         this.#container = target;
         this.#builder = CanvasUtil.init(this.#container, options);
-        this.#data = data;
-        this.#init();
+        this.#init(data);
     }
 
     get container() {
@@ -52,11 +51,10 @@ class Chart {
      * 첫 생성시 기본 실행하는 함수
      * 데이터를 포함하여 생성 시 즉시 차트를 그리기 시작함
      */
-    #init() {
+    #init(data) {
         this.#initOption();
-        if (util.CommonUtil.isNotEmpty(this.data)) {
-            this.#parseOption();
-            this.#parseChartData();
+        if (util.CommonUtil.isNotEmpty(data)) {
+            this.setChartData(data);
         }
         this.#addObserver();
     }
