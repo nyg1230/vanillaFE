@@ -1,7 +1,6 @@
 import Chart from "./Chart.js";
 import * as util from "../util/Utils.js";
 
-const color = ["#EFD1C6"];
 class BarChart extends Chart {
 	#info;
 
@@ -10,7 +9,16 @@ class BarChart extends Chart {
 			space: {
 				l: 0.075, r: 0.025, t: 0.05, b: 0.1
 			},
-			axis: {}
+			tooltip: {
+				use: true,
+				background: "rgba(170, 170, 170, 0.3)",
+				opacity: 0.8
+			},
+			bar: {
+				all: {
+					fillStyle: "#EFD1C6"
+				}
+			}
 		};
 
 		return option;
@@ -63,7 +71,8 @@ class BarChart extends Chart {
 	drawChart(useAnimation = true, option) {
 		option = util.CommonUtil.shallowMerge(option, this.option);
 
-		const { space, axis, animation: { type, speed } } = { ...option };
+		const { bar, space, axis, animation: { type, speed } } = { ...option };
+		const { all: allBarOption } = { ...bar };
 		const animation = util.AnimationUtil.getAnimation(type, speed, useAnimation);
 
 		const canvasRect = util.StyleUtil.getBoundingClientRect(this.builder.canvas);
@@ -81,6 +90,10 @@ class BarChart extends Chart {
 		const spaceWidth = xDataAxis * spaceRatio;
 		const barWidth = xDataAxis * (1 - spaceRatio * 2);
 
+		this.#info = {
+			x, y, xl, yl, spaceRatio, xDataAxis
+		}
+
 		const fn = () => {
 			this.clear();
 			const progressRate = animation.shift();
@@ -90,15 +103,20 @@ class BarChart extends Chart {
 				const sx = (x + spaceWidth) + (xDataAxis * idx);
 				const h = yl * ratio * progressRate;
 				const sy = y - h;
-				this.builder.rect([sx, sy], barWidth, h, "fill", { style: { fillStyle: color[0] } })
+				const barOption = util.CommonUtil.find(bar, `${idx}`);
+				const { background, ...o } = { ...barOption }
+				const opt = util.CommonUtil.shallowMerge(allBarOption, o);
+				if (background) {
+					const bx = x + xDataAxis * idx;
+					const by = y - yl;
+					this.builder.rect([bx, by], xDataAxis, yl, "fill", { style: { fillStyle: background } });
+				}
+				this.builder.rect([sx, sy], barWidth, h, "fill", { style: { ...opt } });
 			});
 
 			xAxis(x, y, xl);
 			yAxis(x, y, yl);
 
-			this.#info = {
-				x, y, xl, yl, spaceRatio, xDataAxis
-			}
 			this.drawDataLabel(true, progressRate);
 			if (util.CommonUtil.isEmpty(animation)) {
 				window.cancelAnimationFrame(fn);
@@ -133,7 +151,7 @@ class BarChart extends Chart {
 
 		const xAxis = () => {
 			data.forEach((d, idx) => {
-				const { name, value, ratio } = { ...d };
+				const { name } = { ...d };
 				const cx = x + (2 * idx + 1) * xDataAxis / 2;
 				const nSize = this.builder.getTextSize(name);
 				const { width: nw, height: nh } = { ...nSize };
@@ -147,12 +165,6 @@ class BarChart extends Chart {
 					]
 				}
 				this.builder.text(name, point, undefined, option);
-
-				const vText = `${value}`;
-				const vSize = this.builder.getTextSize(vText);
-				const { width: vw, height: vh } = { ...vSize };
-				const vPoint = [cx - vw / 2, y - (yl * ratio * (useAni ? progressRate : 1)) - vh];
-				this.builder.text(vText, vPoint);
 			});
 		};
 
@@ -184,7 +196,57 @@ class BarChart extends Chart {
 	}
 
 	setTooltipContent(e, x, y) {
-		// console.log(e, x, y)
+		const data = this.#getTooltipData(x, y);
+		let html;
+
+		if (data) {
+			const { name, value, index } = { ...data };
+			const { index: oIndex } = { ...this._old };
+			html = `<div>
+						<span>${name}</span>
+						<span>${value}</span>
+					</div>`;
+
+			if (index !== oIndex) {
+				const { bar, tooltip } = { ...this.option };
+				const { background, opacity } = { ...tooltip };
+				const commonColor = util.CommonUtil.find(bar, "all.fillStyle");
+				const indexColor = util.CommonUtil.find(bar, `${index}.fillStyle`);
+				const color = indexColor || commonColor;
+				const option = {
+					bar: {
+						[index]: {
+							fillStyle: `rgba(${util.StyleUtil.getHexColorToDecimal(color)}, ${opacity})`,
+							background
+						}
+					}
+				};
+				this.drawChart(false, option);
+				this._old = data;
+			}
+		} else if (this._old) {
+			this.drawChart(false);
+			this._old = null;
+		}
+
+		return html;
+	}
+
+	#getTooltipData(x, y) {
+		let tooltipData;
+
+		const { x: sx, y: sy, xl, yl, xDataAxis } = { ...this.#info };
+
+		if (sx > x || sx + xl < x ) {
+		} else if (sy < y || sy - yl > y) {
+		} else {
+			const { data } = { ...this.chartData };
+			const idx = util.CommonUtil.floor((x - sx) / xDataAxis, 0);
+			tooltipData = { ...data[idx], index: idx };
+		}
+
+
+		return tooltipData;
 	}
 }
 
