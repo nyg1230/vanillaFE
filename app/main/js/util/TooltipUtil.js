@@ -1,4 +1,4 @@
-import * as util from "./Utils.js"
+import * as util from "./utils.js"
 
 class Tooltip {
 	#target;

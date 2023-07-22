@@ -1,5 +1,5 @@
-import CanvasUtil from "../util/CanvasUtil.js";
-import * as util from "../util/Utils.js";
+import CanvasUtil from "../main/util/CanvasUtil.js";
+import * as util from "../main/util/utils.js";
 
 class Chart {
     #container;

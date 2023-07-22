@@ -2,7 +2,7 @@
   "name": "fe",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "main/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config=config/webpack.dev.config.js"
@@ -11,11 +11,12 @@
   "author": "nope <nyg1230@gmail.com>",
   "license": "ISC",
   "dependencies": {
-  },
-  "devDependencies": {
+    "path-browserify": "^1.0.1",
     "html-webpack-plugin": "^5.5.1",
     "webpack": "^5.83.1",
-    "webpack-cli": "^5.1.1",
+    "webpack-cli": "^5.1.1"
+  },
+  "devDependencies": {
     "webpack-dev-server": "^4.15.0"
   }
 }

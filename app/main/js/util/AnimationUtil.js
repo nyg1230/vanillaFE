@@ -1,4 +1,4 @@
-import * as util from "../util/Utils.js";
+import * as util from "./utils.js";
 
 const defaultCount = 100;
 

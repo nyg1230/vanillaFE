@@ -1,6 +1,6 @@
-import CanvasUtil from "../util/CanvasUtil.js";
-import PieChart from "../chart/PieChart.js";
-import BarChart from "../chart/BarChart.js";
+import CanvasUtil from "../main/util/CanvasUtil.js";
+import PieChart from "/js/main/chart/PieChart.js";
+import BarChart from "/js/main/chart/BarChart.js";
 
 export default class CanvasTest {
     #container;

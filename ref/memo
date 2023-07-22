@@ -26,4 +26,30 @@ model 사용
 
 개발 과정에서 객체 삭제 시 메모리 해제를 해주어야함
 
-test
+framework
+	mvi 패턴을 기반으로 진행
+	render ← model
+		↓	↑
+		intent
+		↓	↑
+		side effect
+	user → (action) → intent → (state) → model → (state) → view → (state)
+
+	view에서 event 발생
+	event는 기존 모델에 병합하여 새로운 모델 생성
+		state reducer 고려해야함
+	생성된 모델은 view에 전달하여 데이터 변경
+
+	서버 호출이 필요한 이벤트인 경우 api 호출 이후 응답 결과를 event로 전달받아 model을 생섣
+
+	컴포넌트 및 뷰를 제외한 나머지 디렉토리 구조 고려해야함
+
+	* single state
+	* thread safety
+
+	* single live event 처리 필요 (단순 호출용)
+		* event 호출 시 특정 값으로 처리하면 될듯함
+
+	* aop 구현필요여부 확인
+	* 캐싱처리 방안 필요
+	* spa - 계층형 url로 페이지 구현

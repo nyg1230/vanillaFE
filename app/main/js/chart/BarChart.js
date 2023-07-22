@@ -1,5 +1,5 @@
 import Chart from "./Chart.js";
-import * as util from "../util/Utils.js";
+import * as util from "../main/util/utils.js";
 
 class BarChart extends Chart {
 	#info;
