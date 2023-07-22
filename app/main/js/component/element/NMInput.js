@@ -11,16 +11,26 @@ export default class NMInput extends NMComponent {
 
     get styles() {
         return `
-            * {
-                color: red;
+            .${this.clsName} {
+                --width: 50px;
+                display: block;
+                width: var(--width);
+
+                &:hover {
+                    background-color: red;
+                }
+
+                &input {
+                    width: var(--width);
+                }
             }
         `;
     }
 
     get template() {
         return `
-        <div class="${this.clsName}> part="${this.clsName}"
-            <input type="text" />
+        <div class="${this.clsName}" part="${this.clsName}">
+            <input type="text" part="input"/>
         </div>`;
     }
 }

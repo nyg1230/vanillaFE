@@ -21,8 +21,7 @@ module.exports = {
             zlib: false,
             net: false,
             tls: false,
-            child_process: false,
-            path: require.resolve("path-browserify")
+            child_process: false
         }
     },
     output: {

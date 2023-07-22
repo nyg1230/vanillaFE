@@ -8,6 +8,7 @@ import NMMain from "main/component/view/main/NMMain.js";
 // import CanvasTest from "./test/canvasTest.js";
 
 /* constant */
+import NMConst from "main/constant/NMConstant";
 
 console.log("test");
 window.onload = (e) => {

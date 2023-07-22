@@ -1,12 +1,15 @@
-import * as util from "../util/utils.js";
+/* inherit */
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+/* constant */
+import NMConst from "main/constant/NMConstant";
 
 class NMComponent extends HTMLElement {
     #root;
-    #template;
 
     constructor() {
         super();
-        console.log(this.clsName);
     }
     
     static get observedAttributes() {
@@ -29,6 +32,10 @@ class NMComponent extends HTMLElement {
         return ``;
     }
 
+    get #proto() {
+        return this.__proto__.constructor;
+    }
+
     addEvent() {}
 
     bindEvent(target, eventName, fn) {}
@@ -43,26 +50,43 @@ class NMComponent extends HTMLElement {
 
     #render() {
         this.#root = this.attachShadow({ mode: "open" });
-
-        const clsConstructor = this.__proto__.constructor;
-
-        let style;
-        if (clsConstructor && clsConstructor.styles) {
-            console.log(1);
-            style = clsConstructor.styles;
-        } else {
-            console.log(2);
-            style = util.DomUtil.createElement("style");
-            style.textContent = this.styles;
-            clsConstructor.styles = style;
-        }
-
-        this.#root.appendChild(style);
-
         const frag = document.createDocumentFragment();
-        frag.textContent = this.template;
+
+        const style = this.#getStyle();
+        const template = this.#getTemplate();
+
+        frag.appendChild(style);
+        frag.appendChild(template.content);
 
         this.#root.appendChild(frag);
+    }
+
+    #getStyle() {
+        const proto = this.#proto;
+
+        if (!proto.styles) {
+            const tmpl = util.DomUtil.createElement("style");
+            tmpl.textContent = this.styles;
+            proto.styles = tmpl;
+        }
+
+        const style = proto.styles.cloneNode(true);
+
+        return style;
+    }
+
+    #getTemplate() {
+        const proto = this.#proto;
+
+        if (!proto.template) {
+            const tmpl = util.DomUtil.createElement("template");
+            tmpl.innerHTML = this.template;
+            proto.template = tmpl;
+        }
+
+        const template = proto.template.cloneNode(true);
+
+        return template;
     }
 }
 

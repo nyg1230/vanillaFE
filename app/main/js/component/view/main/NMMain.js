@@ -1,5 +1,12 @@
-import { NMView, define } from "../NMView.js";
-import * as element from "../../element/elements.js"
+/* inherit */
+import { NMView, define } from "main/component/view/NMView.js";
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+import * as element from "main/component/element/elements.js"
+/* constant */
+import NMConst from "main/constant/NMConstant";
+
 
 export default class NMMain extends NMView {
     static get name() {
@@ -11,7 +18,15 @@ export default class NMMain extends NMView {
     }
 
     get styles() {
-        return ``;
+        return `
+            nm-header {
+                width: 100%;
+            }
+
+            .test {
+                color: red;
+            }
+        `;
     }
 
     get template() {

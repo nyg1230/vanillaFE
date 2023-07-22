@@ -1,4 +1,7 @@
-import * as util from "./utils.js";
+/* common */
+import * as util from "main/util/utils.js";
+/* constant */
+import NMConst from "main/constant/NMConstant.js";
 
 const DomUtil = {
 	createElement(tagName, attrs = {}) {
@@ -27,7 +30,7 @@ const DomUtil = {
 	},
 
 	textToDom(str) {
-		const dom = this.domParser(str, "");
+		const dom = this.domParser(str, NMConst.mimeType.TEXT__HTML);
 		return dom;
 	},
 
