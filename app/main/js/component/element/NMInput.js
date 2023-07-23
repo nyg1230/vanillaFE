@@ -1,6 +1,10 @@
 import { NMComponent, define } from "../NMComponent.js";
 
 export default class NMInput extends NMComponent {
+    static get observedAttributes() {
+        return ["value"];
+    }
+
     static get name() {
         return "nm-input";
     }

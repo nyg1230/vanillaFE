@@ -37,6 +37,8 @@ export default class NMMain extends NMView {
         </div>
         `
     }
+
+    addEvent() {}
 }
 
 define(NMMain);

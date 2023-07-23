@@ -10,7 +10,6 @@ import NMMain from "main/component/view/main/NMMain.js";
 /* constant */
 import NMConst from "main/constant/NMConstant";
 
-console.log("test");
 window.onload = (e) => {
     // console.log("test~!");
     // const test = new CanvasTest();
@@ -19,5 +18,4 @@ window.onload = (e) => {
     const main = new NMMain();
 
     body.appendChild(main);
-    console.log(body);
 }
