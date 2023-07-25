@@ -5,6 +5,7 @@ import StyleUtil from "main/util/StyleUtil.js";
 import AopUtil from "main/util/AopUtil.js";
 import AnimationUtil from "main/util/AnimationUtil.js";
 import EventUtil from "main/util/EventUtil.js";
+import ObserverUtil from "main/util/ObserverUtil";
 
 export {
     CommonUtil,
@@ -13,5 +14,6 @@ export {
     StyleUtil,
     AopUtil,
     AnimationUtil,
-    EventUtil
+    EventUtil,
+    ObserverUtil
 };

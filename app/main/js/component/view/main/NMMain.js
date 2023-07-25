@@ -4,11 +4,15 @@ import { NMView, define } from "main/component/view/NMView.js";
 import * as util from "main/util/utils.js";
 /* component */
 import * as element from "main/component/element/elements.js"
+/* model */
+import NMTestModel from "main/model/NMTestModel.js";
 /* constant */
-import NMConst from "main/constant/NMConstant";
+import NMConst from "main/constant/NMConstant.js";
 
 
 export default class NMMain extends NMView {
+    modelList = [NMTestModel];
+
     static get name() {
         return "nm-main";
     }

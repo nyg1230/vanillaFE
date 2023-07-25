@@ -38,8 +38,10 @@ class NMComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.addEvent();
+        this.#addEvent();
+        this.beforeRender();
         this.#render();
+        this.afterRender();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -48,6 +50,10 @@ class NMComponent extends HTMLElement {
 
     disconnectedCallback() {
         this.#destroy();
+    }
+
+    #addEvent() {
+        this.addEvent();
     }
 
     /* component event function start */
@@ -138,6 +144,9 @@ class NMComponent extends HTMLElement {
 
         this.#root.appendChild(frag);
     }
+
+    beforeRender() {}
+    afterRender() {}
 
     /**
      * 컴포넌트가 기본적으로 사용할 style sheet를 반환하는 함수
