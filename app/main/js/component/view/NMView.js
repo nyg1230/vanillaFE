@@ -16,14 +16,15 @@ class NMView extends NMComponent {
     }
 
     #observeModel() {
-        console.log(this.modelList);
         this.modelList.forEach((model) => {
             model.addView(this);
         });
     }
 
     #disconnectModel() {
-
+        this.modelList.forEach((model) => {
+            model.removeView(this);
+        });
     }
 
     #disconnectAllModel() {
@@ -43,7 +44,9 @@ class NMView extends NMComponent {
 
     onModelChange() {}
 
-    destroy() {}
+    destroy() {
+        this.#disconnectModel();
+    }
 }
 
 define(NMView);

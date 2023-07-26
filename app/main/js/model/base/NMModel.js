@@ -9,33 +9,75 @@ import NMConst from "main/constant/NMConstant.js";
 const viewStore = {};
 
 class NMModel {
+    #viewList;
+    #data;
+
+    static async createModel() {
+        if (util.CommonUtil.isNotNull(viewStore[this.name])) return;
+        viewStore[this.name] = new this();
+    }
+
+    static get model() {
+        return viewStore[this.name];
+    }
+    
+    static set model(model) {
+        NMModel.model.data = data;
+    }
+
+    static async addView(view, option) {
+        util.CommonUtil.isNull(NMModel.model) && await NMModel.createModel();
+
+        NMModel.model.setView(view, option);
+    }
+
+    static async removeView(view) {
+        if (util.CommonUtil.isNull(NMModel.model)) return;
+        
+        NMModel.model.removeView(view);
+    }
+
+    static async removeAllView(view) {
+        Object.entries(viewStore).forEach(([name, model]) => {
+            model.removeView(view)
+        });
+    }
+
     constructor() {
+        this.#viewList = [];
         this.init();
     }
 
-    static addView(target) {
-        const { name } = this;
-        if (util.CommonUtil.isNull(viewStore[name])) {
-            viewStore[name] = {
-                model: new this(),
-                viewList: [target]
-            };
-        } else {
-            viewStore[name].viewList.push(target);
-        }
-        console.log(viewStore);
-    }
-
-    static removeView(target) {
-        const { name } = this;
-        
-    }
-
-    static removeAllView() {
-        viewStore = {};
-    }
-
     init() {}
+
+    getData() {
+        return this.#data;
+    }
+
+    setData(data) {
+        this.#data;
+        data;
+
+        this.#viewList.forEach((v) => {
+            util.EventUtil.dispatchEvent(v, "modelChange", this.#data);
+        });
+    }
+
+    setView(view, option) {
+        this.#viewList.push({ view, option });
+    }
+
+    removeView(view) {
+        this.#viewList = this.#viewList.filter((v) => v.view !== view);
+    }
+
+    removeAllView() {
+        this.#viewList = [];
+    }
+
+    destroy() {
+        this.removeAllView();
+    }
 }
 
 export default NMModel;
