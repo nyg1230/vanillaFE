@@ -7,27 +7,27 @@ import * as util from "main/util/utils.js";
 import NMConst from "main/constant/NMConstant.js";
 
 const viewStore = {};
+const store = util.store;
 
 class NMModel {
     #viewList;
     #data;
 
     static async createModel() {
-        if (util.CommonUtil.isNotNull(viewStore[this.name])) return;
-        viewStore[this.name] = new this();
+        if (util.CommonUtil.isNotNull(store.get("model", this.name))) return;
+        store.set("model", this.name, new this());
     }
 
     static get model() {
-        return viewStore[this.name];
+        return store.get("model", this.name);
     }
     
     static set model(model) {
         NMModel.model.data = data;
     }
 
-    static async addView(view, option) {
-        util.CommonUtil.isNull(NMModel.model) && await NMModel.createModel();
-
+    static async subscribe(view, option) {
+        util.CommonUtil.isNull(store.get("model", this.name)) && await NMModel.createModel();
         NMModel.model.setView(view, option);
     }
 

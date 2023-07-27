@@ -1,4 +1,11 @@
+/* inherit */
 import { NMComponent, define } from "../NMComponent.js";
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+/* model */
+/* constant */
+import NMConst from "main/constant/NMConstant.js";
 
 class NMView extends NMComponent {
     modelList = [];
@@ -17,7 +24,7 @@ class NMView extends NMComponent {
 
     #observeModel() {
         this.modelList.forEach((model) => {
-            model.addView(this);
+            model.subscribe(this);
         });
     }
 
