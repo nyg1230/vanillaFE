@@ -1,4 +1,4 @@
-import { NMComponent, define } from "../NMComponent.js";
+import { NMComponent, define } from "main/component/NMComponent.js";
 
 export default class NMInput extends NMComponent {
     static get observedAttributes() {

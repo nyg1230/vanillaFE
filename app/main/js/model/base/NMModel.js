@@ -45,6 +45,7 @@ class NMModel {
 
     constructor() {
         this.#viewList = [];
+        this.#data = {};
         this.init();
     }
 
@@ -55,11 +56,10 @@ class NMModel {
     }
 
     setData(data) {
-        this.#data;
-        data;
+        this.#data = util.CommonUtil.shallowMerge(this.#data, data);
 
         this.#viewList.forEach((v) => {
-            util.EventUtil.dispatchEvent(v, "modelChange", this.#data);
+            util.EventUtil.dispatchEvent(v, NMConst.eventName.MODEL_CHANGE, this.#data);
         });
     }
 

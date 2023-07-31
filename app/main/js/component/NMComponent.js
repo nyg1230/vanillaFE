@@ -53,6 +53,7 @@ class NMComponent extends HTMLElement {
     }
 
     #addEvent() {
+        this.bindEvent(this, NMConst.eventName.MODEL_CHANGE);
         this.addEvent();
     }
 
