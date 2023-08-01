@@ -17,7 +17,6 @@ class NMPieChart extends NMChart {
     }
     
     get layerList() {
-        window.qqq = this;
         return [`graphic`, `dataLabel`, `hover`];
     }
     
@@ -59,13 +58,27 @@ class NMPieChart extends NMChart {
     }
 
     draw() {
-        console.log(this.chartData);
         this.#drawDataLabel();
         this.#drawPie();
     }
 
     #drawDataLabel() {}
-    #drawPie() {}
+    #drawPie() {
+        window.qqq = this;
+        const graphic = this.layers["graphic"];
+        const { canvas, ctx } = { ...graphic };
+        console.log(this.chartData, graphic);
+        const arc = util.CanvasUtil.arc(50, 50, 50, -Math.PI / 2, Math.PI / 2, "fill", { fillStyle: "#FF0000" });
+        console.log(arc);
+        arc.draw(ctx);
+
+        // const rect = util.CanvasUtil.rect(10, 20, 50, 40);
+        // rect.draw(ctx);
+
+        const circle = util.CanvasUtil.circle(100, 100, 30, "fill", { fillStyle: "blue" });
+        console.log(circle);
+        circle.draw(ctx);
+    }
 }
 
 define(NMPieChart);

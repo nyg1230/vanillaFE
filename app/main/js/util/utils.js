@@ -7,6 +7,7 @@ import AnimationUtil from "main/util/AnimationUtil.js";
 import EventUtil from "main/util/EventUtil.js";
 import ObserverUtil from "main/util/ObserverUtil.js";
 import store from "main/util/StoreUtil.js";
+import CanvasUtil from "main/util/CanvasUtil.js";
 
 export {
     CommonUtil,
@@ -17,5 +18,6 @@ export {
     AnimationUtil,
     EventUtil,
     ObserverUtil,
+    CanvasUtil,
     store
 };

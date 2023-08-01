@@ -1,5 +1,106 @@
 import * as util from "./utils.js";
 
+const CanvasUtil = {
+    line() {},
+    rect(x, y, width, height, type, styles) {
+        return {
+            x,
+            y,
+            width,
+            height,
+            type,
+            styles,
+            draw: function(ctx) {
+                const { x, y, width, height, styles } = { ...this };
+                const fn = type === "fill" ? ctx.fillRect : ctx.strokeRect;
+                ctx.save();
+
+                CanvasUtil.setStyle(ctx, styles);
+                fn.call(ctx, x, y, width, height);
+
+                ctx.restore();
+            }
+        }
+    },
+    arc(x, y, r, startAngle, endAngle, type = "fill", styles) {
+        return {
+            x,
+            y,
+            r,
+            startAngle,
+            endAngle,
+            type,
+            styles,
+            draw: function(ctx) {
+                const { x, y, r, startAngle, endAngle, type, styles } = { ...this };
+                const fn = type !== "fill" ? ctx.stroke : ctx.fill;
+
+                ctx.save();
+                CanvasUtil.setStyle(ctx, styles);
+                
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.arc(x, y, r, startAngle, endAngle);
+                fn.call(ctx);
+                ctx.closePath();
+
+                ctx.restore();
+            }
+        };
+    },
+    circle(x, y, r, type, styles) {
+        return CanvasUtil.arc(x, y, r, 0, Math.PI * 2, type, styles);
+    },
+    text(x, y, str, type = "fill", styles) {
+        return {
+            x,
+            y,
+            text: str,
+            getSize: function(ctx, isTransection = false) {
+                isTransection === true && ctx.save();
+                const mtx = ctx.measureText(this.text);
+                const { width, actualBoundingBoxscent, actualBoundingBoxDescent } = mtx;
+                isTransection === true && ctx.restore();
+                return {
+                    width,
+                    height: actualBoundingBoxscent + actualBoundingBoxDescent
+                };
+            },
+            draw: function(ctx, isCenter = true) {
+                let { x, y } = { ...this };
+                ctx.save();
+                CanvasUtil.setStyle(ctx, styles);
+
+                if (isCenter === true) {
+                    const size = this.getSize(ctx);
+                    const { width = 0, height = 0 } = { ...size };
+                    x -= width / 2;
+                    y -= height / 2;
+                }
+
+                ctx.restore();
+            }
+        }
+    },
+    setStyle(ctx, styles) {
+        if (util.CommonUtil.isObject(styles)) {
+            Object.entries(styles).forEach(([k, v]) => {
+                console.log(k, v);
+                ctx[k] = v;
+            });
+        }
+    },
+    rotate(x, y, angle, obj) {},
+    clear(canvas) {
+        const canvasRect = util.StyleUtil.getBoundingClientRect(canvas);
+		const { width, height } = canvasRect;
+        const ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, width, height);        
+    }
+}
+
+
 class CanvasBuilder {
     #container;
     #canvas;
@@ -152,8 +253,10 @@ const figure = {
     }
 }
 
-export default {
-    init: (target, options) => {
-        return new CanvasBuilder(target, options);;
-    }
-};
+// export default {
+//     init: (target, options) => {
+//         return new CanvasBuilder(target, options);;
+//     }
+// };
+
+export default CanvasUtil;

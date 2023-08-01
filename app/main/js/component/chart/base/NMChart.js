@@ -40,11 +40,12 @@ class NMChart extends NMComponent {
             }
 
             .chart-area {
-
+                position: relative;
             }
 
             .chart-area canvas {
                 position: absolute;
+                background-color: transparent;
             }
         `;
     }
@@ -111,9 +112,16 @@ class NMChart extends NMComponent {
 
     draw() {}
 
-    clear() {
-        Object.values(this.#layers).forEach((v) => {
-            const { ctx } = { ...v };
+    clear(name) {
+        const target = this.#layers[name];
+        const { ctx } = { ...target };
+
+        // ctx && ctx
+    }
+
+    clearAll() {
+        Object.keys(this.#layers).forEach((name) => {
+            this.clear(name);
         });
     }
 }
