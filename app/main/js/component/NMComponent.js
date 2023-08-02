@@ -7,6 +7,7 @@ import NMConst from "main/constant/NMConstant";
 
 class NMComponent extends HTMLElement {
     #root;
+    #rect;
     #event = {}
 
     constructor() {
@@ -25,6 +26,10 @@ class NMComponent extends HTMLElement {
         return NMComponent.name;
     }
 
+    get rect() {
+        return this.#rect;
+    }
+
     get styles() {
         return ``;
     }
@@ -39,9 +44,9 @@ class NMComponent extends HTMLElement {
 
     connectedCallback() {
         this.#addEvent();
-        this.beforeRender();
+        this.#beforeRender();
         this.#render();
-        this.afterRender();
+        this.#afterRender();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -146,7 +151,15 @@ class NMComponent extends HTMLElement {
         this.#root.appendChild(frag);
     }
 
+    #beforeRender() {
+        this.beforeRender();
+    }
     beforeRender() {}
+    #afterRender() {
+        const rect = this.getBoundingClientRect();
+        this.#rect = new DOMRectReadOnly(rect);
+        this.afterRender();
+    }
     afterRender() {}
 
     /**

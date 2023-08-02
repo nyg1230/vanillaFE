@@ -75,6 +75,7 @@ class NMChart extends NMComponent {
     }
 
     afterRender() {
+        this.#setPosition();
         this.layerList.forEach((name) => {
             const canvas = util.DomUtil.querySelector(this, `#${name}`);
             if (canvas) {
@@ -95,6 +96,10 @@ class NMChart extends NMComponent {
     #parseOption(obj) {
         const opiton = this.parseOption(obj);
         this.#option = util.CommonUtil.shallowMerge(this.#initOption, opiton);
+    }
+
+    #setPosition() {
+        console.log(this.rect);
     }
 
     parseOption() {}

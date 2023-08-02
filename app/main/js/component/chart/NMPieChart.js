@@ -17,7 +17,8 @@ class NMPieChart extends NMChart {
     }
     
     get layerList() {
-        return [`graphic`, `dataLabel`, `hover`];
+        window.qqq = this;
+        return [`graphic`, `hover`, `dataLabel`];
     }
     
     parseOption(obj) {
@@ -34,20 +35,31 @@ class NMPieChart extends NMChart {
     }
 
     parseData(data) {
+        let rect = this.rect;
+        if (rect) {
+            rect = this.getBoundingClientRect();
+        }
+        console.log(rect)
+        const { width, height } = rect;
         let entries = Object.entries(data);
         entries.sort((a, b) => a[1] < b[1]);
 
         const total = entries.reduce((acc, val) => acc += val[1], 0);
-        const startAngle = util.CommonUtil.find(this.option, "chart.startAngle");
+        let startAngle = util.CommonUtil.find(this.option, "chart.startAngle");
         console.log(startAngle);
 
         const list = [];
         entries.forEach((ent) => {
             const [name, value] = [...ent];
             const ratio = value / total;
-            const d = { name, value, ratio }
+            const angle = Math.PI * 2 * ratio;
+            const endAngle = startAngle + angle;
+            const max = width > height ? width : height;
+            const r = max / 2 * 0.9;
+            const arc = util.CanvasUtil.arc(width / 2, height / 2, r, startAngle, endAngle);
+            startAngle += endAngle;
 
-            list.push(d);
+            list.push(arc);
         });
 
         const chartData = {
@@ -58,26 +70,18 @@ class NMPieChart extends NMChart {
     }
 
     draw() {
-        this.#drawDataLabel();
         this.#drawPie();
+        console.log(this.chartData);
+        const { data } = { ...this.chartData };
+        data.forEach((d) => {
+            console.log(d);
+        });
+        this.#drawDataLabel();
     }
 
     #drawDataLabel() {}
     #drawPie() {
-        window.qqq = this;
-        const graphic = this.layers["graphic"];
-        const { canvas, ctx } = { ...graphic };
-        console.log(this.chartData, graphic);
-        const arc = util.CanvasUtil.arc(50, 50, 50, -Math.PI / 2, Math.PI / 2, "fill", { fillStyle: "#FF0000" });
-        console.log(arc);
-        arc.draw(ctx);
-
-        // const rect = util.CanvasUtil.rect(10, 20, 50, 40);
-        // rect.draw(ctx);
-
-        const circle = util.CanvasUtil.circle(100, 100, 30, "fill", { fillStyle: "blue" });
-        console.log(circle);
-        circle.draw(ctx);
+        
     }
 }
 

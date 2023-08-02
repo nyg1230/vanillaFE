@@ -10,13 +10,13 @@ const CanvasUtil = {
             height,
             type,
             styles,
-            draw: function(ctx) {
+            draw: function(ctx, ratio = 1) {
                 const { x, y, width, height, styles } = { ...this };
                 const fn = type === "fill" ? ctx.fillRect : ctx.strokeRect;
                 ctx.save();
 
                 CanvasUtil.setStyle(ctx, styles);
-                fn.call(ctx, x, y, width, height);
+                fn.call(ctx, x, y, width, height * ratio);
 
                 ctx.restore();
             }
@@ -31,16 +31,17 @@ const CanvasUtil = {
             endAngle,
             type,
             styles,
-            draw: function(ctx) {
+            draw: function(ctx, ratio = 1) {
                 const { x, y, r, startAngle, endAngle, type, styles } = { ...this };
                 const fn = type !== "fill" ? ctx.stroke : ctx.fill;
+                const gap = endAngle - startAngle;
 
                 ctx.save();
                 CanvasUtil.setStyle(ctx, styles);
                 
                 ctx.beginPath();
                 ctx.moveTo(x, y);
-                ctx.arc(x, y, r, startAngle, endAngle);
+                ctx.arc(x, y, r, startAngle, startAngle + gap * ratio);
                 fn.call(ctx);
                 ctx.closePath();
 
