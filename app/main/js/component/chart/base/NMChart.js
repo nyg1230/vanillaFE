@@ -13,14 +13,19 @@ class NMChart extends NMComponent {
     #layers = {};
     #option = {};
     #initOption = {
-        animation: {
+        parette: "rainbow",
+        styles: {},
+        animate: {
             use: true,
             type: "rapidly",
-            speed: "default"
+            delay: 1000
         },
         legend: {
             use: true,
             position: "r"
+        },
+        tooltip: {
+            use: true
         }
     };
     
@@ -39,11 +44,7 @@ class NMChart extends NMComponent {
                 height: 100%;
             }
 
-            .chart-area {
-                position: relative;
-            }
-
-            .chart-area canvas {
+            .${this.clsName} canvas {
                 position: absolute;
                 background-color: transparent;
             }
@@ -52,9 +53,8 @@ class NMChart extends NMComponent {
 
     get template() {
         const htmlList = this.layerList.map((name) => `<canvas id="${name}"></canvas>`);
-        return `<div part="${this.clsName}">
-                    <div class="chart-area">${htmlList.join("")}</div>
-                    <div class="legend-area"></div>
+        return `<div class="${this.clsName}" part="${this.clsName}">
+                    ${htmlList.join("")}
                 </div>`;
     }
 
@@ -75,7 +75,6 @@ class NMChart extends NMComponent {
     }
 
     afterRender() {
-        this.#setPosition();
         this.layerList.forEach((name) => {
             const canvas = util.DomUtil.querySelector(this, `#${name}`);
             if (canvas) {
@@ -85,11 +84,22 @@ class NMChart extends NMComponent {
                 }
             }
         });
+        this.#resize(false);
     }
 
-    setData(data, option) {
+    set(data, option) {
         this.#parseOption(option);
         this.#parseData(data);
+        this.#draw();
+    }
+
+    setData(data) {
+        this.#parseData(data);
+        this.#draw();
+    }
+
+    setOption(option) {
+        this.#parseOption(option);
         this.#draw();
     }
 
@@ -98,8 +108,17 @@ class NMChart extends NMComponent {
         this.#option = util.CommonUtil.shallowMerge(this.#initOption, opiton);
     }
 
-    #setPosition() {
-        console.log(this.rect);
+    #resize(refresh = true) {
+        const { width, height } = this.rect;
+
+        Object.values(this.#layers).forEach((layer) => {
+            const { canvas } = { ...layer };
+
+            canvas.setAttribute("width", width);
+            canvas.setAttribute("height", height);
+        });
+
+        refresh === true && this.#draw();
     }
 
     parseOption() {}
@@ -111,17 +130,17 @@ class NMChart extends NMComponent {
     parseData() {}
 
     #draw() {
-        this.clear();
         this.draw();
+        this.#setTooltip();
     }
 
     draw() {}
 
     clear(name) {
-        const target = this.#layers[name];
-        const { ctx } = { ...target };
+        const target = this.layers[name];
+        const { canvas } = { ...target };
 
-        // ctx && ctx
+        util.CanvasUtil.clear(canvas);
     }
 
     clearAll() {
@@ -129,6 +148,23 @@ class NMChart extends NMComponent {
             this.clear(name);
         });
     }
+
+    #setTooltip() {
+        const { tooltip } = { ...this.option };
+        const { use: tooltipUse } = { ...tooltip };
+
+        if (tooltipUse === true) {
+            this.bindEvent(this, NMConst.eventName.MOUSE_MOVE, this.#onMouseMove);
+        } else {
+            this.unbindEvent(this, NMConst.eventName.MOUSE_MOVE);
+        }
+    }
+
+    #onMouseMove(e) {
+        const content = this.getTooltipContent(e);
+    }
+
+    getTooltipContent(e) {}
 }
 
 define(NMChart);

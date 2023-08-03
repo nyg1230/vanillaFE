@@ -8,6 +8,7 @@ import EventUtil from "main/util/EventUtil.js";
 import ObserverUtil from "main/util/ObserverUtil.js";
 import store from "main/util/StoreUtil.js";
 import CanvasUtil from "main/util/CanvasUtil.js";
+import ColorUtil from "main/util/ColorUtil.js";
 
 export {
     CommonUtil,
@@ -19,5 +20,6 @@ export {
     EventUtil,
     ObserverUtil,
     CanvasUtil,
+    ColorUtil,
     store
 };

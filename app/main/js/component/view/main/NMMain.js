@@ -63,7 +63,7 @@ export default class NMMain extends NMView {
             ecco: 5671,
             fiore: 301
         };
-        pieChart.setData(pieData);
+        pieChart.set(pieData);
     }
 }
 

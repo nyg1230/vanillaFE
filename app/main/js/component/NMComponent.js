@@ -157,7 +157,8 @@ class NMComponent extends HTMLElement {
     beforeRender() {}
     #afterRender() {
         const rect = this.getBoundingClientRect();
-        this.#rect = new DOMRectReadOnly(rect);
+        const { x, y, width, height } = rect;
+        this.#rect = new DOMRectReadOnly(x, y, width, height);
         this.afterRender();
     }
     afterRender() {}

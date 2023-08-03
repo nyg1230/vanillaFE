@@ -1,6 +1,7 @@
 const NMConstant = {
     eventName: {
         CLICK: "click",
+        MOUSE_MOVE: "mousemove",
         MODEL_CHANGE: "modelChange"
     },
     mimeType: {
