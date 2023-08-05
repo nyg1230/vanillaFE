@@ -57,27 +57,44 @@ const CanvasUtil = {
             x,
             y,
             text: str,
+            styles: styles,
             getSize: function(ctx, isTransection = false) {
                 isTransection === true && ctx.save();
                 const mtx = ctx.measureText(this.text);
-                const { width, actualBoundingBoxscent, actualBoundingBoxDescent } = mtx;
+                const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
                 isTransection === true && ctx.restore();
                 return {
                     width,
-                    height: actualBoundingBoxscent + actualBoundingBoxDescent
+                    height: ba + bd
                 };
             },
-            draw: function(ctx, isCenter = true) {
-                let { x, y } = { ...this };
-                ctx.save();
-                CanvasUtil.setStyle(ctx, styles);
+            draw: function(ctx, position = "lc", addStyle) {
+                let { x, y, text, styles } = { ...this };
+                const fn = type !== "fill" ? ctx.strokeText : ctx.fillText;
 
-                if (isCenter === true) {
-                    const size = this.getSize(ctx);
-                    const { width = 0, height = 0 } = { ...size };
-                    x -= width / 2;
-                    y -= height / 2;
+                ctx.save();
+                const [horison = "c", vertical = "c"] = [...position];
+                
+                let baseline;
+                if (vertical === "t") {
+                    baseline = "top";
+                } else if (vertical === "b") {
+                    baseline = "hanging";
+                } else {
+                    baseline = "middle";
                 }
+
+                CanvasUtil.setStyle(ctx, { ...styles, ...addStyle, textBaseline: baseline });
+                const size = this.getSize(ctx);
+                const { width } = { ...size };
+
+                if (horison === "l") {
+                    x -= width;
+                } else if (horison === "c") {
+                    x -= width / 2;
+                }
+
+                fn.call(ctx, text, x, y);
 
                 ctx.restore();
             }

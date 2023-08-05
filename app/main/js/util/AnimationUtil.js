@@ -3,6 +3,13 @@ import * as util from "./utils.js";
 const defaultCount = 100;
 
 const AnimationUtil = {
+    get(type) {
+        const fn = animateProgress[type] || animateProgress["normal"];
+        return fn;
+    },
+    getRatio(type, progress) {
+        return this.get(type)(progress);
+    },
     getAnimation(type, speed, use = true) {
         let ani;
 
@@ -69,6 +76,12 @@ const AnimationUtil = {
         }
 
         return arr;
+    }
+};
+
+const animateProgress = {
+    normal(x) {
+        return x;
     }
 };
 

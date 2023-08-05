@@ -26,6 +26,9 @@ class NMPieChart extends NMChart {
             chart: {
                 startAngle: -Math.PI / 2,
                 scale: 0.9
+            },
+            animate: {
+                type: "normal"
             }
         };
 
@@ -35,7 +38,8 @@ class NMPieChart extends NMChart {
     }
 
     parseData(data) {
-        const { palertte } = { ...this.option };
+        const { palertte, styels: optionStyles } = { ...this.option };
+        const { chart: chartStyles } = { ...optionStyles };
         const { width, height } = this.rect;
         let entries = Object.entries(data);
         entries.sort((a, b) => a[1] < b[1]);
@@ -57,6 +61,7 @@ class NMPieChart extends NMChart {
             const angle = Math.PI * 2 * ratio;
             const endAngle = startAngle + angle;
             const styles = {
+                ...chartStyles,
                 fillStyle: colorList[idx]
             };
             const arc = util.CanvasUtil.arc(x, y, r, startAngle, endAngle, "fill", styles);
@@ -78,7 +83,6 @@ class NMPieChart extends NMChart {
 
     draw() {
         this.#drawPie();
-        this.#drawDataLabel();
     }
 
     #drawPie() {
@@ -87,17 +91,19 @@ class NMPieChart extends NMChart {
         const { canvas, ctx } = { ...layer };
 
         const { animate } = { ...this.option };
-        let { use, delay } = { ...animate };
+        let { use, type, delay } = { ...animate };
         const start = performance.now();
         if (use !== true) {
             delay = 1;
         }
 
+        const getProgress = util.AnimationUtil.get(type);
+
         const fn = (time) => {
             this.clear("graphic");
             const remaingTime = time - start;
             const ramaingRatio = remaingTime / delay;
-            const progress = ramaingRatio >= 1 ? 1 : ramaingRatio;
+            const progress = ramaingRatio >= 1 ? 1 : getProgress(ramaingRatio);
 
             data.forEach((d) => {
                 d.draw(ctx, progress);
@@ -105,6 +111,7 @@ class NMPieChart extends NMChart {
 
             if (progress === 1) {
                 window.cancelAnimationFrame(fn);
+                this.#drawDataLabel();
             } else {
                 window.requestAnimationFrame(fn);
             }
@@ -113,13 +120,48 @@ class NMPieChart extends NMChart {
         window.requestAnimationFrame(fn);
     }
 
-    #drawDataLabel() {}
+    #drawDataLabel() {
+        const { styles } = { ...this.option };
+        const { dataLabel: dataLabelStyles } = { ...styles };
+        const { data, x, y, r } = { ...this.chartData };
+        const { ctx } = { ...this.layers["graphic"]};
+
+        data.forEach((d) => {
+            const { startAngle, endAngle, info } = { ...d };
+            const angle = endAngle - startAngle;
+            const radian = startAngle + angle / 2;
+            const dataLabel = this.#getDataLabelText(info);
+            
+            const rr = r + 5;
+            const tx = Math.cos(radian) * rr + x;
+            const ty = Math.sin(radian) * rr + y;
+            const position = this.#toDegree(radian) > 180 ? "lc" : "rc";
+            const text = util.CanvasUtil.text(tx, ty, dataLabel, "fill", dataLabelStyles);
+            text.draw(ctx, position);
+        });
+    }
+
+    #getDataLabelText(data) {
+        const { name, value, ratio } = { ...data }
+
+        const text = `${name}`;
+        return text
+    }
 
     getTooltipContent(e) {
         const { clientX: x, clientY: y } = e;
         const bool = this.#isInPie(x, y);
         const data = bool === true ? this.#getCoorData(x, y) : "";
-        const html = data ? this.#getTooltipHtml(data) : "";
+        const { ctx } = { ...this.layers["hover"]};
+
+        let html;
+        this.clear("hover");
+        if (data && ctx) {
+            data.draw(ctx, 1, { fillStyle: "#FFF" });
+            data.draw(ctx, 1, { globalAlpha: 0.7 });
+
+            html = data ? this.#getTooltipHtml(data) : "";
+        }
 
         return html;
     }
@@ -137,6 +179,12 @@ class NMPieChart extends NMChart {
         });
         
         return result;
+    }
+
+    #toDegree(radian) {
+        const startAngle = util.CommonUtil.find(this.option, "chart.startAngle");
+        const degree = (radian - startAngle) * 180 / Math.PI;
+        return degree;
     }
 
     #getDegree(mx, my) {

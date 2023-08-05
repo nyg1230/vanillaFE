@@ -57,6 +57,10 @@ const CommonUtil = {
         return this.approximation("floor", num, round, isPercent);
     },
 
+    toPercent(number, round = 2) {
+        return this.round(number * 100, round);
+    },
+
     requestAnimationFrame(target, prop) {
         const name = "___reqani";
 

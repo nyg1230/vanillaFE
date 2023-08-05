@@ -14,10 +14,15 @@ class NMChart extends NMComponent {
     #option = {};
     #initOption = {
         parette: "rainbow",
-        styles: {},
+        styles: {
+            chart: {},
+            dataLabel: {
+                font: "bold 12px auto"
+            }
+        },
         animate: {
             use: true,
-            type: "rapidly",
+            type: "normal",
             delay: 1000
         },
         legend: {
