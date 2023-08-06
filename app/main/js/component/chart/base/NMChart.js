@@ -33,6 +33,7 @@ class NMChart extends NMComponent {
             use: true
         }
     };
+    #tooltip;
     
     static get name() {
         return "nm-chart"
@@ -135,6 +136,7 @@ class NMChart extends NMComponent {
     parseData() {}
 
     #draw() {
+        console.log("#draw")
         this.draw();
         this.#setTooltip();
     }
@@ -158,18 +160,38 @@ class NMChart extends NMComponent {
         const { tooltip } = { ...this.option };
         const { use: tooltipUse } = { ...tooltip };
 
+        // if (tooltipUse === true) {
+        //     this.bindEvent(this, NMConst.eventName.MOUSE_MOVE, this.#onMouseMove);
+        // } else {
+        //     this.unbindEvent(this, NMConst.eventName.MOUSE_MOVE);
+        // }
+
         if (tooltipUse === true) {
-            this.bindEvent(this, NMConst.eventName.MOUSE_MOVE, this.#onMouseMove);
+            if (!this.#tooltip) {
+                this.#tooltip = util.TooltipUtil.setTooltip(this, this.#getTooltipContent);
+            }
         } else {
-            this.unbindEvent(this, NMConst.eventName.MOUSE_MOVE);
+            if (this.#tooltip) {
+                this.#tooltip.clear();
+                this.#tooltip = null;
+            }
         }
     }
 
     #onMouseMove(e) {
-        const content = this.getTooltipContent(e);
+        const content = this.#getTooltipContent(e);
     }
 
-    getTooltipContent(e) {}
+    #getTooltipContent(e) {
+        const { left, top } = this.rect;
+        const { clientX, clientY } = e;
+
+        const x = clientX - left;
+        const y = clientY - top;
+        return this.getTooltipContent(e, x, y);
+    }
+
+    getTooltipContent() {}
 }
 
 define(NMChart);

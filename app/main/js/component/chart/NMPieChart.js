@@ -7,6 +7,14 @@ import * as util from "main/util/utils.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
+/**
+ * TODO LIST
+ * 데이터 라벨 곂치는 경우 처리는 어떻게 진행할 것인지
+ * 추가적인 옵션이 필요할 것인지...
+ *  - 라벨 관련 옵션
+ *  - 파이 관렵 옵션
+ */
+
 class NMPieChart extends NMChart {
     static get name() {
         return `nm-pie-chart`;
@@ -148,8 +156,7 @@ class NMPieChart extends NMChart {
         return text
     }
 
-    getTooltipContent(e) {
-        const { clientX: x, clientY: y } = e;
+    getTooltipContent(e, x, y) {
         const bool = this.#isInPie(x, y);
         const data = bool === true ? this.#getCoorData(x, y) : "";
         const { ctx } = { ...this.layers["hover"]};
@@ -191,7 +198,7 @@ class NMPieChart extends NMChart {
         const { x, y } = { ...this.chartData };
         const startAngle = util.CommonUtil.find(this.option, "chart.startAngle");
         const radian = (Math.atan2(my - y, mx - x) - startAngle) * 180 / Math.PI;
-        const degree = radian < 0 ? radian + 360 : radian;;
+        const degree = radian < 0 ? radian + 360 : radian;
 
         return degree;
     }

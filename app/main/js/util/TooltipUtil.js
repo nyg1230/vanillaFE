@@ -1,10 +1,17 @@
-import * as util from "./utils.js"
+/* inherit */
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+/* model */
+/* constant */
+import NMConst from "main/constant/NMConstant.js";
 
 class Tooltip {
 	#target;
 	#content;
 	#option;
 	#tooltip;
+	#events;
 
 	constructor(p) {
 		const { target, content, option } = { ...p };
@@ -83,7 +90,7 @@ class Tooltip {
 		const tContent = util.DomUtil.querySelector(this.#tooltip, ".content");
 
 		this.setContent = (e) => {
-			const content = util.CommonUtil.isFunction(this.#content) ? this.#content(e) : this.#content;
+			const content = util.CommonUtil.isFunction(this.#content) ? this.#content.call(this.#target, e) : this.#content;
 
 			util.DomUtil.enableClass(this.#tooltip, "hidden", !content);
 			this.clearContent();
@@ -101,18 +108,21 @@ class Tooltip {
 	}
 
 	setTooltip() {
-		this.#target.addEventListener("mouseover", this.onMouseOver.bind(this));
+		const mouseover = this.onMouseOver.bind(this);
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OVER, mouseover, {});
+		this.#events = { [NMConst.eventName.MOUSE_OVER]: mouseover };
 	}
 	
-	clearTooltip() {
-		this.#target.removeEventListener("mouseout", this.onMouseOut.bind(this));
-		this.#target.removeEventListener("mousemove", this.onMouseMove.bind(this));
-		this.#target.removeEventListener("mouseover", this.onMouseOver.bind(this));
+	clearEventAll() {
+		Object.entries(this.#events).forEach(([eventName, fn]) => {
+			util.EventUtil.unbindEvent(this.#target, eventName, fn);
+		});
+		this.#events = {};
 	}
 
 	reset() {
-		this.clearTooltip();
-		this.#target.addEventListener("mouseover", this.onMouseOver.bind(this));
+		this.clearEventAll();
+		this.setTooltip();
 	}
 
 	setPosition(e) {
@@ -127,13 +137,27 @@ class Tooltip {
 	}
 
 	onMouseOut() {
-		this.#target.removeEventListener("mouseout", this.onMouseOut.bind(this));
-		this.#target.removeEventListener("mousemove", this.onMouseMove.bind(this));
+		const mouseOut = this.#events[NMConst.eventName.MOUSE_OUT];
+		if (mouseOut) {
+			util.EventUtil.unbindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut, {});
+			delete this.#events[NMConst.eventName.MOUSE_OUT];
+		}
+
+		const mouseMove = this.#events[NMConst.eventName.MOUSE_MOVE];
+		if (mouseMove) {
+			util.EventUtil.unbindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mouseMove, {});
+			delete this.#events[NMConst.eventName.MOUSE_MOVE];
+		}
 	}
 
 	onMouseOver(e) {
-		this.#target.addEventListener("mouseout", this.onMouseOut.bind(this));
-		this.#target.addEventListener("mousemove", this.onMouseMove.bind(this));
+		const mouseOut = this.onMouseOut.bind(this);
+		this.#events[NMConst.eventName.MOUSE_OUT] = mouseOut;
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut);
+
+		const mmouseMove = this.onMouseMove.bind(this);
+		this.#events[NMConst.eventName.MOUSE_MOVE] = mmouseMove;
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mmouseMove);
 	}
 
 	onMouseMove(e) {
