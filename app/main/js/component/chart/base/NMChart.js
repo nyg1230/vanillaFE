@@ -178,10 +178,6 @@ class NMChart extends NMComponent {
         }
     }
 
-    #onMouseMove(e) {
-        const content = this.#getTooltipContent(e);
-    }
-
     #getTooltipContent(e) {
         const { left, top } = this.rect;
         const { clientX, clientY } = e;
