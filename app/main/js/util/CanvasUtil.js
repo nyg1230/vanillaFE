@@ -1,5 +1,8 @@
 import * as util from "./utils.js";
 
+const publicCanvas = util.DomUtil.createElement("canvas");
+const publicCtx = publicCanvas.getContext("2d");
+
 const CanvasUtil = {
     line() {},
     rect(x, y, width, height, type, styles) {
@@ -99,6 +102,17 @@ const CanvasUtil = {
                 ctx.restore();
             }
         }
+    },
+    getTextSize(text, style = {}) {
+        publicCtx.save();
+        this.setStyle(publicCtx, style);
+        const mtx = publicCtx.measureText(text);
+        const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
+        publicCtx.restore();
+        return {
+            width,
+            height: ba + bd
+        };
     },
     setStyle(ctx, styles) {
         if (util.CommonUtil.isObject(styles)) {

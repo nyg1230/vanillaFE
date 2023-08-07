@@ -5,6 +5,7 @@ import * as util from "main/util/utils.js";
 /* component */
 import * as element from "main/component/element/elements.js"
 import { NMPieChart } from "main/component/chart/NMPieChart.js"
+import { NMAxisChart } from "main/component/chart/axisChart/NMAxisChart.js"
 /* model */
 import NMTestModel from "main/model/NMTestModel.js";
 /* constant */
@@ -46,7 +47,7 @@ export default class NMMain extends NMView {
         <div class="${this.name}">
             <nm-input value="1"></nm-input>
             <nm-input value="2"></nm-input>
-            <nm-pie-chart class="chart"></nm-pie-chart>
+            <nm-axis-chart class="chart"></nm-axis-chart>
         </div>
         `
     }
@@ -55,14 +56,23 @@ export default class NMMain extends NMView {
 
     afterRender() {
         const pieChart = util.DomUtil.querySelector(this, ".chart");
-        const pieData = {
-            amy: 1000,
+        const pieData = [{
+            fiore: 301,
             bart: 2500,
-            chacy: 1234,
+            amy: 1000,
             dewin: 234,
             ecco: 5671,
-            fiore: 301
-        };
+            chacy: 1234
+        },
+        {
+            fiore: 123,
+            bart: 456,
+            amy: 789,
+            dewin: 753,
+            ecco: 159,
+            chacy: 1769,
+            test: 1234
+        }];
         pieChart.set(pieData);
     }
 }
