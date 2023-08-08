@@ -4,7 +4,34 @@ const publicCanvas = util.DomUtil.createElement("canvas");
 const publicCtx = publicCanvas.getContext("2d");
 
 const CanvasUtil = {
-    line() {},
+    line(coordinateList = [], type = "stroke") {
+        return {
+            coordinateList,
+            type,
+            draw: function(ctx) {
+                const { coordinateList, type } = { ...this };
+                if (util.CommonUtil.length(coordinateList) < 1) return;
+
+                const [first, ...remain] = [...coordinateList];
+                const [fx, fy, fStyles] = [...first];
+                ctx.save();
+
+                ctx.beginPath();
+                CanvasUtil.setStyle(ctx, fStyles);
+                ctx.moveTo(fx, fy);
+
+                remain.forEach((coor) => {
+                    const [x, y, styles] = [...coor];
+                    CanvasUtil.setStyle(ctx, styles);
+                    ctx.lineTo(x, y);
+                });
+                ctx.closePath();
+                
+                type === "stroke" ? ctx.stroke() : ctx.fill();
+                ctx.restore();
+            }
+        }
+    },
     rect(x, y, width, height, type, styles) {
         return {
             x,

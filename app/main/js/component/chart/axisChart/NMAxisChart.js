@@ -22,9 +22,11 @@ class NMAxisChart extends NMChart {
 
     parseOption(obj) {
         let option = {
-            chart: {},
+            chart: {
+                type: "vertical"
+            },
             styles: {
-                xAsix: {
+                xAxis: {
                     font: "bold 12px auto"
                 },
                 yAxis: {
@@ -42,60 +44,128 @@ class NMAxisChart extends NMChart {
     }
 
     parseData(data) {
-        const { palertte, styels: optionStyles } = { ...this.option };
-        const { chart: chartStyles } = { ...optionStyles };
+        const { chart, palertte, styles } = { ...this.option };
+        const { type } = { ...chart };
+        const { chart: chartStyles } = { ...styles };
         const { width, height } = this.rect;
 
-        const { styles } = { ...this.options };
-        const { yAxis: yAxisStyles } = { ...styles };
+        const { xAxis: xAxisStyles, yAxis: yAxisStyles } = { ...styles };
         const { ctx } = { ...this.layers["graphic"] };
 
-        let total = 0;
-        const xAxisSet = new Set();
-        const len = util.CommonUtil.length(data);
-        let maxTextWidth = 0;
-        let min = 0;
-        let max = 0;
+        const axisData = this.#getPreParseData(data);
+        const { maxNameWidth, maxValueWidth } = { ...axisData };
+        let lPad = 10;
+        lPad += type === "vertical" ? maxValueWidth : maxNameWidth;
+        console.log(lPad);
 
-        // 사전 작업
-        data.forEach((d) => {
-            Object.entries(d).forEach(([k, v]) => {
-                xAxisSet.add(k);
-                total += Number(v);
-                const mtx = util.CanvasUtil.getTextSize(k, yAxisStyles);
-                const { width } = { ...mtx };
-                min = min < v ? min : v;
-                max = max > v ? max : v;
-                maxTextWidth = maxTextWidth > width ? maxTextWidth : width;
+        const padding = [
+            width / 10,
+            width / 20,
+            width / 10,
+            lPad
+        ];
+        const [t, r, b, l] = [...padding];
+
+        const xAxisY = height - b;
+        const axisX = util.CanvasUtil.line([[l, xAxisY, xAxisStyles], [width - r, xAxisY, xAxisStyles]]);
+        const yAxisX = l;
+        const axisY = util.CanvasUtil.line([[yAxisX, t, xAxisStyles], [yAxisX, height - b, xAxisStyles]]);;
+        const axis = {
+            axisX,
+            axisY
+        };
+
+        if (type === "vertical") {
+            Object.entries(axisData.data).forEach(([name, list]) => {
+                list.forEach((d) => {
+                    console.log(d);
+                })
             });
-        });
+        } else {
 
-        const parseData = {};
-        xAxisSet.forEach((d) => {
-            parseData[d] = new Array(len).fill(0);
-        });
+        }
         
         const chartData = {
-            data: parseData,
-            min,
-            max,
-            total
+            axis
+            // data: parseData,
+            // min,
+            // max,
+            // dataLength,
+            // total
         };
 
         console.log(chartData);
+        return chartData
     }
     
     draw() {
-        this.drawAixsChart();
+        const { ctx } = { ...this.layers["graphic"] };
+        this.drawAixsChart(ctx);
     }
 
-    drawAixsChart() {
-        this.drawAsisX();
-        this.drawAsisY();
+    drawAixsChart(ctx) {
+        const { axis } = { ...this.chartData };
+        const { axisX, axisY } = { ...axis };
+        axisX.draw(ctx);
+        axisY.draw(ctx);
     }
 
-    drawAsisX() {}
-    drawAsisY() {}
+    #getPreParseData(data) {
+        const { styles, chart } = { ...this.option };
+        const { xAxis: xAxisStyles, yAxis: yAxisStyles } = { ...styles };
+        const { type: chartType } = { ...chart };
+        const [textStyles, valueStyles] = chartType === "vertical" ? [yAxisStyles, xAxisStyles] : [xAxisStyles, yAxisStyles];
+
+        let maxNameWidth = 0;
+        let min = 0;
+        let max = 0;
+        let total = 0;
+        const dataLength = util.CommonUtil.length(data);
+
+        const preData = {};
+        data.forEach((d, idx) => {
+            Object.entries(d).forEach(([k, v]) => {
+                let temp;
+                try {
+                    temp = { value: v };
+                    if (util.CommonUtil.isNull(preData[k])) throw new Error();
+                } catch (e) {
+                    preData[k] = new Array(dataLength).fill({ value: 0 });
+                } finally {
+                    preData[k][idx] = temp;
+                    total += Number(v);
+                    min = min < v ? min : v;
+                    max = max > v ? max : v;
+                    const nameMtx = util.CanvasUtil.getTextSize(k, textStyles);
+                    const { width } = { ...nameMtx };
+                    maxNameWidth = maxNameWidth > width ? maxNameWidth : width;
+                }
+            });
+        });
+
+        // 각 데이터 마다 전체값에 대한 비율값 추가
+        const axisMax = util.CommonUtil.ceil(max, -util.CommonUtil.length(`${max}`) + 1);
+        Object.values(preData).forEach((l) => {
+            l.forEach((d) => {
+                const { value } = { ...d };
+                d.ratio = value / axisMax;
+            });
+        });
+
+        const valueMtx = util.CanvasUtil.getTextSize(axisMax, valueStyles);
+        const { width: maxValueWidth } = { ...valueMtx };
+
+        const parseData = {
+            data: preData,
+            min,
+            max,
+            axisMax,
+            maxNameWidth,
+            maxValueWidth
+        }
+
+        return parseData;
+    }
 }
 
 define(NMAxisChart);
