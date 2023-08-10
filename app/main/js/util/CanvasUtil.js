@@ -82,12 +82,15 @@ const CanvasUtil = {
     circle(x, y, r, type, styles) {
         return CanvasUtil.arc(x, y, r, 0, Math.PI * 2, type, styles);
     },
-    text(x, y, str, type = "fill", styles) {
+    text(x, y, str, param) {
+        const { type = "fill", style, option } = { ...param };
         return {
             x,
             y,
+            type,
             text: str,
-            styles: styles,
+            style,
+            option,
             getSize: function(ctx, isTransection = false) {
                 isTransection === true && ctx.save();
                 const mtx = ctx.measureText(this.text);
@@ -98,8 +101,11 @@ const CanvasUtil = {
                     height: ba + bd
                 };
             },
-            draw: function(ctx, position = "lc", addStyle) {
-                let { x, y, text, styles } = { ...this };
+            draw: function(ctx, param) {
+                const { style: addStyle, option: addOption } = { ...param };
+                let { x, y, text, style, option } = { ...this };
+                option = { ...option, ...addOption };
+                const { rotate, position = "lc" } = { ...option };
                 const fn = type !== "fill" ? ctx.strokeText : ctx.fillText;
 
                 ctx.save();
@@ -114,7 +120,15 @@ const CanvasUtil = {
                     baseline = "middle";
                 }
 
-                CanvasUtil.setStyle(ctx, { ...styles, ...addStyle, textBaseline: baseline });
+                if (rotate) {
+                    const radian = rotate / 180 * Math.PI;
+                    console.log(Math.PI / 4);
+                    console.log(radian);
+                    ctx.translate(x, y);
+                    ctx.rotate(radian);
+                    ctx.translate(-x, -y);
+                }
+                CanvasUtil.setStyle(ctx, { ...style, ...addStyle, textBaseline: baseline });
                 const size = this.getSize(ctx);
                 const { width } = { ...size };
 

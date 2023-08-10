@@ -25,6 +25,15 @@ class NMAxisChart extends NMChart {
             chart: {
                 type: "vertical"
             },
+            axis: {
+                major: {
+                    unit: 1333
+                },
+                minor: {
+                    use: true,
+                    unit: -1
+                }
+            },
             styles: {
                 xAxis: {
                     font: "bold 12px auto"
@@ -52,31 +61,13 @@ class NMAxisChart extends NMChart {
         const { xAxis: xAxisStyles, yAxis: yAxisStyles } = { ...styles };
         const { ctx } = { ...this.layers["graphic"] };
 
-        const axisData = this.#getPreParseData(data);
-        const { maxNameWidth, maxValueWidth } = { ...axisData };
-        let lPad = 10;
-        lPad += type === "vertical" ? maxValueWidth : maxNameWidth;
-        console.log(lPad);
-
-        const padding = [
-            width / 10,
-            width / 20,
-            width / 10,
-            lPad
-        ];
-        const [t, r, b, l] = [...padding];
-
-        const xAxisY = height - b;
-        const axisX = util.CanvasUtil.line([[l, xAxisY, xAxisStyles], [width - r, xAxisY, xAxisStyles]]);
-        const yAxisX = l;
-        const axisY = util.CanvasUtil.line([[yAxisX, t, xAxisStyles], [yAxisX, height - b, xAxisStyles]]);;
-        const axis = {
-            axisX,
-            axisY
-        };
+        const preParseData = this.#getPreParseData(data);
+        const parseAxisData = this.#parseAxis(preParseData);
+        console.log(preParseData);
+        console.log(parseAxisData);
 
         if (type === "vertical") {
-            Object.entries(axisData.data).forEach(([name, list]) => {
+            Object.entries(preParseData.data).forEach(([name, list]) => {
                 list.forEach((d) => {
                     console.log(d);
                 })
@@ -86,7 +77,7 @@ class NMAxisChart extends NMChart {
         }
         
         const chartData = {
-            axis
+            axis: parseAxisData
             // data: parseData,
             // min,
             // max,
@@ -97,6 +88,97 @@ class NMAxisChart extends NMChart {
         console.log(chartData);
         return chartData
     }
+
+    #parseAxis(preData) {
+        const { chart, axis, styles } = { ...this.option };
+        const { major, minor } = { ...axis };
+        const { xAxis: xAxisStyles, yAxis: yAxisStyles } = { ...styles };
+        const { type } = { ...chart };
+        const { width, height } = this.rect;
+        const { data, axisMax, maxNameWidth, maxValueWidth } = { ...preData };
+        const isVertical = type === "vertical";
+
+        let lPad = 10;
+        lPad += isVertical ? maxValueWidth : maxNameWidth;
+
+        const padding = [width / 20, width / 20, width / 10, lPad];
+        const [t, r, b, l] = [...padding];
+
+        const xAxisY = height - b;
+        const axisX = util.CanvasUtil.line([[l, xAxisY], [width - r, xAxisY]]);
+        const lenX = width - r - l;
+        const yAxisX = l;
+        const axisY = util.CanvasUtil.line([[yAxisX, t], [yAxisX, height - b]]);;
+        const lenY = height - b - t;
+
+        const nameList = Object.keys(data);
+        const nameCount = util.CommonUtil.length(nameList);
+
+        let { unit: majorUnit } = { ...major };
+        let { use, unit: minorUnit } = { ...minor };
+
+        if (majorUnit <= 0) {
+            majorUnit = axisMax / 5;
+        } else if (majorUnit > axisMax) {
+            majorUnit = axisMax
+        }
+
+        const majorCount = axisMax / majorUnit;
+
+        let datalabelX = [];
+        let datalabelY = [];
+        let nameOption = {}
+        let valueOption = {};
+        let unitX;
+        let unitY
+        if (isVertical) {
+            unitX = lenX / nameCount;
+            unitY = lenY / majorCount;
+            nameOption = { option: { rotate: 45, position: "cc" } };
+        } else {
+            unitX = lenX / majorCount;
+            unitY = lenY / nameCount;
+        }
+
+        // data axis
+        for(let idx = 0; idx < majorCount + 1; idx++) {
+            let value = majorUnit * idx;
+            let y = xAxisY - unitY * (idx);
+            
+            if (value > axisMax) {
+                value = axisMax;
+                y = t;
+            }
+            const text = util.CanvasUtil.text(yAxisX - 10, y, `${value}`, valueOption)
+            const line = util.CanvasUtil.line([[yAxisX, y], [yAxisX - 5, y]]);
+            datalabelY.push(text, line);
+        }
+
+        // name axis
+        nameList.forEach((n, idx) => {
+            const x = l + (unitX * idx) + unitX / 2;
+            const text = util.CanvasUtil.text(x, height - b + 15, `${n}`, nameOption);
+            datalabelX.push(text);
+        });
+
+        console.log(datalabelX);
+        console.log(datalabelY);
+
+        const parseAxisData = {
+            x: {
+                axis: axisX,
+                datalabel: datalabelX,
+                unit: unitX
+            },
+            y: {
+                axis: axisY,
+                datalabel: datalabelY,
+                unit: unitY
+            }
+        };
+
+        return parseAxisData;
+    }
     
     draw() {
         const { ctx } = { ...this.layers["graphic"] };
@@ -105,9 +187,13 @@ class NMAxisChart extends NMChart {
 
     drawAixsChart(ctx) {
         const { axis } = { ...this.chartData };
-        const { axisX, axisY } = { ...axis };
-        axisX.draw(ctx);
-        axisY.draw(ctx);
+        Object.values(axis).forEach((a) => {
+            const { axis, datalabel } = { ...a };
+            axis.draw(ctx);
+            datalabel.forEach((dl) => {
+                dl.draw(ctx);
+            });
+        });
     }
 
     #getPreParseData(data) {
