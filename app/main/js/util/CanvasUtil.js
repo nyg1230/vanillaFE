@@ -8,8 +8,38 @@ import * as util from "main/util/utils.js";
 const canvas = util.DomUtil.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
+const publicCanvas = util.DomUtil.createElement("canvas");
+const publicCtx = publicCanvas.getContext("2d");
+
 const CanvasUtil = {
-    line() {},
+    line(coordinateList = [], type = "stroke") {
+        return {
+            coordinateList,
+            type,
+            draw: function(ctx) {
+                const { coordinateList, type } = { ...this };
+                if (util.CommonUtil.length(coordinateList) < 1) return;
+
+                const [first, ...remain] = [...coordinateList];
+                const [fx, fy, fStyles] = [...first];
+                ctx.save();
+
+                ctx.beginPath();
+                CanvasUtil.setStyle(ctx, fStyles);
+                ctx.moveTo(fx, fy);
+
+                remain.forEach((coor) => {
+                    const [x, y, styles] = [...coor];
+                    CanvasUtil.setStyle(ctx, styles);
+                    ctx.lineTo(x, y);
+                });
+                ctx.closePath();
+                
+                type === "stroke" ? ctx.stroke() : ctx.fill();
+                ctx.restore();
+            }
+        }
+    },
     rect(x, y, width, height, param) {
         const { type = "fill", style, option } = { ...param };
         return {
@@ -62,12 +92,15 @@ const CanvasUtil = {
     circle(x, y, r, type, styles) {
         return CanvasUtil.arc(x, y, r, 0, Math.PI * 2, type, styles);
     },
-    text(x, y, str, type = "fill", styles) {
+    text(x, y, str, param) {
+        const { type = "fill", style, option } = { ...param };
         return {
             x,
             y,
+            type,
             text: str,
-            styles: styles,
+            style,
+            option,
             getSize: function(ctx, isTransection = false) {
                 isTransection === true && ctx.save();
                 const mtx = ctx.measureText(this.text);
@@ -78,8 +111,11 @@ const CanvasUtil = {
                     height: ba + bd
                 };
             },
-            draw: function(ctx, position = "lc", addStyle) {
-                let { x, y, text, styles } = { ...this };
+            draw: function(ctx, param) {
+                const { style: addStyle, option: addOption } = { ...param };
+                let { x, y, text, style, option } = { ...this };
+                option = { ...option, ...addOption };
+                const { rotate, position = "lc" } = { ...option };
                 const fn = type !== "fill" ? ctx.strokeText : ctx.fillText;
 
                 ctx.save();
@@ -94,7 +130,13 @@ const CanvasUtil = {
                     baseline = "middle";
                 }
 
-                CanvasUtil.setStyle(ctx, { ...styles, ...addStyle, textBaseline: baseline });
+                if (rotate) {
+                    const radian = rotate / 180 * Math.PI;
+                    ctx.translate(x, y);
+                    ctx.rotate(radian);
+                    ctx.translate(-x, -y);
+                }
+                CanvasUtil.setStyle(ctx, { ...style, ...addStyle, textBaseline: baseline });
                 const size = this.getSize(ctx);
                 const { width } = { ...size };
 
@@ -109,6 +151,17 @@ const CanvasUtil = {
                 ctx.restore();
             }
         }
+    },
+    getTextSize(text, style = {}) {
+        publicCtx.save();
+        this.setStyle(publicCtx, style);
+        const mtx = publicCtx.measureText(text);
+        const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
+        publicCtx.restore();
+        return {
+            width,
+            height: ba + bd
+        };
     },
     setStyle(ctx, styles) {
         if (util.CommonUtil.isObject(styles)) {
