@@ -161,6 +161,12 @@ const CommonUtil = {
         });
 
         return tmp;
+    },
+
+    modulo(a, b) {
+        let result = a % b;
+        result = result < 0 ? result + b : result;
+        return result;
     }
 };
 

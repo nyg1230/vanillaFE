@@ -27,6 +27,10 @@ class Chart {
         return this.#chartData;
     }
 
+    get mainLayer() {
+        return this.#mainLayer;
+    }
+
     get option() {
         return {};
     }
@@ -39,7 +43,7 @@ class Chart {
 
     #parseData() {
         this.#setTitle();
-        this.parseData();    
+        this.#chartData = this.parseData();
     }
 
     parseData() {}
@@ -65,6 +69,10 @@ class Chart {
     }
 
     draw() {}
+
+    drawChart() {}
+
+    drawDatalabel() {}
 
     clear() {}
 }

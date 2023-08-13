@@ -10,27 +10,30 @@ const ctx = canvas.getContext("2d");
 
 const CanvasUtil = {
     line() {},
-    rect(x, y, width, height, type, styles) {
+    rect(x, y, width, height, param) {
+        const { type = "fill", style, option } = { ...param };
         return {
             x,
             y,
             width,
             height,
             type,
-            styles,
+            style,
+            option,
             draw: function(ctx, ratio = 1, addStyles = {}) {
-                const { x, y, width, height, styles } = { ...this };
+                const { x, y, width, height, style } = { ...this };
                 const fn = type === "fill" ? ctx.fillRect : ctx.strokeRect;
                 ctx.save();
 
-                CanvasUtil.setStyle(ctx, styles);
+                CanvasUtil.setStyle(ctx, style);
                 fn.call(ctx, x, y, width, height * ratio);
 
                 ctx.restore();
             }
         }
     },
-    arc(x, y, r, startAngle, endAngle, type = "fill", styles) {
+    arc(x, y, r, startAngle, endAngle, param) {
+        const { type = "fill", style, option } = { ...param };
         return {
             x,
             y,
@@ -38,15 +41,14 @@ const CanvasUtil = {
             startAngle,
             endAngle,
             type,
-            styles,
-            draw: function(ctx, ratio = 1, addStyles = {}) {
-                const { x, y, r, startAngle, endAngle, type, styles } = { ...this };
+            style,
+            draw: function(ctx, ratio = 1) {
+                const { x, y, r, startAngle, endAngle, type, style } = { ...this };
                 const fn = type !== "fill" ? ctx.stroke : ctx.fill;
                 const gap = endAngle - startAngle;
 
                 ctx.save();
-                CanvasUtil.setStyle(ctx, { ...styles, ...addStyles });
-                
+                CanvasUtil.setStyle(ctx, style);
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.arc(x, y, r, startAngle, startAngle + gap * ratio);

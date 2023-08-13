@@ -71,7 +71,7 @@ class NMPieChart extends NMChart {
                 ...chartStyles,
                 fillStyle: colorList[idx]
             };
-            const arc = util.CanvasUtil.arc(x, y, r, startAngle, endAngle, "fill", styles);
+            const arc = util.CanvasUtil.arc(x, y, r, startAngle, endAngle, { style: styles });
             startAngle += angle;
 
             const info = { name, value, ratio }

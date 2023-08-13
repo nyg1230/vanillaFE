@@ -91,6 +91,7 @@ export default class NMMain extends NMView {
         const chart = util.DomUtil.querySelector(this, "nm-chart");
         if (chart) {
             chart.setChart(data);
+            chart.draw();
         }
     }
 }

@@ -2,8 +2,8 @@ const commonOption = {
     palette: "rainbow",
     title: {
         text: "test",
-        styles: {
-            font: "bold 24px auto"
+        style: {
+            font: "bold 75px auto"
         }
     },
     animate: {
@@ -12,13 +12,13 @@ const commonOption = {
     },
     legend: {
         use: false,
-        styles: {
+        style: {
             font: "bold 12px auto"
         }
     },
-    datalabel: {
+    dataLabel: {
         use: true,
-        styles: {
+        style: {
             font: "bold 12px auto"
         }
     },
