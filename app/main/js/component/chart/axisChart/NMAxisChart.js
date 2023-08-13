@@ -23,7 +23,12 @@ class NMAxisChart extends NMChart {
     parseOption(obj) {
         let option = {
             chart: {
-                type: "vertical"
+                type: "vertical",
+                padding: [5, 5, 5, 5]
+            },
+            title: {
+                text: "test",
+                font: "bold 18px auto"
             },
             axis: {
                 major: {
@@ -43,6 +48,7 @@ class NMAxisChart extends NMChart {
                 }
             },
             animate: {
+                use: true,
                 type: "normal"
             }
         };
@@ -63,13 +69,14 @@ class NMAxisChart extends NMChart {
 
         const preParseData = this.#getPreParseData(data);
         const parseAxisData = this.#parseAxis(preParseData);
+
         console.log(preParseData);
         console.log(parseAxisData);
 
         if (type === "vertical") {
             Object.entries(preParseData.data).forEach(([name, list]) => {
                 list.forEach((d) => {
-                    console.log(d);
+                    // console.log(d);
                 })
             });
         } else {
@@ -160,9 +167,6 @@ class NMAxisChart extends NMChart {
             const text = util.CanvasUtil.text(x, height - b + 15, `${n}`, nameOption);
             datalabelX.push(text);
         });
-
-        console.log(datalabelX);
-        console.log(datalabelY);
 
         const parseAxisData = {
             x: {

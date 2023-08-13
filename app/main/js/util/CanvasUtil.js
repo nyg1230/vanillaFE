@@ -122,8 +122,6 @@ const CanvasUtil = {
 
                 if (rotate) {
                     const radian = rotate / 180 * Math.PI;
-                    console.log(Math.PI / 4);
-                    console.log(radian);
                     ctx.translate(x, y);
                     ctx.rotate(radian);
                     ctx.translate(-x, -y);
