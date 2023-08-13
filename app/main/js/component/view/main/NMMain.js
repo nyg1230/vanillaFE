@@ -5,6 +5,7 @@ import * as util from "main/util/utils.js";
 /* component */
 import * as element from "main/component/element/elements.js"
 import { NMPieChart } from "main/component/chart/NMPieChart.js"
+import { NMChart } from "main/component/chart/NMChart.js"
 /* model */
 import NMTestModel from "main/model/NMTestModel.js";
 /* constant */
@@ -32,7 +33,12 @@ export default class NMMain extends NMView {
                 color: red;
             }
 
+            .chart-area {
+                display: flex;
+            }
+
             .chart {
+                margin-right: 4px;
                 border: solid 1px blue;
                 display: block;
                 width: 600px;
@@ -46,7 +52,10 @@ export default class NMMain extends NMView {
         <div class="${this.name}">
             <nm-input value="1"></nm-input>
             <nm-input value="2"></nm-input>
-            <nm-pie-chart class="chart"></nm-pie-chart>
+            <div class="chart-area">
+                <nm-pie-chart class="chart"></nm-pie-chart>
+                <nm-chart class="chart"></nm-chart>
+            </div>
         </div>
         `
     }
@@ -55,15 +64,34 @@ export default class NMMain extends NMView {
 
     afterRender() {
         const pieChart = util.DomUtil.querySelector(this, ".chart");
-        const pieData = {
-            amy: 1000,
-            bart: 2500,
-            chacy: 1234,
-            dewin: 234,
-            ecco: 5671,
-            fiore: 301
-        };
-        pieChart.set(pieData);
+        if (pieChart) {
+            const pieData = {
+                amy: 1000,
+                bart: 2500,
+                chacy: 1234,
+                dewin: 234,
+                ecco: 5671,
+                fiore: 301
+            };
+            pieChart.set(pieData);
+        }
+
+        const data = {
+            type: "pie",
+            data: {
+                amy: 1000,
+                bart: 2500,
+                chacy: 1234,
+                dewin: 234,
+                ecco: 5671,
+                fiore: 301
+            }
+        }
+
+        const chart = util.DomUtil.querySelector(this, "nm-chart");
+        if (chart) {
+            chart.setChart(data);
+        }
     }
 }
 

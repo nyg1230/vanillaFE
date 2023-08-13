@@ -1,4 +1,12 @@
-import * as util from "./utils.js";
+/* inherit */
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+/* model */
+/* constant */
+
+const canvas = util.DomUtil.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
 const CanvasUtil = {
     line() {},
@@ -106,6 +114,17 @@ const CanvasUtil = {
                 ctx[k] = v;
             });
         }
+    },
+    getTextSize(text, styles) {
+        ctx.save();
+        CanvasUtil.setStyle(ctx, styles);
+        const mtx = ctx.measureText(text);
+        const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
+        ctx.restore();
+        return {
+            width,
+            height: ba + bd
+        };
     },
     rotate(x, y, angle, obj) {},
     clear(canvas) {

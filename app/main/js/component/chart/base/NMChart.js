@@ -36,7 +36,7 @@ class NMChart extends NMComponent {
     #tooltip;
     
     static get name() {
-        return "nm-chart"
+        return "nm-chart-1"
     }
 
     get clsName() {

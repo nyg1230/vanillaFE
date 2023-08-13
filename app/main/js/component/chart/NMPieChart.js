@@ -25,7 +25,6 @@ class NMPieChart extends NMChart {
     }
     
     get layerList() {
-        window.qqq = this;
         return [`graphic`, `hover`];
     }
     
