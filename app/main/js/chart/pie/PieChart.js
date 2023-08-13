@@ -39,11 +39,12 @@ class PieChart extends Chart {
             const d = { name, value, ratio };
             const text = this.#getDataLabelText(d);
             const centerRadian = currentRadian + (endRadian - currentRadian) / 2;
-            console.log(this.#toDegree(currentRadian), this.#toDegree(endRadian), this.#toDegree(centerRadian));
             const rr = r + 5;
             const tx = Math.cos(centerRadian) * rr + x;
             const ty = Math.sin(centerRadian) * rr + y;
-            const dl = util.CanvasUtil.text(tx, ty, text, { style: dataLabelStyle });
+            const dlPosition = this.#getDataLabelPosition(centerRadian - startRadian);
+            const dlOption = { position: dlPosition };
+            const dl = util.CanvasUtil.text(tx, ty, text, { style: dataLabelStyle, option: dlOption });
             parseDataLabel.push(dl);
 
             currentRadian = endRadian;
@@ -86,6 +87,24 @@ class PieChart extends Chart {
         return util.CommonUtil.find(data, "name");
     }
 
+    #getDataLabelPosition(radian) {
+        let degree = this.#toDegree(radian);
+        degree = util.CommonUtil.modulo(degree, 360);
+
+        let position;
+        if (degree > 270) {
+            position = "lt";
+        } else if (degree > 180) {
+            position = "lb";
+        } else if (degree > 90) {
+            position = "rb";
+        } else {
+            position = "rt";
+        }
+
+        return position;
+    }
+
     draw() {
         this.#draw();
     }
@@ -95,7 +114,7 @@ class PieChart extends Chart {
         const { ctx } = { ...this.mainLayer };
 
         chart.forEach((c) => {
-            c.draw(ctx, 0.99);
+            c.draw(ctx, 0.95);
         });
 
         dataLabel.forEach((dl) => {

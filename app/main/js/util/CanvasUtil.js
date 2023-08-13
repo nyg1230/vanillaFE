@@ -89,8 +89,8 @@ const CanvasUtil = {
             }
         };
     },
-    circle(x, y, r, type, styles) {
-        return CanvasUtil.arc(x, y, r, 0, Math.PI * 2, type, styles);
+    circle(x, y, r, param) {
+        return CanvasUtil.arc(x, y, r, 0, Math.PI * 2, param);
     },
     text(x, y, str, param) {
         const { type = "fill", style, option } = { ...param };
@@ -123,9 +123,9 @@ const CanvasUtil = {
                 
                 let baseline;
                 if (vertical === "t") {
-                    baseline = "top";
+                    baseline = "bottom";
                 } else if (vertical === "b") {
-                    baseline = "hanging";
+                    baseline = "top";
                 } else {
                     baseline = "middle";
                 }
