@@ -60,7 +60,9 @@ class Chart {
         this.#chartData.title = title;
     }
 
-    parseData() {}
+    parseData() {
+        return {};
+    }
 
     #setTitle() {
         const { title } = { ...this.#data };

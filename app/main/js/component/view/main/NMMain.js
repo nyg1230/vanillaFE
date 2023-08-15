@@ -52,7 +52,8 @@ export default class NMMain extends NMView {
             <nm-input value="1"></nm-input>
             <nm-input value="2"></nm-input>
             <div class="chart-area">
-                <nm-chart class="chart"></nm-chart>
+                <nm-chart class="chart pie"></nm-chart>
+                <nm-chart class="chart column"></nm-chart>
             </div>
         </div>
         `
@@ -61,7 +62,7 @@ export default class NMMain extends NMView {
     addEvent() {}
 
     afterRender() {
-        const data = {
+        const pieData = {
             type: "pie",
             title: {
                 text: "Pie Chart"
@@ -77,12 +78,49 @@ export default class NMMain extends NMView {
                 honey: 4233,
                 icy: 234
             }
+        };
+
+        const chart = util.DomUtil.querySelector(this, "nm-chart.pie");
+        if (chart) {
+            chart.setChart(pieData);
+            chart.draw();
         }
 
-        const chart = util.DomUtil.querySelector(this, "nm-chart");
-        if (chart) {
-            chart.setChart(data);
-            chart.draw();
+        const axisData = {
+            type: "column",
+            title: {
+                text: "Axis Chart"
+            },
+            data: [
+                {
+                    amy: 1000,
+                    bart: 2500,
+                    chacy: 1234,
+                    dewin: 234,
+                    ecco: 5671,
+                    fiore: 301,
+                    grace: 2013,
+                    honey: 4233,
+                    icy: 234
+                },
+                {
+                    amy: 1000,
+                    bard: 2500,
+                    chacy: 1234,
+                    dewin: 234,
+                    ecco: 5671,
+                    fifa: 301,
+                    grace: 2013,
+                    honey: 4233,
+                    icy: 234
+                }
+            ]
+        };
+
+        const chartColumn = util.DomUtil.querySelector(this, "nm-chart.column");
+        if (chartColumn) {
+            chartColumn.setChart(axisData);
+            chartColumn.draw();
         }
     }
 }
