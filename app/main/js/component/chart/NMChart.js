@@ -2,12 +2,12 @@
 import { NMComponent, define } from "main/component/NMComponent.js";
 /* common */
 import * as util from "main/util/utils.js";
+import charts from "main/chart/charts.js";
 /* component */
 /* model */
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
-import PieChart from "main/chart/pie/PieChart";
 
 class NMChart extends NMComponent {
     #layers = {};
@@ -93,8 +93,7 @@ class NMChart extends NMComponent {
     setChart(param) {
         const { type, ...p } = { ...param };
 
-        // const chart = charts[type];
-        const chart = PieChart;
+        const chart = charts[type];
 
         if (chart) {
             const { mainLayer, subLayer } = { ...this.#layers };
