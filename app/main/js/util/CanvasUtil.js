@@ -72,13 +72,15 @@ const CanvasUtil = {
             endAngle,
             type,
             style,
-            draw: function(ctx, ratio = 1) {
+            draw: function(ctx, ratio = 1, addParam) {
                 const { x, y, r, startAngle, endAngle, type, style } = { ...this };
+                const { style: addStyle, option: addOption } = { ...addParam };
                 const fn = type !== "fill" ? ctx.stroke : ctx.fill;
                 const gap = endAngle - startAngle;
+                const mewgeStyle = util.CommonUtil.shallowMerge(style, addStyle);
 
                 ctx.save();
-                CanvasUtil.setStyle(ctx, style);
+                CanvasUtil.setStyle(ctx, mewgeStyle);
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.arc(x, y, r, startAngle, startAngle + gap * ratio);

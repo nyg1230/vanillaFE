@@ -12,6 +12,7 @@ import PieChart from "main/chart/pie/PieChart";
 class NMChart extends NMComponent {
     #layers = {};
     #chart;
+    #tooltip;
 
     static get name() {
         return "nm-chart"
@@ -40,6 +41,20 @@ class NMChart extends NMComponent {
                     <canvas class="main-layer"></canvas>
                     <canvas class="sub-layer"></canvas>
                 <div>`;
+    }
+
+    addEvent() {
+        this.bindEvent(this, NMConst.eventName.CHART_DRAW_COMPLETE, this.onChartComplete);
+    }
+
+    onChartComplete(e) {
+        const { detail } = e;
+        let { tooltip } = { ...detail };
+        tooltip = util.CommonUtil.toBoolean(tooltip);
+
+        if (tooltip === true) {
+            this.#tooltip = util.TooltipUtil.setTooltip(this, this.#getTooltipContent);
+        }
     }
 
     afterRender() {
@@ -83,7 +98,7 @@ class NMChart extends NMComponent {
 
         if (chart) {
             const { mainLayer, subLayer } = { ...this.#layers };
-            this.#chart = new chart(mainLayer, subLayer);
+            this.#chart = new chart(mainLayer, subLayer, this);
             this.#chart.setting(p);
         } else {
             this.clear();
@@ -99,6 +114,19 @@ class NMChart extends NMComponent {
             const { canvas } = { ...layer };
             util.CanvasUtil.clear(canvas);
         });
+    }
+
+    #getTooltipContent(e) {
+        if (!this.#chart) return;
+
+        const { left, top } = this.rect;
+        const { clientX, clientY } = e;
+
+        const x = clientX - left;
+        const y = clientY - top;
+
+        const content = this.#chart.getTooltipHTML(x, y, e);
+        return content;
     }
 }
 

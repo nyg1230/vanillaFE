@@ -71,20 +71,27 @@ export default class NMMain extends NMView {
                 chacy: 1234,
                 dewin: 234,
                 ecco: 5671,
-                fiore: 301
+                fiore: 301,
+                grace: 2013
             };
             pieChart.set(pieData);
         }
 
         const data = {
             type: "pie",
+            title: {
+                text: "Pie Chart"
+            },
             data: {
                 amy: 1000,
                 bart: 2500,
                 chacy: 1234,
                 dewin: 234,
                 ecco: 5671,
-                fiore: 301
+                fiore: 301,
+                grace: 2013,
+                honey: 4233,
+                icy: 234
             }
         }
 

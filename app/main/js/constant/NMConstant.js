@@ -7,7 +7,8 @@ const NMConstant = {
         MOUSE_OUT: "mouseout",
         MOUSE_ENTER: "mouseenter",
         MOUSE_LEAVE: "mouseleave",
-        MODEL_CHANGE: "modelChange"
+        MODEL_CHANGE: "modelChange",
+        CHART_COMPLETE: "chartComplete"
     },
     mimeType: {
         TEXT__HTML: "text/html",

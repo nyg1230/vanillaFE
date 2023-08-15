@@ -9,6 +9,7 @@ import ObserverUtil from "main/util/ObserverUtil.js";
 import store from "main/util/StoreUtil.js";
 import CanvasUtil from "main/util/CanvasUtil.js";
 import ColorUtil from "main/util/ColorUtil.js";
+import AnimateUtil from "main/util/AnimateUtil.js";
 
 export {
     CommonUtil,
@@ -17,6 +18,7 @@ export {
     StyleUtil,
     AopUtil,
     AnimationUtil,
+    AnimateUtil,
     EventUtil,
     ObserverUtil,
     CanvasUtil,

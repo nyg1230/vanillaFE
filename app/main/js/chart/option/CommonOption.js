@@ -1,9 +1,9 @@
 const commonOption = {
     palette: "rainbow",
     title: {
-        text: "test",
+        text: "",
         style: {
-            font: "bold 75px auto"
+            font: "bold 30px auto"
         }
     },
     animate: {

@@ -1,6 +1,6 @@
 const option = {
     chart: {
-        scale: 80,
+        scale: 90,
         startDegree: -90
     }
 };

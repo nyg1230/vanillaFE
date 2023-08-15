@@ -36,6 +36,11 @@ const CommonUtil = {
         return len;
     },
 
+    toBoolean(obj) {
+        const bool = `${obj}` === "true";
+        return bool;
+    },
+
     approximation(type, num, round, isPercent = false) {
         let result = 0;
         const corr = 10 ** round;

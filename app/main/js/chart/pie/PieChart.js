@@ -10,6 +10,9 @@ import NMConst from "main/constant/NMConstant.js";
 import option from "main/chart/option/PieOption.js";
 
 class PieChart extends Chart {
+    #oldIndex;
+    #tooltipHTML;
+
     get option() {
         return option;
     }
@@ -26,14 +29,22 @@ class PieChart extends Chart {
         const parseChart = [];
         const parseDataLabel = [];
         let currentRadian = startRadian;
-        console.log(currentRadian);
-        Object.entries(data).forEach(([name, value]) => {
+
+        Object.entries(data).forEach(([name, value], idx) => {
             const ratio = value / total;
             const angle = Math.PI * 2 * ratio;
             const endRadian = currentRadian + angle;
+            const color = util.ColorUtil.getPaletteColor(palette, idx);
             // 파이 조각 하나
-            const arc = util.CanvasUtil.arc(x, y, r, currentRadian, endRadian);
-            parseChart.push(arc);
+            const arcOption = {
+                style: { fillStyle: color }
+            };
+            const arc = util.CanvasUtil.arc(x, y, r, currentRadian, endRadian, arcOption);
+            const arcData = {
+                ...arc,
+                info: { name, value, ratio }
+            }
+            parseChart.push(arcData);
 
             // 데이터 라벨
             const d = { name, value, ratio };
@@ -52,10 +63,11 @@ class PieChart extends Chart {
         
         const chartData = {
             chart: parseChart,
-            dataLabel: parseDataLabel
+            dataLabel: parseDataLabel,
+            x,
+            y,
+            r
         };
-
-        console.log(chartData);
 
         return chartData;
     }
@@ -106,21 +118,129 @@ class PieChart extends Chart {
     }
 
     draw() {
-        this.#draw();
+        this.#drawChart();
     }
 
-    #draw() {
+    #drawChart() {
         const { chart, dataLabel } = { ...this.chartData };
-        const { ctx } = { ...this.mainLayer };
+        const { canvas, ctx } = { ...this.mainLayer };
 
-        chart.forEach((c) => {
-            c.draw(ctx, 0.95);
-        });
+        const { animate, tooltip } = { ...this.data };
+        const { use = true, delay: _delay = 1000 } = { ...animate };
+        const delay = use === true ? _delay : 1;
+        const aniFn = util.AnimateUtil.getFunction("");
 
+        const start = performance.now();
+        const fn = (t) => {
+            util.CanvasUtil.clear(canvas);
+            let ratio = (t - start) / delay;
+            ratio = ratio < 1 ? ratio : 1;
+            const progress = aniFn(ratio);
+            
+            this.drawTitle(ctx);
+            chart.forEach((c) => {
+                c.draw(ctx, progress);
+            });
+
+            if (ratio < 1) {
+                window.requestAnimationFrame(fn);
+            } else {
+                window.cancelAnimationFrame(fn);
+                this.#drawDataLabel(ctx);
+                util.EventUtil.dispatchEvent(this.container, NMConst.eventName.CHART_DRAW_COMPLETE, { tooltip: tooltip.use });
+            }
+        };
+
+        window.requestAnimationFrame(fn);
+    }
+
+    #drawDataLabel(ctx) {
+        const { dataLabel } = { ...this.chartData };
         dataLabel.forEach((dl) => {
             dl.draw(ctx);
         });
     }
+
+    /* tooltip start */
+    getTooltipHTML(mx, my, e) {
+        const isContain = this.#isContainPie(mx, my);
+        const { canvas, ctx } = { ...this.subLayer };
+
+        let html;
+        if (isContain === true) {
+            const idx = this.#getDataIndex(mx, my);
+            
+            if (this.#oldIndex !== idx) {
+                this.#oldIndex = idx;
+                const data = util.CommonUtil.find(this.chartData, `chart.${idx}`);
+                
+                util.CanvasUtil.clear(canvas);
+                data.draw(ctx, 1, { style: { fillStyle: "white" } });
+                data.draw(ctx, 1, { style: { globalAlpha: 0.6 } });
+                this.#tooltipHTML = this.#getTooltipHTML(data);
+            }
+
+            html = this.#tooltipHTML;
+        } else {
+            if (this.#oldIndex >= 0) {
+                util.CanvasUtil.clear(canvas);
+                this.#oldIndex = null;
+                this.#tooltipHTML = null;
+            }
+        }
+        
+        return html;
+    }
+
+    #getTooltipHTML(data) {
+        const { info } = { ...data };
+        const { name, value, ratio } = { ...info };
+        const vRatio = util.CommonUtil.round(ratio * 100, 2);
+        const html = `<div>${name} ${value} ${vRatio}%</div>`;
+
+        return html;
+    }
+
+    #isContainPie(mx, my) {
+        const { x, y, r } = { ...this.chartData };
+        const gapX = Math.abs(mx - x);
+        const gapY = Math.abs(my - y);
+        
+        let result = false;
+        if (gapX + gapY <= r) {
+            result = true;
+        } else if (gapX > r || gapY > r) {
+        } else if (gapX ** 2 + gapY ** 2 <= r ** 2) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    #getDataIndex(mx, my) {
+        const { chart } = { ...this.chartData };
+        const radian = this.#getRadian(mx, my);
+        const idx = chart.findIndex((c) => {
+            const { startAngle, endAngle } = { ...c };
+            return startAngle <= radian && endAngle > radian
+        });
+
+        if (idx === -1) {
+            console.log(radian);
+        }
+
+        return idx;
+    }
+
+    #getRadian(mx, my) {
+        const { x, y } = { ...this.chartData };
+        const startDegree = util.CommonUtil.find(this.data, "chart.startDegree");
+        const startRadian = this.#toRadian(startDegree);
+        let radian = Math.atan2(my - y, mx - x);
+        radian = radian >= startRadian ? radian : radian + Math.PI * 2;
+        return radian;
+    }
+    /* tooltip end */
 }
 
 export default PieChart;
