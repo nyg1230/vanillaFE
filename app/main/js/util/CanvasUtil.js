@@ -51,12 +51,14 @@ const CanvasUtil = {
             style,
             option,
             draw: function(ctx, ratio = 1, addStyles = {}) {
-                const { x, y, width, height, style } = { ...this };
+                const { x, y: _y, width, height: _height, style } = { ...this };
                 const fn = type === "fill" ? ctx.fillRect : ctx.strokeRect;
                 ctx.save();
 
                 CanvasUtil.setStyle(ctx, style);
-                fn.call(ctx, x, y, width, height * ratio);
+                const height = _height * ratio;
+                y = _y + _height - height
+                fn.call(ctx, x, y, width, height);
 
                 ctx.restore();
             }

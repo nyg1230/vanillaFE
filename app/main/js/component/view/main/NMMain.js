@@ -93,26 +93,30 @@ export default class NMMain extends NMView {
             },
             data: [
                 {
-                    amy: 1000,
                     bart: 2500,
                     chacy: 1234,
                     dewin: 234,
+                    amy: 1000,
                     ecco: 5671,
-                    fiore: 301,
-                    grace: 2013,
                     honey: 4233,
-                    icy: 234
+                    icy: 234,
+                    grace: 2013,
+                    fiore: 301,
                 },
                 {
                     amy: 1000,
-                    bard: 2500,
-                    chacy: 1234,
-                    dewin: 234,
-                    ecco: 5671,
-                    fifa: 301,
-                    grace: 2013,
                     honey: 4233,
-                    icy: 234
+                    icy: 234,
+                    dewin: 234,
+                    ecco: 7814,
+                    chacy: 1234,
+                    fifa: 301,
+                    bard: 2500,
+                    grace: 2013,
+                },
+                {
+                    yg: 123,
+                    ecco: 456
                 }
             ]
         };

@@ -14,7 +14,8 @@ const AnimateUtil = {
 };
 
 const aniFnc = {
-    normal: (x) => x
+    normal: (x) => x,
+    speedly: (x) => x ** 5
 };
 
 export default AnimateUtil;
