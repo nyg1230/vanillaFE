@@ -63,7 +63,7 @@ class Chart {
     parseData() {
         return {};
     }
-
+ 
     #setTitle() {
         const { title } = { ...this.#data };
         const { text, style } = { ...title };
@@ -75,7 +75,7 @@ class Chart {
         let titleText;
 
         if (util.CommonUtil.isNotEmpty(text)) {
-            const mtx = util.CanvasUtil.getTextSize(text, style);
+            const mtx = util.CanvasUtil.getTextSize(text, { style });
             let tHeight = util.CommonUtil.ceil(mtx.height, 0);
             tHeight += 10;
             area.y = tHeight;

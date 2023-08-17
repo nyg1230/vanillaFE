@@ -33,15 +33,14 @@ export default class NMMain extends NMView {
             }
 
             .chart-area {
-                display: flex;
+                display: block;
             }
 
             .chart {
-                margin-right: 4px;
                 border: solid 1px blue;
                 display: block;
-                width: 600px;
-                height: 400px;
+                width: 500px;
+                height: 350px;
             }
         `;
     }
@@ -116,7 +115,8 @@ export default class NMMain extends NMView {
                 },
                 {
                     yg: 123,
-                    ecco: 456
+                    ecco: 456,
+                    VivaLaVida: 1379
                 }
             ]
         };

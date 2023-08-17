@@ -17,16 +17,16 @@ class ColumnChart extends AxisChart {
         return "column";
     }
 
-    parseData() {
+    parseAxisChartData() {
         const preData = this.#getPreData();
-        const { max, axisMax, nameList, groupCount } = { ...preData };
 
         const { axisData, drawArea } = this.#getAxisData(preData);
         const chartData = this.#getChartData(preData, drawArea);
 
         const result = {
             axis: axisData,
-            chart: chartData
+            chart: chartData,
+            drawArea
         };
 
         return result;
@@ -70,7 +70,8 @@ class ColumnChart extends AxisChart {
 
         const result = [];
         const nameWidthTick = aw / nameList.length;
-        const columnWidhTick = nameWidthTick / groupCount;
+        const columnPadding = nameWidthTick * 0.1  / 2;
+        const columnWidhTick = (nameWidthTick - columnPadding * 2) / groupCount;
 
         nameList.forEach((name, nameIdx) => {
             const d = parseChart[name];
@@ -79,7 +80,7 @@ class ColumnChart extends AxisChart {
             d.forEach((v, groupIdx) => {
                 const ratio = v / axisMax;
                 const columnHeight = ah * ratio;
-                const columnX = startX + columnWidhTick * groupIdx;
+                const columnX = startX + columnPadding + columnWidhTick * groupIdx;
                 const columnY = ay - columnHeight;
                 const color = util.ColorUtil.getPaletteColor(palette, groupIdx);
                 const param = { style: { fillStyle: color } };
@@ -97,10 +98,14 @@ class ColumnChart extends AxisChart {
         const { area } = { ...chart };
         const { x, y, width: aw, height: ah } = { ...area };
         const { axisMax, nameList } = { ...param };
-        const w = util.CanvasUtil.getTextSize(axisMax, {});
+        const labelParam = util.CommonUtil.find(this.data, "axis.y.label");
+        const nameWidthList = nameList.map((name) => util.CanvasUtil.getTextSize(name, labelParam).width);
+        const maxNameWidth = Math.max.call(null, ...nameWidthList);
+        const w = util.CanvasUtil.getTextSize(axisMax, labelParam);
         let { width: tw, height: th } = { ...w };
         tw += 10;
-        const padding = [ah / 40, aw / 40, ah / 5, aw / 40];
+        const padding = [ah * 0.02, aw * 0.025, maxNameWidth, aw * 0.02];
+        this.a = util.CanvasUtil.rect(x, y, aw, ah);
         const [t, r, b, l] = [...padding];
 
         const startX = x + l + tw;
@@ -130,16 +135,15 @@ class ColumnChart extends AxisChart {
     }
 
     #getXAxisData(list, y, startX, endX) {
-        const { axis } = { ...this.data };
-        const { x: param } = { ...axis };
+        const labelParam = util.CommonUtil.find(this.data, "axis.x.label");
         const width = endX - startX;
         const widthTick = width / list.length;
 
         const axisData = [];
-        y += 20;
+        y += 10;
         list.forEach((name, idx) => {
             const x = startX + widthTick * idx + widthTick / 2;
-            const text = util.CanvasUtil.text(x, y, name, param);
+            const text = util.CanvasUtil.text(x, y, name, labelParam);
             axisData.push(text);
         });
 
@@ -148,21 +152,23 @@ class ColumnChart extends AxisChart {
 
     #getYAxisData(maxValue, x, startY, endY) {
         const height = startY - endY;
-        const { axis } = { ...this.data };
-        const { minor, major, y: param } = { ...axis };
-        const { style }= { ...param };
+        const dataY = util.CommonUtil.find(this.data, "axis.y");
+        const { label, mark } = { ...dataY };
+        const { minor, major } = { ...mark };
+        const { style, option } = { ...label };
+        const param = { style, option };
 
         const axisData = [];
 
         // major 눈금 계산 start
-        let { unit: majorUnit } = { ...major };
+        let { unit: majorUnit = -1 } = { ...major };
         if (majorUnit <= 0) {
             const pow = `${maxValue}`.length - 1;
             const refValue = 5 * 10 ** pow;
             majorUnit = maxValue < refValue ? 5 * 10 ** (pow - 1) : 10 ** pow;
         }
 
-        const majorMtx = util.CanvasUtil.getTextSize(maxValue, style);
+        const majorMtx = util.CanvasUtil.getTextSize(maxValue, param);
         const { height: majorTextHeight } = { ...majorMtx };
         const count = maxValue / majorUnit;
         const majorMarkTick = util.CommonUtil.round(height / count, 12);
@@ -196,8 +202,7 @@ class ColumnChart extends AxisChart {
         // major 눈금 계산 end
 
         // minor 눈금 계산 start
-        let { use: minorUse, unit: minorUnit } = { ...minor };
-        minorUse = true;
+        let { use: minorUse, unit: minorUnit = -1 } = { ...minor };
         if (minorUse) {
             minorUnit = minorUnit > 0 ? minorUnit : majorUnit / 5;
             const multipie = minorUnit > 0 ? majorUnit / minorUnit : 5;

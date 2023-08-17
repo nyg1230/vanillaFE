@@ -225,10 +225,6 @@ class PieChart extends Chart {
             return startAngle <= radian && endAngle > radian
         });
 
-        if (idx === -1) {
-            console.log(radian);
-        }
-
         return idx;
     }
 

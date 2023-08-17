@@ -2,28 +2,53 @@ const option = {
     column: {
         chart: {},
         axis: {
-            major: {
-                unit: -1
-            },
-            minor: {
-                use: false,
-                unit: -1
-            },
             x: {
-                style: {
-                    font: "bold 12px auto"
+                title: {
+                    text: "끼예에에에에",
+                    param: {
+                        style: {
+                            font: "bold 25px auto"
+                        },
+                        option: {
+                            position: "cc"
+                        }
+                    }
                 },
-                option: {
-                    position: "cc",
-                    rotate: 45
+                label: {
+                    style: {
+                        font: "bold 12px auto"
+                    },
+                    option: {
+                        position: "lc",
+                        rotate: 315
+                    }
                 }
             },
             y: {
-                style: {
-                    font: "bold 12px auto"
+                title: {
+                    text: "크아아아앙",
+                    param: {
+                        style: {
+                            font: "bold 30px auto"
+                        }
+                    }
                 },
-                option: {
-                    position: "lc"
+                label: {
+                    style: {
+                        font: "bold 14px auto"
+                    },
+                    option: {
+                        position: "lc"
+                    }
+                },
+                mark: {
+                    major: {
+                        unit: -1
+                    },
+                    minor: {
+                        use: true,
+                        unit: -1
+                    }
                 }
             }
         }

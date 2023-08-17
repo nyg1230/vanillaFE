@@ -136,9 +136,7 @@ const CanvasUtil = {
 
                 if (rotate) {
                     const radian = rotate / 180 * Math.PI;
-                    ctx.translate(x, y);
-                    ctx.rotate(radian);
-                    ctx.translate(-x, -y);
+                    CanvasUtil.rotate(ctx, x, y, radian);
                 }
                 CanvasUtil.setStyle(ctx, { ...style, ...addStyle, textBaseline: baseline });
                 const size = this.getSize(ctx);
@@ -156,8 +154,16 @@ const CanvasUtil = {
             }
         }
     },
-    getTextSize(text, style = {}) {
+    getTextSize(text, param) {
         publicCtx.save();
+        const { style, option } = { ...param };
+        const { rotate } = { ...option };
+        
+        if (rotate) {
+            const radian = rotate / 180 * Math.PI;
+            CanvasUtil.rotate(publicCtx, 0, 0, radian);
+        }
+
         this.setStyle(publicCtx, style);
         const mtx = publicCtx.measureText(text);
         const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
@@ -174,18 +180,11 @@ const CanvasUtil = {
             });
         }
     },
-    getTextSize(text, styles) {
-        ctx.save();
-        CanvasUtil.setStyle(ctx, styles);
-        const mtx = ctx.measureText(text);
-        const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
-        ctx.restore();
-        return {
-            width,
-            height: ba + bd
-        };
+    rotate(ctx, x, y, radian) {
+        ctx.translate(x, y);
+        ctx.rotate(radian);
+        ctx.translate(-x, -y);
     },
-    rotate(x, y, angle, obj) {},
     clear(canvas) {
         const canvasRect = util.StyleUtil.getBoundingClientRect(canvas);
 		const { width, height } = canvasRect;
