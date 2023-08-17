@@ -12,7 +12,8 @@ const publicCanvas = util.DomUtil.createElement("canvas");
 const publicCtx = publicCanvas.getContext("2d");
 
 const CanvasUtil = {
-    line(coordinateList = [], type = "stroke") {
+    line(coordinateList = [], param) {
+        const { type = "stroke" } = { ...param };
         return {
             coordinateList,
             type,
