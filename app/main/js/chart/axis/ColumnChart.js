@@ -6,8 +6,6 @@ import * as util from "main/util/utils.js";
 /* model */
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
-/* option */
-import option from "main/chart/option/PieOption.js";
 
 class ColumnChart extends AxisChart {
     #oldIndex;
@@ -19,14 +17,17 @@ class ColumnChart extends AxisChart {
 
     parseAxisChartData() {
         const preData = this.#getPreData();
+        const { palette } = { ...this.data };
 
         const { axisData, drawArea } = this.#getAxisData(preData);
-        const chartData = this.#getChartData(preData, drawArea);
+        const { chartData, tooltipData } = this.#getChartData(preData, drawArea);
 
         const result = {
             axis: axisData,
             chart: chartData,
-            drawArea
+            tooltipData,
+            drawArea,
+            palette
         };
 
         return result;
@@ -68,15 +69,17 @@ class ColumnChart extends AxisChart {
             });
         });
 
-        const result = [];
+        const chartData = [];
         const nameWidthTick = aw / nameList.length;
         const columnPadding = nameWidthTick * 0.1  / 2;
         const columnWidhTick = (nameWidthTick - columnPadding * 2) / groupCount;
 
+        const tooltipData = [];
         nameList.forEach((name, nameIdx) => {
             const d = parseChart[name];
             const startX = ax + nameWidthTick * nameIdx;
 
+            const tData = { name, value: d };
             d.forEach((v, groupIdx) => {
                 const ratio = v / axisMax;
                 const columnHeight = ah * ratio;
@@ -86,9 +89,13 @@ class ColumnChart extends AxisChart {
                 const param = { style: { fillStyle: color } };
 
                 const rect = util.CanvasUtil.rect(columnX, columnY, columnWidhTick, columnHeight, param);
-                result.push(rect);
+                chartData.push(rect);
             });
+
+            tooltipData.push(tData);
         });
+
+        const result = { chartData, tooltipData };
 
         return result;
     }

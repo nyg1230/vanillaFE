@@ -99,6 +99,92 @@ class AxisChart extends Chart {
         
         return title;
     }
+
+    getTooltipHTML(mx, my) {
+        const isContain = this.#isContain(mx, my);
+        let html;
+        const { canvas, ctx } = { ...this.subLayer };
+        util.CanvasUtil.clear(canvas);
+        if (isContain) {
+            const { tooltipData = [] } = { ...this.chartData };
+            if (util.CommonUtil.isEmpty(tooltipData)) return;
+
+            const { idx, tick } = this.#getDataIndex(mx, my);
+
+            if (this.#oldIndex !== idx) {
+                this.#oldIndex = idx;
+                this.#toottipHTML = this.getAxisTooltipHTML(idx);
+            }
+
+            this.#setDim(ctx, idx, tick);
+            html = this.#toottipHTML;
+        } else {
+            if (this.#oldIndex > -1) {
+                this.#oldIndex = null;
+                this.#toottipHTML = null;
+            }
+        }
+
+        return html;
+    }
+
+    #isContain(mx, my) {
+        const { drawArea } = { ...this.chartData };
+        const { x, y, width, height } = { ...drawArea };
+        let result = true;
+        if (mx < x || mx > x + width) {
+            result = false;
+        } else if (my > y || my < y - height) {
+            result = false;
+        }
+
+        return result;
+    }
+
+    #getDataIndex(mx, my) {
+        const { drawArea, tooltipData = [] } = { ...this.chartData };
+        const { x, width } = { ...drawArea };
+        const tick = width / tooltipData.length;
+        const idx = util.CommonUtil.floor((mx - x) / tick, 0);
+
+        return { idx, tick };
+    }
+
+    #setDim(ctx, idx, tick) {
+        const { drawArea } = { ...this.chartData };
+        const { x, y, width, height } = { ...drawArea };
+
+        const dimX = x + tick * idx;
+        const param = {
+            style: {
+                fillStyle: "#000000",
+                globalAlpha: 0.1
+            }
+        };
+        const dim = util.CanvasUtil.rect(dimX, y, tick, -height, param);
+        dim.draw(ctx);
+    }
+
+    getAxisTooltipHTML(idx) {
+        const { tooltipData = [], palette } = { ...this.chartData };
+        const data = tooltipData[idx];
+        const { name, value } = { ...data };
+
+        const html = `
+            <div>
+                <div>${name}</div>
+                ${value.map((v, idx) => {
+                    const color = util.ColorUtil.getPaletteColor(palette, idx);
+                    return `<div style="display: flex;">
+                                <div style="margin: auto 0px; width: 10px; height: 10px; background-color: ${color};"></div>
+                                <div style="margin-left: 5px;">${v}</div>
+                            </div>`;
+                }).join("")}
+            </div>
+        `;
+
+        return html;
+    }
 }
 
 export default AxisChart;
