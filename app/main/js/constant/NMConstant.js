@@ -8,7 +8,9 @@ const NMConstant = {
         MOUSE_ENTER: "mouseenter",
         MOUSE_LEAVE: "mouseleave",
         MODEL_CHANGE: "modelChange",
-        CHART_COMPLETE: "chartComplete"
+        CHART_COMPLETE: "chartComplete",
+        POP_STATE: "popstate",
+        HASH_CHANGE: "hashchange"
     },
     mimeType: {
         TEXT__HTML: "text/html",
@@ -17,6 +19,9 @@ const NMConstant = {
         APP__XHTML_XML: "application/xhtml+xml",
         IMG__SVG_XML: "image/svg+xml"
 
+    },
+    env: {
+        baseUrl: ""
     }
 }
 

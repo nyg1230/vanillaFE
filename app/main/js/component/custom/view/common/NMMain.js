@@ -3,16 +3,13 @@ import { NMView, define } from "main/component/core/view/NMView.js";
 /* common */
 import * as util from "main/util/utils.js";
 /* component */
-import * as element from "main/component/core/element/elements.js"
-import { NMChart } from "main/component/core/chart/NMChart.js"
 /* model */
-import NMTestModel from "main/model/NMTestModel.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
 
 export default class NMMain extends NMView {
-    modelList = [NMTestModel];
+    modelList = [];
 
     static get name() {
         return "nm-main";
@@ -24,36 +21,17 @@ export default class NMMain extends NMView {
 
     get styles() {
         return `
-            nm-header {
+            .${this.clsName} {
                 width: 100%;
-            }
-
-            .test {
-                color: red;
-            }
-
-            .chart-area {
-                display: block;
-            }
-
-            .chart {
-                border: solid 1px blue;
-                display: block;
-                width: 500px;
-                height: 350px;
+                height: 100%;
             }
         `;
     }
 
     get template() {
         return `
-        <div class="${this.name}">
-            <nm-input value="1"></nm-input>
-            <nm-input value="2"></nm-input>
-            <div class="chart-area">
-                <nm-chart class="chart pie"></nm-chart>
-                <nm-chart class="chart column"></nm-chart>
-            </div>
+        <div class="${this.clsName}" part="${this.clsName}">
+            <slot></slot>
         </div>
         `
     }
