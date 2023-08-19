@@ -1,5 +1,5 @@
 /* inherit */
-import { NMComponent, define } from "main/component/NMComponent.js";
+import { NMComponent, define } from "main/component/core/NMComponent.js";
 /* common */
 import * as util from "main/util/utils.js";
 import charts from "main/chart/charts.js";

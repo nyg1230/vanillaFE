@@ -4,7 +4,7 @@
 import * as util from "main/util/utils.js";
 
 /* component */
-import NMMain from "main/component/view/main/NMMain.js";
+import NMMain from "main/component/custom/main/NMMain.js";
 // import CanvasTest from "./test/canvasTest.js";
 
 /* constant */
