@@ -1,10 +1,10 @@
 /* inherit */
-import { NMView, define } from "main/component/view/NMView.js";
+import { NMView, define } from "main/component/core/view/NMView.js";
 /* common */
 import * as util from "main/util/utils.js";
 /* component */
-import * as element from "main/component/element/elements.js"
-import { NMChart } from "main/component/chart/NMChart.js"
+import * as element from "main/component/core/element/elements.js"
+import { NMChart } from "main/component/core/chart/NMChart.js"
 /* model */
 import NMTestModel from "main/model/NMTestModel.js";
 /* constant */
