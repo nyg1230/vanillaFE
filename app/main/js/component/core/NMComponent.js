@@ -43,10 +43,8 @@ class NMComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.#addEvent();
-        this.#beforeRender();
+        this.#addEvent();        
         this.#render();
-        this.#afterRender();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -139,7 +137,10 @@ class NMComponent extends HTMLElement {
      * shadowDom을 생성하고 해당 root에 fragment를 추가함
      */
     #render() {
-        this.#root = this.attachShadow({ mode: "open" });
+        this.#beforeRender();
+        if (!this.#root) {
+            this.#root = this.attachShadow({ mode: "open" });
+        }
         const frag = document.createDocumentFragment();
 
         const style = this.#getStyle();
@@ -149,6 +150,7 @@ class NMComponent extends HTMLElement {
         frag.appendChild(template.content);
 
         this.#root.appendChild(frag);
+        this.#afterRender();
     }
 
     #beforeRender() {
@@ -201,6 +203,14 @@ class NMComponent extends HTMLElement {
         const template = proto.template.cloneNode(true);
 
         return template;
+    }
+
+    refresh() {
+        console.log(this.firstElementChild);
+        while (this.#root.firstElementChild) {
+            this.#root.firstElementChild.remove();
+        };
+        this.#render();
     }
     /* component renderring function end */
     

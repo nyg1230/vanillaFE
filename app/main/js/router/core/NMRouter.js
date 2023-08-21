@@ -14,11 +14,12 @@ import NMConst from "main/constant/NMConstant.js";
  */
 const routePath = [];
 class NMRouter {
+    #home = "main/body/home";
     #route = route;
     #_mode;
-    #baseUrl = NMConst.env.baseUrl;
     #container;
     #allowMode = ["hash", "history"];
+    #currentPathName;
 
     constructor() {
         this.#init();
@@ -46,7 +47,14 @@ class NMRouter {
     }
     
     init() {
-        this.setRoute();
+        let path = this.getPathName();
+        // path = util.CommonUtil.isNotEmpty(path) ? path : this.#home;
+        
+        if (util.CommonUtil.isNotEmpty(path)) {
+            this.route({ path });
+        } else {
+            this.pushState(this.#home);
+        }
     }
 
     /* setting start */
@@ -61,10 +69,12 @@ class NMRouter {
     /* setting end */
 
     getPathName() {
-        let url;
+        let url = "";
 
         if (this.#mode === "hash") {
-            url = location.hash.replace(/^\#*/, "");
+            location.hash.replace(/(?<=#).*?((?=\?)|(?<=$))/, (str) => {
+                url = str;
+            });
         } else if (this.#mode === "history") {
             url = location.pathname.replace(/^\/*/, "");
         }
@@ -74,76 +84,139 @@ class NMRouter {
         return url;
     }
 
+    getPathParam() {
+        let queryString = location.search;
+
+        if (this.#mode === "hash") {
+            location.hash.replace(/(?<=\?).*$/, (str) => {
+                queryString = str;
+            });
+        } else if (this.#mode === "history") {
+            queryString = location.search.replace(/^\?/, "");
+        } else {
+            return;
+        }
+
+        const list = queryString.split("&");
+        const param = {};
+        list.forEach((d) => {
+            const p = d.split("=");
+            const [k, v] = [...p];
+            param[k] = v;
+        });
+
+        return param;
+    }
+
     getView(url) {
         return this.#route[url];
     }
 
-    setRoute() {
-        this.spliceRoute();
-        const list = this.getPathName().split("/");
-
-        const len = list.length;
-        let now = routePath.length === 0 ? this.#container : [...routePath].pop().view;
-        const startIndex = routePath.length;
-        for (let idx = startIndex; idx < len; idx++) {
-            try {
-                const name = list[idx];
-                this.setRouteView(name);
-            } catch (e) {
-                console.log(e);
-                break;
-            }
-        }
-        console.log(routePath);
-    }
-
-    setRouteView(name) {
-        const last = [...routePath].pop();
-        let { view } = { ...last };
-        view = util.CommonUtil.isEmpty(view) ? this.#container : view;
-        const pathName = routePath.map((r) => r.name);
-        pathName.push(name);
-        const url = pathName.join("/");
-
-        try {
-            let addView = this.getView(url);
-            addView = new addView();
-            view.append(addView);
-            routePath.push({ name, view: addView });
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    spliceRoute() {
-        if (routePath.length === 0) return;
-
-        const pathName = this.getPathName();
-        const pathNameList = pathName.split("/");
-        console.log(pathName, pathNameList)
-    }
-
     onPopState(e) {
-        console.log(e);
-        this.setRoute();
+        const pathName = this.getPathName();
+
+        if (this.#currentPathName === pathName) {
+            const last = [...routePath].pop();
+            const { view } = { ...last };
+            view && view.refresh();
+        } else {
+            this.route({ path: pathName });
+        }
     }
 
     pushState(url, param) {
-        url = `${this.#baseUrl}${url}`;
+        if (this.#mode === "hash") {
+            url = `#${url}`
+        }
         window.history.pushState(param, "", url);
+        this.route({ path: this.getPathName(), ...param });
+    }
+
+    route(p) {
+        const { path, isPush = true, ...param } = { ...p };
+
+        const hasView = !!this.getView(path);
+        if (!hasView) return;
+        
+        const list = path.split("/");
+        const lastPath = list.pop();
+        const len = list.length;
+
+        let parent;
+
+        if (!isPush) {
+            const parentPath = list.join("/");
+            const route = routePath.find((r) => r.path === parentPath);
+            parent = route.view;
+        } else {
+            let startIndex = 0;
+            if (routePath.length === 0) {
+                parent = this.#container;
+            } else {
+                this.#spliceRoute(path);
+                const route = [...routePath].pop();
+                const { view } = { ...route };
+                parent = view;
+            }
+
+            for (let idx = routePath.length; idx < len; idx++) {
+                const name = list[idx];
+                const url = [...list].splice(0, idx + 1).join("/");
+
+                const cls = this.getView(url);
+                const view = new cls();
+                this.#pushRoute(parent, name, view);
+                parent = view;
+            }
+        }
+
+        if (!this.#currentPathName || !this.#currentPathName.startsWith(path)) {
+            const cls = this.getView(path);
+            const view = new cls(param)
+            this.#pushRoute(parent, path, view);
+        }
+
+        this.#currentPathName = path;
+    }
+
+    #pushRoute(parent, name, view) {
+        parent.append(view);
+        routePath.push({ name, view });
+    }
+
+    #spliceRoute(url) {
+        const list = url.split("/");
+        const len = list.length;
+
+        if (routePath.length === 0) return;
+
+        let removeList;
+        if (this.#currentPathName.startsWith(url)) {
+            removeList = routePath.splice(len);
+        } else {
+            for (let idx = 0; idx < len; idx++) {
+                const name = list[idx];
+                const route = routePath[idx];
+                
+                if (!route || name !== route.name) {
+                    removeList = routePath.splice(idx);
+                    break;
+                }
+            }
+        }
+
+        if (removeList.length === 0) return;
+        const [target] = [...removeList];
+        const { view } = { ...target };
+        view && view.remove();
+    }
+
+    #removeRoute(idx) {
+        const removePathList = routePath.splice(idx);
+        const first = removePathList.shift();
+        first.destroy();
     }
 }
 
-/**
- * /기본틀/공통틀
- * /main
- * /main/body
- * /main/body/home
- * /main/body/board/list?category="blah"
- * /main/body/board/detail?oid=1
- * /main/body/statistics
- */
-
 const router = new NMRouter();
-window.rrr = router;
 export default router;

@@ -8,15 +8,15 @@ import * as util from "main/util/utils.js";
 import NMConst from "main/constant/NMConstant.js";
 
 
-export default class NMMain extends NMView {
+export default class NMHome extends NMView {
     modelList = [];
 
     static get name() {
-        return "nm-main";
+        return "nm-home";
     }
 
     get clsName() {
-        return NMMain.name;
+        return NMHome.name;
     }
 
     get styles() {
@@ -31,10 +31,10 @@ export default class NMMain extends NMView {
     get template() {
         return `
         <div class="${this.clsName}" part="${this.clsName}">
-            나는 메인
+            나는 홈
             <slot></slot>
         </div>
-        `
+        `;
     }
 
     addEvent() {}
@@ -108,4 +108,4 @@ export default class NMMain extends NMView {
     }
 }
 
-define(NMMain);
+define(NMHome);
