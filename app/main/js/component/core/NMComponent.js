@@ -52,7 +52,7 @@ class NMComponent extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.#destroy();
+        this.destroy();
     }
 
     #addEvent() {
@@ -222,13 +222,14 @@ class NMComponent extends HTMLElement {
      */
     #destroy() {
         this.unbindEventAll();
-        this.destroy();
     }
 
     /**
      * 상속받는 객체에서 삭제 시 추가적인 행위를 위하면 해당 함수를 사용함
      */
-    destroy() {}
+    destroy() {
+        this.#destroy();
+    }
     /* component remove function end */
 }
 

@@ -53,6 +53,7 @@ class NMView extends NMComponent {
 
     destroy() {
         this.#disconnectModel();
+        super.destroy();
     }
 }
 
