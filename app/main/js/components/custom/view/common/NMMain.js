@@ -1,5 +1,5 @@
 /* inherit */
-import { NMView, define } from "main/component/core/view/NMView.js";
+import { NMView, define } from "main/components/core/view/NMView.js";
 /* common */
 import * as util from "main/util/utils.js";
 /* component */
@@ -8,15 +8,15 @@ import * as util from "main/util/utils.js";
 import NMConst from "main/constant/NMConstant.js";
 
 
-export default class NMHome extends NMView {
+export default class NMMain extends NMView {
     modelList = [];
 
     static get name() {
-        return "nm-home";
+        return "nm-main";
     }
 
     get clsName() {
-        return NMHome.name;
+        return NMMain.name;
     }
 
     get styles() {
@@ -31,10 +31,9 @@ export default class NMHome extends NMView {
     get template() {
         return `
         <div class="${this.clsName}" part="${this.clsName}">
-            나는 홈
             <slot></slot>
         </div>
-        `;
+        `
     }
 
     addEvent() {}
@@ -108,4 +107,4 @@ export default class NMHome extends NMView {
     }
 }
 
-define(NMHome);
+define(NMMain);

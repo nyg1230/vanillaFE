@@ -1,6 +1,6 @@
-import NMMain from "main/component/custom/view/common/NMMain.js";
-import NMBody from "main/component/custom/view/common/NMBody.js";
-import NMHome from "main/component/custom/view/home/NMHome.js";
+import NMMain from "main/components/custom/view/common/NMMain.js";
+import NMBody from "main/components/custom/view/common/NMBody.js";
+import NMHome from "main/components/custom/view/home/NMHome.js";
 
 const route = {
     "main": NMMain,
