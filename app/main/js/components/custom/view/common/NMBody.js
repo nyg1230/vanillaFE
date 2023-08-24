@@ -32,32 +32,53 @@ export default class NMBody extends NMView {
             .${this.clsName} {
                 width: 100%;
                 height: 100%;
+				display: flex;
+				flex-direction: column;
+            }
+
+			.container {
+				--width: 1440px;
+				max-width: var(--width);
+                height: 100%;
                 display: grid;
-                grid-template-areas: 
-                    "h h h h h"
-                    ". n s a ."
-                    "f f f f f";
-            }
+				grid-template-areas: "nav sec aside";
+				grid-template-columns: minmax(0, 10vw) minmax(0, 50vw) minmax(0, 10vw);
+				margin: 0 auto;
+			}
 
-            nm-header {
-                grid-area: h;
-            }
+			.side-bar {
+				display: contents;
+			}
 
-            nm-nav {
-                grid-area: n;
-            }
+			nm-header {
+				position: sticky;
+				height: fit-content;
+			}
 
-            section {
-                grid-area: s;
-            }
+			nm-nav {
+				grid-area: nav;
+			}
 
-            nm-aside {
-                grid-area: a;
-            }
+			section {
+				grid-area: sec;
+			}
 
-            nm-footer {
-                grid-area: f;
-            }
+			nm-aside {
+				grid-area: aside;
+			}
+
+			@media screen and (max-width: 860px) {
+				.container {
+					--width: 800px;
+					margin: 0 0;
+					grid-template-areas:
+						"nav"
+						"sec"
+						"aside";
+					grid-template-columns: minmax(0, 100vw);
+					grid-template-rows: minmax(0, fit-content);
+				}
+			}
         `;
     }
 
@@ -65,11 +86,15 @@ export default class NMBody extends NMView {
         return `
         <div class="${this.clsName}" part="${this.clsName}">
             <nm-header></nm-header>
-            <nm-nav></nm-nav>
-            <section>
-                <slot></slot>
-            </section>
-            <nm-aside></nm-aside>
+			<div class="container">
+				<div class="side-bar">
+					<nm-nav></nm-nav>
+					<nm-aside></nm-aside>
+				</div>
+				<section>
+					<slot></slot>
+				</section>
+			</div>
             <nm-footer></nm-footer>
         </div>
         `;
