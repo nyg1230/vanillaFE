@@ -13,24 +13,31 @@ const publicCtx = publicCanvas.getContext("2d");
 
 const CanvasUtil = {
     line(coordinateList = [], param) {
-        const { type = "stroke" } = { ...param };
+        const { type = "stroke", style, option } = { ...param };
         return {
             coordinateList,
             type,
+            style,
+            option,
             draw: function(ctx) {
                 const { coordinateList, type } = { ...this };
                 if (util.CommonUtil.length(coordinateList) < 1) return;
 
                 const [first, ...remain] = [...coordinateList];
-                const [fx, fy, fStyles] = [...first];
+                let [fx, fy, fStyles] = [...first];
+                fx = util.CommonUtil.round(fx, 0),
+                fy = util.CommonUtil.round(fy, 0),
                 ctx.save();
 
                 ctx.beginPath();
+                CanvasUtil.setStyle(ctx, this.style);
                 CanvasUtil.setStyle(ctx, fStyles);
                 ctx.moveTo(fx, fy);
 
                 remain.forEach((coor) => {
-                    const [x, y, styles] = [...coor];
+                    let [x, y, styles] = [...coor];
+                    x = util.CommonUtil.round(x, 0),
+                    y = util.CommonUtil.round(y, 0),
                     CanvasUtil.setStyle(ctx, styles);
                     ctx.lineTo(x, y);
                 });
@@ -44,8 +51,8 @@ const CanvasUtil = {
     rect(x, y, width, height, param) {
         const { type = "fill", style, option } = { ...param };
         return {
-            x,
-            y,
+            x: util.CommonUtil.round(x, 0),
+            y: util.CommonUtil.round(y, 0),
             width,
             height,
             type,

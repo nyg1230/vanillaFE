@@ -22,6 +22,9 @@ const option = {
                         position: "lc",
                         rotate: 315
                     }
+                },
+                tooltip: {
+                    text: ["첫번째", "두번째", "매지막"]
                 }
             },
             y: {

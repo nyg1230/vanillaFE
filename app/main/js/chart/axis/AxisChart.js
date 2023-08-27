@@ -106,15 +106,19 @@ class AxisChart extends Chart {
         const { canvas, ctx } = { ...this.subLayer };
         util.CanvasUtil.clear(canvas);
         if (isContain) {
-            const { tooltipData = [] } = { ...this.chartData };
-            if (util.CommonUtil.isEmpty(tooltipData)) return;
+            const tData = util.CommonUtil.find(this.chartData, "tooltip.data");
+            if (util.CommonUtil.isEmpty(tData)) return;
+            const { idx, tick } = { ...this.#getDataIndex(mx, my) };
 
-            const { idx, tick } = this.#getDataIndex(mx, my);
-
-            if (this.#oldIndex !== idx) {
+            if (util.CommonUtil.isNull(idx)) {
+                return;
+            } else if (util.CommonUtil.isNull(tick)) {
+                return;
+            } else if (this.#oldIndex !== idx) {
                 this.#oldIndex = idx;
                 this.#toottipHTML = this.getAxisTooltipHTML(idx);
             }
+
 
             this.#setDim(ctx, idx, tick);
             html = this.#toottipHTML;
@@ -128,63 +132,23 @@ class AxisChart extends Chart {
         return html;
     }
 
+    isContain(x, y) {}
     #isContain(mx, my) {
-        const { drawArea } = { ...this.chartData };
-        const { x, y, width, height } = { ...drawArea };
-        let result = true;
-        if (mx < x || mx > x + width) {
-            result = false;
-        } else if (my > y || my < y - height) {
-            result = false;
-        }
-
-        return result;
+        return this.isContain(mx, my);
     }
 
+    getDataIndex(x, y) {}
     #getDataIndex(mx, my) {
-        const { drawArea, tooltipData = [] } = { ...this.chartData };
-        const { x, width } = { ...drawArea };
-        const tick = width / tooltipData.length;
-        const idx = util.CommonUtil.floor((mx - x) / tick, 0);
-
-        return { idx, tick };
+        return this.getDataIndex(mx, my);
     }
 
+    getDim() {}
     #setDim(ctx, idx, tick) {
-        const { drawArea } = { ...this.chartData };
-        const { x, y, width, height } = { ...drawArea };
-
-        const dimX = x + tick * idx;
-        const param = {
-            style: {
-                fillStyle: "#000000",
-                globalAlpha: 0.1
-            }
-        };
-        const dim = util.CanvasUtil.rect(dimX, y, tick, -height, param);
-        dim.draw(ctx);
+        const dim = this.getDim(idx, tick);
+        dim && dim.draw(ctx);
     }
 
-    getAxisTooltipHTML(idx) {
-        const { tooltipData = [], palette } = { ...this.chartData };
-        const data = tooltipData[idx];
-        const { name, value } = { ...data };
-
-        const html = `
-            <div>
-                <div>${name}</div>
-                ${value.map((v, idx) => {
-                    const color = util.ColorUtil.getPaletteColor(palette, idx);
-                    return `<div style="display: flex;">
-                                <div style="margin: auto 0px; width: 10px; height: 10px; background-color: ${color};"></div>
-                                <div style="margin-left: 5px;">${v}</div>
-                            </div>`;
-                }).join("")}
-            </div>
-        `;
-
-        return html;
-    }
+    getAxisTooltipHTML(idx) {}
 }
 
 export default AxisChart;

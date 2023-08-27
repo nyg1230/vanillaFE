@@ -25,7 +25,11 @@ class ColumnChart extends AxisChart {
         const result = {
             axis: axisData,
             chart: chartData,
-            tooltipData,
+            tooltip: {
+                name: util.CommonUtil.find(this.data, "axis.x.tooltip.text", []),
+                data: tooltipData,
+                length: tooltipData.length
+            },
             drawArea,
             palette
         };
@@ -160,6 +164,7 @@ class ColumnChart extends AxisChart {
     #getYAxisData(maxValue, x, startY, endY) {
         const height = startY - endY;
         const dataY = util.CommonUtil.find(this.data, "axis.y");
+        const drawWidth = util.CommonUtil.find(this.data, "chart.area.width");
         const { label, mark } = { ...dataY };
         const { minor, major } = { ...mark };
         const { style, option } = { ...label };
@@ -199,13 +204,15 @@ class ColumnChart extends AxisChart {
                 axisData.push(majorText);
             }
             const majorMark = util.CanvasUtil.line([[x, y], [x - majorMarkWidth, y]]);
+            const majorLine = util.CanvasUtil.line([[x, y], [x + drawWidth, y]]);
 
-            axisData.push(majorMark);
+            axisData.push(majorMark, majorLine);
         }
         
         const lastMajorText = util.CanvasUtil.text(majorTextX, endY, maxValue, param);
         const lastMajorMark = util.CanvasUtil.line([[x, endY], [x - majorMarkWidth, endY]]);
-        axisData.push(lastMajorText, lastMajorMark);
+        const lastMajorLine = util.CanvasUtil.line([[x, endY], [x + drawWidth, endY]], { style: { font: "bold 24px auto" } });
+        axisData.push(lastMajorText, lastMajorMark, lastMajorLine);
         // major 눈금 계산 end
 
         // minor 눈금 계산 start
@@ -256,11 +263,11 @@ class ColumnChart extends AxisChart {
             ratio = ratio < 1 ? ratio : 1
             const progress = aniFn(ratio);
 
+            this.#drawAxis(ctx);
             chart.forEach((c) => {
                 c.draw(ctx, progress);
             });
             this.drawTitle(ctx);
-            this.#drawAxis(ctx);
 
             if (ratio < 1) {
                 window.requestAnimationFrame(fn);
@@ -282,6 +289,68 @@ class ColumnChart extends AxisChart {
             });
         });
     }
+
+    /* tooltip function start */
+    isContain(mx, my) {
+        const { drawArea } = { ...this.chartData };
+        const { x, y, width, height } = { ...drawArea };
+        let result = true;
+        if (mx < x || mx > x + width) {
+            result = false;
+        } else if (my > y || my < y - height) {
+            result = false;
+        }
+        return result;
+    }
+
+    getDataIndex(mx, my) {
+        const { drawArea, tooltip } = { ...this.chartData };
+        const { length: tLength = 1 } = { ...tooltip };
+        const { x, width } = { ...drawArea };
+        const tick = width / tLength;
+        const idx = util.CommonUtil.floor((mx - x) / tick, 0);
+
+        return { idx, tick };
+    }
+
+    getDim(idx, tick) {
+        const { drawArea } = { ...this.chartData };
+        const { x, y, width, height } = { ...drawArea };
+
+        const dimX = x + tick * idx;
+        const param = {
+            style: {
+                fillStyle: "#000000",
+                globalAlpha: 0.2
+            }
+        };
+        const dim = util.CanvasUtil.rect(dimX, y, tick, -height, param);
+        return dim;
+    }
+
+    getAxisTooltipHTML(idx) {
+        const { tooltip, palette } = { ...this.chartData };
+        const { data: tData, name: tName } = { ...tooltip };
+        const data = tData[idx];
+        const { name, value } = { ...data };
+
+        const html = `
+            <div>
+                <div>${name}</div>
+                ${value.map((v, idx) => {
+                    const color = util.ColorUtil.getPaletteColor(palette, idx);
+                    return `<div style="display: flex;">
+                                <div style="margin: auto 0px; width: 10px; height: 10px; background-color: ${color};"></div>
+                                <div style="margin-left: 5px;">${tName[idx] || ""}</div>
+                                <div style="margin-left: 5px;">${v}</div>
+                            </div>`;
+                }).join("")}
+            </div>
+        `;
+
+        return html;
+    }
+    /* tooltip function end */
 }
 
 export default ColumnChart;
