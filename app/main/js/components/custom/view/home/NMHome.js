@@ -186,6 +186,15 @@ export default class NMHome extends NMView {
                 title: {
                     text: "언어별 커밋량"
                 },
+                dataLabel: {
+                    position: "inner",
+                    minHideRatio: 0.1,
+                    param: {
+                        style: {
+                            fillStyle: "white"
+                        }
+                    }
+                },
                 data: {
                     javascript: 5000,
                     html: 350,
