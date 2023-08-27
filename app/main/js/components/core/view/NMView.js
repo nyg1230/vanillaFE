@@ -40,7 +40,6 @@ class NMView extends NMComponent {
 
     #addEvent() {
         this.bindEvent(this, "modelChange", this.onModelChange);
-        console.log(123);
         this.addEvent();
     }
 

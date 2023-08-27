@@ -29,7 +29,7 @@ export default class NMNav extends NMComponent {
 
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
-                    나비게이터
+                    간단한 개인정보<br>메뉴 리스트
                 </div>`;
     }
 }

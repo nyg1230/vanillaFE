@@ -16,7 +16,7 @@ export default class NMBody extends NMView {
     modelList = [];
 
     static get name() {
-        return "nm-body-view";
+        return "nm-body";
     }
 
     get clsName() {
@@ -42,7 +42,7 @@ export default class NMBody extends NMView {
                 height: 100%;
                 display: grid;
 				grid-template-areas: "nav sec aside";
-				grid-template-columns: minmax(0, 10vw) minmax(0, 50vw) minmax(0, 10vw);
+				grid-template-columns: minmax(0, 10vw) minmax(0, 60vw) minmax(0, 10vw);
 				margin: 0 auto;
 			}
 
@@ -69,14 +69,14 @@ export default class NMBody extends NMView {
 
 			@media screen and (max-width: 860px) {
 				.container {
-					--width: 800px;
+					--width: 100%;
 					margin: 0 0;
 					grid-template-areas:
 						"nav"
 						"sec"
 						"aside";
 					grid-template-columns: minmax(0, 100vw);
-					grid-template-rows: minmax(0, fit-content);
+					grid-template-rows: minmax(0, min-content) minmax(0, auto) minmax(0, min-content);
 				}
 			}
         `;
@@ -100,9 +100,7 @@ export default class NMBody extends NMView {
         `;
     }
 
-    addEvent() {
-        window.qqq = this;
-    }
+    addEvent() {}
 
     afterRender() {}
 }

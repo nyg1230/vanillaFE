@@ -49,7 +49,6 @@ class Chart {
     }
 
     setting(p) {
-        window.qqq = this;
         this.#data = util.CommonUtil.shallowMerge(CommonOption, this.option, p);
         this.#parseData();
     }
@@ -96,6 +95,10 @@ class Chart {
     drawTitle(ctx) {
         const { title } = { ...this.chartData };
         title && title.draw(ctx);
+    }
+
+    refresh() {
+        this.#parseData();
     }
 
     draw() {}

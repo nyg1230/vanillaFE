@@ -29,7 +29,7 @@ export default class NMHeader extends NMComponent {
 
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
-                    헤더헤더헤더
+                    별 내용 없으며 배경 이미지
                 </div>`;
     }
 }

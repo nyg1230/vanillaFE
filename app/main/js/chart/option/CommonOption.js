@@ -3,7 +3,7 @@ const commonOption = {
     title: {
         text: "",
         style: {
-            font: "bold 30px auto"
+            font: "bold 24px auto"
         }
     },
     animate: {

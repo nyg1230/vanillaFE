@@ -29,7 +29,7 @@ export default class NMFooter extends NMComponent {
 
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
-                    푸터푸터푸터
+                    내용 고민 필요...
                 </div>`;
     }
 }

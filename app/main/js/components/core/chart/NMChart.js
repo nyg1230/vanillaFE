@@ -27,6 +27,8 @@ class NMChart extends NMComponent {
             .${this.clsName} {
                 width: 100%;
                 height: 100%;
+                overflow: hidden;
+                position: relative;
             }
 
             .${this.clsName} canvas {
@@ -45,6 +47,7 @@ class NMChart extends NMComponent {
 
     addEvent() {
         this.bindEvent(this, NMConst.eventName.CHART_DRAW_COMPLETE, this.onChartComplete);
+        this.bindEvent(window, "resize", this.onResize);
     }
 
     onChartComplete(e) {
@@ -57,7 +60,16 @@ class NMChart extends NMComponent {
         }
     }
 
+    onResize(e) {
+        util.CommonUtil.debounce(this, "resize");
+    }
+
+    resize() {
+        this.#resize();
+    }
+
     afterRender() {
+        window.www = this;
         const mainLayer = util.DomUtil.querySelector(this, ".main-layer");
         if (mainLayer) {
             this.#layers.mainLayer = {
@@ -78,6 +90,7 @@ class NMChart extends NMComponent {
     }
 
     #resize() {
+        this.setRect();
         const { width: w, height: h } = this.rect;
         Object.values(this.#layers).forEach((layer) => {
             const { canvas } = { ...layer };
@@ -88,6 +101,11 @@ class NMChart extends NMComponent {
             const { x, y, width, height } = rect;
             layer.rect = new DOMRectReadOnly(x, y, width, height);
         });
+
+        if (this.#chart) {
+            this.#chart.refresh();
+            this.draw();
+        }
     }
 
     setChart(param) {

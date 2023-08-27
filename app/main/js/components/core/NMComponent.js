@@ -75,6 +75,8 @@ class NMComponent extends HTMLElement {
      * @param {Object}      option      이벤트 등록시 추가할 옵션
      */
     bindEvent(target, eventName, fn, option = {}) {
+        if (!util.CommonUtil.isFunction(fn)) return;
+
         let eventList = util.CommonUtil.find(this.#event, `${eventName}`);
 
         if (util.CommonUtil.isEmpty(eventList)) {
@@ -88,6 +90,7 @@ class NMComponent extends HTMLElement {
             }
         }
 
+        fn = fn.bind(this);
         util.EventUtil.bindEvent(target, eventName, fn, option);
         const evtObejct = { target, eventName, fn, option };
 
@@ -158,12 +161,19 @@ class NMComponent extends HTMLElement {
     }
     beforeRender() {}
     #afterRender() {
-        const rect = this.getBoundingClientRect();
-        const { x, y, width, height } = rect;
-        this.#rect = new DOMRectReadOnly(x, y, width, height);
+        this.setRect();
         this.afterRender();
     }
     afterRender() {}
+
+    /**
+     * component의 size를 게산하여 변수로 선언 및 초기화하는 함수
+     */
+    setRect() {
+        const rect = this.getBoundingClientRect();
+        const { x, y, width, height } = rect;
+        this.#rect = new DOMRectReadOnly(x, y, width, height);
+    }
 
     /**
      * 컴포넌트가 기본적으로 사용할 style sheet를 반환하는 함수
@@ -206,7 +216,6 @@ class NMComponent extends HTMLElement {
     }
 
     refresh() {
-        console.log(this.firstElementChild);
         while (this.#root.firstElementChild) {
             this.#root.firstElementChild.remove();
         };

@@ -31,7 +31,8 @@ const ColorUtil = {
 };
 
 const palette = {
-    rainbow: ["#F00", "#FF8C00", "#FF0", "#008000", "#00F", "#4B0082", "#800080"]
+    rainbow: ["#F00", "#FF8C00", "#FF0", "#008000", "#00F", "#4B0082", "#800080"],
+    pantone: ["#1E4477", "#325B63", "#848283", "#F4F9FF", "E0D0DB"]
 }
 
 export default ColorUtil;

@@ -4,10 +4,10 @@ const option = {
         axis: {
             x: {
                 title: {
-                    text: "끼예에에에에",
+                    text: "",
                     param: {
                         style: {
-                            font: "bold 25px auto"
+                            font: "bold 18px auto"
                         },
                         option: {
                             position: "cc"
@@ -26,10 +26,10 @@ const option = {
             },
             y: {
                 title: {
-                    text: "크아아아앙",
+                    text: "",
                     param: {
                         style: {
-                            font: "bold 30px auto"
+                            font: "bold 18px auto"
                         }
                     }
                 },
@@ -46,7 +46,7 @@ const option = {
                         unit: -1
                     },
                     minor: {
-                        use: true,
+                        use: false,
                         unit: -1
                     }
                 }
