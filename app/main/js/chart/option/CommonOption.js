@@ -18,8 +18,10 @@ const commonOption = {
     },
     dataLabel: {
         use: true,
-        style: {
-            font: "bold 12px auto"
+        param: {
+            style: {
+                font: "bold 12px auto"
+            }
         }
     },
     tooltip: {

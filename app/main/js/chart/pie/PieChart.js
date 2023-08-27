@@ -48,15 +48,9 @@ class PieChart extends Chart {
 
             // 데이터 라벨
             const d = { name, value, ratio };
-            const text = this.#getDataLabelText(d);
             const centerRadian = currentRadian + (endRadian - currentRadian) / 2;
-            const rr = r + 5;
-            const tx = Math.cos(centerRadian) * rr + x;
-            const ty = Math.sin(centerRadian) * rr + y;
-            const dlPosition = this.#getDataLabelPosition(centerRadian - startRadian);
-            const dlOption = { position: dlPosition };
-            const dl = util.CanvasUtil.text(tx, ty, text, { style: dataLabelStyle, option: dlOption });
-            parseDataLabel.push(dl);
+            const dl = this.#getDataLabel(d, x, y, r, centerRadian, startRadian);
+            dl && parseDataLabel.push(dl);
 
             currentRadian = endRadian;
         });
@@ -70,6 +64,42 @@ class PieChart extends Chart {
         };
 
         return chartData;
+    }
+
+    #getDataLabel(data, x, y, r, radian, startRadian) {
+        const { dataLabel } = { ...this.data };
+        const { position, param, minHideRatio = 0.05 } = { ...dataLabel };
+        const { ratio } = { ...data };
+
+        let dl;
+        let tx;
+        let ty;
+        let option;
+        if (ratio < minHideRatio) {
+            return;
+        } if (position === "inner") {
+            tx = Math.cos(radian) * r / 2 + x;
+            ty = Math.sin(radian) * r / 2 + y;
+            option = {
+                position: "cc"
+            }
+        } else if (position === "outter") {
+            const corr = 3;
+            r += corr;
+            tx = Math.cos(radian) * r + x;
+            ty = Math.sin(radian) * r + y;
+            option = {
+                position: this.#getDataLabelPosition(radian - startRadian)
+            }
+        } else {
+            return;
+        }
+
+        const text = this.#getDataLabelText(data);
+        param.option = { ...param.option, ...option };
+        dl = util.CanvasUtil.text(tx, ty, text, param);
+
+        return dl;
     }
 
     #getXYR() {
