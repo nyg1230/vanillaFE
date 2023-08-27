@@ -205,8 +205,7 @@ class PieChart extends Chart {
                 const data = util.CommonUtil.find(this.chartData, `chart.${idx}`);
                 
                 util.CanvasUtil.clear(canvas);
-                data.draw(ctx, 1, { style: { fillStyle: "white" } });
-                data.draw(ctx, 1, { style: { globalAlpha: 0.6 } });
+                this.#setDim(ctx, data, idx);
                 this.#tooltipHTML = this.#getTooltipHTML(data);
             }
 
@@ -220,6 +219,20 @@ class PieChart extends Chart {
         }
         
         return html;
+    }
+
+    #setDim(ctx, target, idx) {
+        target.draw(ctx, 1, { style: { fillStyle: "white" } });
+        target.draw(ctx, 1, { style: { globalAlpha: 0.6 } });
+
+        const position = util.CommonUtil.find(this.data, "dataLabel.position");
+
+        if (position === "inner") {
+            const { dataLabel } = { ...this.chartData };
+            dataLabel.forEach((d) => {
+                d.draw(ctx);
+            });
+        }
     }
 
     #getTooltipHTML(data) {
