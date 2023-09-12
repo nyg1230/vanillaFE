@@ -20,8 +20,17 @@ const NMConstant = {
         IMG__SVG_XML: "image/svg+xml"
 
     },
+    method: {
+        GET: "get",
+        POST: "post",
+        PUT: "put",
+        DELETE: "delete"
+    },
     env: {
-        baseUrl: ""
+        baseUrl: "",
+        github: {
+            apiVersion: "2022-11-28"
+        }
     }
 }
 

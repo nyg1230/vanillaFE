@@ -4,9 +4,10 @@ import { NMView, define } from "main/components/core/view/NMView.js";
 import * as util from "main/util/utils.js";
 /* component */
 /* model */
+/* intent */
+import githubIntent from "main/intent/custom/NMGithubIntent.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
-
 
 export default class NMMain extends NMView {
     modelList = [];
@@ -29,16 +30,16 @@ export default class NMMain extends NMView {
     }
 
     get template() {
-        return `
-        <div class="${this.clsName}" part="${this.clsName}">
-            <slot></slot>
-        </div>
-        `
+        return `<div class="${this.clsName}" part="${this.clsName}">
+                    <slot></slot>
+                </div>`;
     }
 
     addEvent() {}
 
     afterRender() {
+        githubIntent.getCommitLanguage([{ owner: "nyg1230", repo: "vanillaFE" }]);
+
         const pieData = {
             type: "pie",
             title: {

@@ -58,7 +58,4 @@ class NMView extends NMComponent {
 
 define(NMView);
 
-export {
-    NMView,
-    define
-};
+export { NMView, define };

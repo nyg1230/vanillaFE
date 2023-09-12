@@ -103,6 +103,20 @@ export default class NMHome extends NMView {
         this.setPieChart();
     }
 
+    getGithubData() {
+        const gitApiModule = "";
+    }
+
+    onChangeModel(e) {
+
+    }
+
+    getCommitCount() {}
+
+    getRepoLanguage() {}
+
+    getCommitList() {}
+
     setColumnChart() {
         const columnChart = util.DomUtil.querySelector(this, ".column-chart");
         try {
