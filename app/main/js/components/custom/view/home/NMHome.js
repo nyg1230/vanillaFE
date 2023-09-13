@@ -5,6 +5,8 @@ import * as util from "main/util/utils.js";
 /* component */
 import NMChart from "main/components/core/chart/NMChart.js";
 /* model */
+/* intent */
+import githubIntent from "main/intent/custom/NMGithubIntent.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
@@ -118,6 +120,14 @@ export default class NMHome extends NMView {
     getCommitList() {}
 
     setColumnChart() {
+        githubIntent.getCommitLanguages([{ owner: "nyg1230", repo: "vanillaFE" }]);
+        githubIntent.getWeeklyCommitCount([
+            { owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } },
+            { owner: "nyg1230", repo: "pythonBE", ext: { name: "be" } },
+            { owner: "nyg1230", repo: "nyg1230.github.io", ext: { name: "io" } }
+        ]);
+        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } }]);
+
         const columnChart = util.DomUtil.querySelector(this, ".column-chart");
         try {
             const data = {

@@ -1,5 +1,5 @@
 /* inherit */
-import NMModel from "main/model/NMModel.js";
+import NMModel from "main/model/core/NMModel.js";
 /* common */
 import * as util from "main/util/utils.js";
 /* component */

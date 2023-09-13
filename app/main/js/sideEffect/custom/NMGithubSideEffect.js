@@ -6,6 +6,7 @@ import { Octokit, App } from "octokit";
 // import { Octokit } from "https://esm.sh/@octokit/core";
 /* component */
 /* model */
+import NMGithubModel from "main/model/custom/NMGithubModel.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
@@ -25,6 +26,10 @@ class NMGithubSideEffect extends NMSideEffect {
         this.#octokit = new Octokit({ auth: atob(apiKey) }); 
     }
 
+    get model() {
+        return NMGithubModel;
+    }
+
     async #request(url, option) {
         const { owner, repo, headers, ...remain } = { ...option };
 
@@ -41,19 +46,86 @@ class NMGithubSideEffect extends NMSideEffect {
         return response;
     }
 
-    getCommitLanguage(params = []) {
+    #getPromiseList(key, params = []) {
         const promiseList = [];
+
         params.forEach((p) => {
-            const url = urlBuilder("commit.repo.languages", p);
+            const { ext, ...remain } = { ...p };
+            const url = urlBuilder(key, remain);
             const promise = new Promise((res, rej) => {
-                res(this.#request(url, p));
+                res(this.#request(url, remain));
             });
             promiseList.push(promise);
         });
 
+        return promiseList;
+    }
+
+    #getGithubData(key, promiseList = [], parse) {
         Promise.all(promiseList).then((result) => {
-            console.log(result);
+            const parseData = util.CommonUtil.isFunction(parse) ? parse(result) : result;
+            console.log(key);
+            console.log(parseData);
         });
+    }
+
+    getCommitLanguages(params = []) {
+        const promiseList = this.#getPromiseList("commit.repo.languages", params);
+        const parse = (list) => {
+            const [d] = [...list];
+            const { data } = { ...d };
+
+            return data;
+        };
+        this.#getGithubData("commitLanguages", promiseList, parse);
+    }
+
+    getWeeklyCommitCount(params = []) {
+        const promiseList = this.#getPromiseList("commit.count.weekly", params);
+        const parse = (list = []) => {
+            const d = [];
+
+            list.forEach((l, idx) => {
+                const { data } = { ...l };
+                const { owner } = { ...data };
+                const { ext } = { ...params[idx] };
+                const { name } = { ...ext };
+                const result = { name, data: owner.reverse() };
+
+                d.push(result);
+            });
+
+            return d;
+        };
+        this.#getGithubData("weeklyCommitLists", promiseList, parse);
+    }
+
+    getCommitLists(params = []) {
+        const promiseList = this.#getPromiseList("commit.list", params);
+        const parse = (list = []) => {
+            const result = [];
+
+            list.forEach((l, idx) => {
+                const { data } = { ...l };
+                const { commit } = { ...data };
+                const { ext } = { ...params[idx] };
+                const { name } = { ...ext };
+                const commitList = [];
+
+                data.forEach((d) => {
+                    const { commit } = { ...d };
+                    const { author, message } = { ...commit };
+                    const { name, date } = { ...author };
+                    const result = { name, date, message };
+                    commitList.push(result);
+                });
+                const info = { name, commitList };
+                result.push(info);
+            });
+
+            return result;
+        };
+        this.#getGithubData("commitList", promiseList, parse);
     }
 }
 

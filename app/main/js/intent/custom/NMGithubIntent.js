@@ -9,8 +9,16 @@ import githubSideEffect from "main/sideEffect/custom/NMGithubSideEffect.js";
 import NMConst from "main/constant/NMConstant.js";
 
 class NMGithubIntent extends NMIntent {
-    getCommitLanguage(p = []) {
-        githubSideEffect.getCommitLanguage(p);
+    getCommitLanguages(p = []) {
+        githubSideEffect.getCommitLanguages(p);
+    }
+
+    getWeeklyCommitCount(p = []) {
+        githubSideEffect.getWeeklyCommitCount(p);
+    }
+
+    getCommitLists(p = []) {
+        githubSideEffect.getCommitLists(p);
     }
 }
 
