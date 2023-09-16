@@ -22,19 +22,19 @@ class NMModel {
         return store.get("model", this.name);
     }
     
-    static set model(model) {
-        NMModel.model.data = data;
-    }
+    // static set model(model) {
+    //     NMModel.model.data = data;
+    // }
 
     static async subscribe(view, option) {
-        util.CommonUtil.isNull(store.get("model", this.name)) && await NMModel.createModel();
-        NMModel.model.setView(view, option);
+        util.CommonUtil.isNull(store.get("model", this.name)) && await this.createModel();
+        this.model.setView(view, option);
     }
 
     static async removeView(view) {
-        if (util.CommonUtil.isNull(NMModel.model)) return;
+        if (util.CommonUtil.isNull(this.model)) return;
         
-        NMModel.model.removeView(view);
+        this.model.removeView(view);
     }
 
     static async removeAllView(view) {
@@ -43,23 +43,42 @@ class NMModel {
         });
     }
 
+    static set(property, data) {
+        if (this.model) {
+            this.model.set(property, data);
+        } else {
+            console.log(`model is not exist...`);
+        }
+    }
+
     constructor() {
         this.#viewList = [];
         this.#data = {};
         this.init();
     }
 
-    init() {}
-
-    getData() {
-        return this.#data;
+    static get name() {
+        return "model";
     }
 
-    setData(data) {
-        this.#data = util.CommonUtil.shallowMerge(this.#data, data);
+    get clsName() {
+        return NMModel.name;
+    }
+
+    init() {}
+
+    set(key, data) {
+        this.#data[key] = data;
+
+        const param = {
+            name: this.clsName,
+            property: key,
+            data: data
+        };
 
         this.#viewList.forEach((v) => {
-            util.EventUtil.dispatchEvent(v, NMConst.eventName.MODEL_CHANGE, this.#data);
+            const { view } = { ...v };
+            util.EventUtil.dispatchEvent(view, NMConst.eventName.MODEL_CHANGE, param);
         });
     }
 

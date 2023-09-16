@@ -24,7 +24,7 @@ const option = {
                     }
                 },
                 tooltip: {
-                    text: ["첫번째", "두번째", "매지막"]
+                    text: []
                 }
             },
             y: {

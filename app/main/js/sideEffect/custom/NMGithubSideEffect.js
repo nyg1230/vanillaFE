@@ -26,10 +26,6 @@ class NMGithubSideEffect extends NMSideEffect {
         this.#octokit = new Octokit({ auth: atob(apiKey) }); 
     }
 
-    get model() {
-        return NMGithubModel;
-    }
-
     async #request(url, option) {
         const { owner, repo, headers, ...remain } = { ...option };
 
@@ -64,8 +60,7 @@ class NMGithubSideEffect extends NMSideEffect {
     #getGithubData(key, promiseList = [], parse) {
         Promise.all(promiseList).then((result) => {
             const parseData = util.CommonUtil.isFunction(parse) ? parse(result) : result;
-            console.log(key);
-            console.log(parseData);
+            NMGithubModel.set(key, parseData);
         });
     }
 

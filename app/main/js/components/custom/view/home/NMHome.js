@@ -5,14 +5,16 @@ import * as util from "main/util/utils.js";
 /* component */
 import NMChart from "main/components/core/chart/NMChart.js";
 /* model */
+import NMGithubModel from "main/model/custom/NMGithubModel.js";
 /* intent */
 import githubIntent from "main/intent/custom/NMGithubIntent.js";
 /* constant */
 import NMConst from "main/constant/NMConstant.js";
 
+const weeklyLimit = 10;
 
 export default class NMHome extends NMView {
-    modelList = [];
+    modelList = [NMGithubModel];
 
     static get name() {
         return "nm-home";
@@ -55,6 +57,7 @@ export default class NMHome extends NMView {
 
             .column-chart-area {
                 grid-area: col;
+                padding: 0px 8px;
             }
 
             .pie-chart-area {
@@ -98,113 +101,35 @@ export default class NMHome extends NMView {
         `;
     }
 
-    addEvent() {}
+    addEvent() {
+        super.addEvent();
+    }
 
     afterRender() {
-        this.setColumnChart();
-        this.setPieChart();
+        super.afterRender();
+        this.getChartDatas();
     }
 
-    getGithubData() {
-        const gitApiModule = "";
+    onModelChange(e) {
+        const { detail } = e;
+        const { name, property, data } = { ...detail };
+
+        if (name === NMGithubModel.name) {
+            if (property === "commitLanguages") {
+                this.setCommitLanguages(data);
+            } else if (property === "commitList") {
+                this.setCommitList(data);
+            } else if (property === "weeklyCommitLists") {
+                this.setWeeklyCommitLists(data);
+            }
+        }
     }
 
-    onChangeModel(e) {
-
-    }
-
-    getCommitCount() {}
-
-    getRepoLanguage() {}
-
-    getCommitList() {}
-
-    setColumnChart() {
-        githubIntent.getCommitLanguages([{ owner: "nyg1230", repo: "vanillaFE" }]);
-        githubIntent.getWeeklyCommitCount([
-            { owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } },
-            { owner: "nyg1230", repo: "pythonBE", ext: { name: "be" } },
-            { owner: "nyg1230", repo: "nyg1230.github.io", ext: { name: "io" } }
-        ]);
-        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } }]);
-
-        const columnChart = util.DomUtil.querySelector(this, ".column-chart");
-        try {
-            const data = {
-                palette: "pantone",
-                type: "column",
-                title: {
-                    text: "주간 커밋 횟수"
-                },
-                axis: {
-                    x: {
-                        title: {
-                            text: "커밋 주차"
-                        }
-                    },
-                    y: {
-                        title: {
-                            text: "횟수"
-                        }
-                    }
-                },
-                data: [
-                    {
-                        "1주차": 10,
-                        "2주차": 15,
-                        "3주차": 15,
-                        "4주차": 7,
-                        "5주차": 9,
-                        "6주차": 4,
-                        "7주차": 10,
-                        "8주차": 15,
-                        "9주차": 15,
-                        "10주차": 7,
-                        "11주차": 9,
-                        "12주차": 4
-                    },
-                    {
-                        "1주차": 7,
-                        "2주차": 9,
-                        "3주차": 2,
-                        "4주차": 7,
-                        "5주차": 3,
-                        "6주차": 0,
-                        "7주차": 7,
-                        "8주차": 9,
-                        "9주차": 2,
-                        "10주차": 7,
-                        "11주차": 3,
-                        "12주차": 0
-                    },
-                    {
-                        "1주차": 20,
-                        "2주차": 3,
-                        "3주차": 30,
-                        "4주차": 7,
-                        "5주차": 15,
-                        "6주차": 6,
-                        "7주차": 20,
-                        "8주차": 3,
-                        "9주차": 30,
-                        "10주차": 7,
-                        "11주차": 15,
-                        "12주차": 6
-                    }
-                ]
-            };
-            columnChart.setChart(data);
-            columnChart.draw();
-        } catch (e) {
-            console.log(e);
-        };
-    }
-
-    setPieChart() {
+    setCommitLanguages(data) {
         const pieChart = util.DomUtil.querySelector(this, ".pie-chart");
 
         try {
-            const data = {
+            const pieData = {
                 palette: "pantone",
                 type: "pie",
                 title: {
@@ -220,16 +145,70 @@ export default class NMHome extends NMView {
                     }
                 },
                 data: {
-                    javascript: 5000,
-                    html: 350,
-                    css: 100
+                    ...data
                 }
             };
-            pieChart.setChart(data);
+            pieChart.setChart(pieData);
             pieChart.draw();
         } catch(e) {
             console.log(e);
         }
+    }
+
+    setWeeklyCommitLists(data) {
+        const columnChart = util.DomUtil.querySelector(this, ".column-chart");
+        try {
+            const tooltipText = [];
+            const chartData = [];
+            
+            data.forEach((d) => {
+                const { name, data } = { ...d };
+                const parseData = {};
+                for (let idx = 0; idx < weeklyLimit; idx++) {
+                    const text = `${idx}주 전`;
+                    parseData[text] = data[idx];
+                }
+
+                tooltipText.push(name);
+                chartData.push(parseData);
+            });
+
+            const columnData = {
+                palette: "pantone",
+                type: "column",
+                title: { text: "주간 커밋 횟수" },
+                axis: {
+                    x: {
+                        title: { text: "커밋 주차" },
+                        tooltip: { text: tooltipText },
+                    },
+                    y: {
+                        title: {
+                            text: "횟수"
+                        }
+                    }
+                },
+                data: chartData
+            };
+            columnChart.setChart(columnData);
+            columnChart.draw();
+        } catch (e) {
+            console.log(e);
+        };
+    }
+
+    setCommitList(data) {
+        console.log(data);
+    }
+
+    getChartDatas() {
+        githubIntent.getCommitLanguages([{ owner: "nyg1230", repo: "vanillaFE" }]);
+        githubIntent.getWeeklyCommitCount([
+            { owner: "nyg1230", repo: "vanillaFE", ext: { name: "repo: FE-js" } },
+            { owner: "nyg1230", repo: "pythonBE", ext: { name: "repo: BE-py" } },
+            { owner: "nyg1230", repo: "nyg1230.github.io", ext: { name: "repo: git.io" } }
+        ]);
+        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } }]);
     }
 }
 
