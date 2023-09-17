@@ -35,6 +35,35 @@ class StoreUtil {
 
         p[last] = value;
     }
+
+    getLocalStorage(key, defaultValue = null) {
+        let result = localStorage.getItem(key);
+
+        if (util.CommonUtil.isNull(result)) {
+            this.setLocalStorage(key, defaultValue);
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    setLocalStorage(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    getSessionStorage(key, defaultValue = null) {
+        const result = sessionStorage.getItem(key);
+
+        if (util.CommonUtil.isNotNull(result)) {
+            this.setSessrionStorage(key, defaultValue);
+        }
+
+        return result;
+    }
+
+    setSessrionStorage(key, value) {
+        return sessionStorage.setItem(key, value);
+    }
 }
 
 const store = new StoreUtil();

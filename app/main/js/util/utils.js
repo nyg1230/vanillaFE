@@ -10,6 +10,7 @@ import CanvasUtil from "main/util/CanvasUtil.js";
 import ColorUtil from "main/util/ColorUtil.js";
 import AnimateUtil from "main/util/AnimateUtil.js";
 import FetchUtil from "main/util/FetchUtil.js";
+import TranslateUtil from "main/util/TranslateUtil.js";
 
 export {
     CommonUtil,
@@ -23,5 +24,6 @@ export {
     CanvasUtil,
     ColorUtil,
     FetchUtil,
+    TranslateUtil,
     store
 };

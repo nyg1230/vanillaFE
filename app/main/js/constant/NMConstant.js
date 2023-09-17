@@ -10,7 +10,8 @@ const NMConstant = {
         MODEL_CHANGE: "modelChange",
         CHART_COMPLETE: "chartComplete",
         POP_STATE: "popstate",
-        HASH_CHANGE: "hashchange"
+        HASH_CHANGE: "hashchange",
+        CHANGE_LANGUAGE: "changeLanguage"
     },
     mimeType: {
         TEXT__HTML: "text/html",
