@@ -1,4 +1,10 @@
+/* inherit */
 import { NMComponent, define } from "main/components/core/NMComponent.js";
+/* common */
+import * as util from "main/util/utils.js";
+/* component */
+/* constant */
+import NMConst from "main/constant/NMConstant.js";
 
 export default class NMInput extends NMComponent {
     static get observedAttributes() {

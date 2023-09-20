@@ -48,7 +48,7 @@ class NMComponent extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        this.changeAttribute(name, oldValue, newValue);
+        this.onChangeAttr(name, oldValue, newValue);
     }
 
     disconnectedCallback() {
@@ -131,7 +131,7 @@ class NMComponent extends HTMLElement {
     /* component event function end */
 
     /* component attribute observe function start */
-    changeAttribute() {}
+    onChangeAttr() {}
     /* component attribute observe function end */
 
     /* component renderring function start */

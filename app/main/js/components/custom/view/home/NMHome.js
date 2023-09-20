@@ -89,13 +89,19 @@ export default class NMHome extends NMView {
                 <nm-chart class="pie-chart commit-kind-chart"></nm-chart>
             </div>
             <div class="commit-list">
-                커밋 리스트
+                <div class="title-area">
+                    <nm-label class="" value="commit.list" range="git" param="1,23"></nm-label>
+                </div>
             </div>
             <div class="recent-list-area">
-                최근 목록 리스트
+                <div class="title-area">
+                    <nm-label class="" value="recent.list" range="board"></nm-label>
+                </div>
             </div>
             <div class="tag-list-area">
-                태그 리스트
+                <div class="title-area">
+                    <nm-label class="" value="tag.list" range="tag"></nm-label>
+                </div>
             </div>
         </div>
         `;

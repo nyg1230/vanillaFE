@@ -12,21 +12,25 @@ let pack;
 
 const TranslateUtil = {
     translate(key, range = "common", data = []) {
-        let text = util.CommonUtil.find(pack, `${range}.${key}`);
+        const target = util.CommonUtil.find(pack, range);
 
-        if (util.CommonUtil.isArray(data)) {
-            data.forEach((d, idx) => {
-                const reg = new RegExp(`{${idx}}`);
-                text = text.replace(reg, d);
-            });
+        let text;
+        if (util.CommonUtil.isNotEmpty(target)) {
+            text = target[key];
+            
+            if (util.CommonUtil.isArray(data)) {
+                data.forEach((d, idx) => {
+                    const reg = new RegExp(`\\{${idx}\\}`);
+                    text = text.replace(reg, d);
+                });
+            }
         }
 
         return text;
     },
-    changeLanguage(key) {
-        lang = key;
-        store.setSessionStorage(key, lang);
-        this.getLanguagePack(language);
+    changeLanguage(lang) {
+        store.setLocalStorage("language", lang);
+        this.getLanguagePack(lang);
 
         util.EventUtil.dispatchEvent(window, NMConst.eventName.CHANGE_LANGUAGE);
     },
