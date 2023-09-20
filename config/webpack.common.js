@@ -1,3 +1,5 @@
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 const path = require('path');
 
 const rootPath = path.resolve(__dirname, "../");
@@ -7,7 +9,8 @@ module.exports = {
     entry: {},
     resolve: {
         alias: {
-            main: `${rootPath}/app/main/js/`
+            main: `${rootPath}/app/main/js/`,
+            css: `${rootPath}/app/main/css/`
         },
         fallback: {
             fs: false,
@@ -35,7 +38,18 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/
+            },
+            {
+                test: /\.css$/,
+                use: ["css-loader"],
+                exclude: [/node_modules/]
             }
         ]
-    }
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[name].[id].css"
+        }),
+    ]
 };

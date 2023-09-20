@@ -1,6 +1,17 @@
 import * as util from "./utils.js";
+import css from "css/common.css";
+
+const styleSheet = new CSSStyleSheet();
+const [module] = [...css];
+const [pathName, styles, _, obj] = [...module];
+styleSheet.replace(styles);
 
 const StyleUtil = {
+    setGlobalStyles(component) {
+        console.log(component);
+        window.eee = component;
+        component.adoptedStyleSheets.push(styleSheet);
+    },
     getBoundingClientRect(dom) {
         let rect;
         if (!dom) {

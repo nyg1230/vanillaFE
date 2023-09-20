@@ -143,6 +143,7 @@ class NMComponent extends HTMLElement {
         this.#beforeRender();
         if (!this.#root) {
             this.#root = this.attachShadow({ mode: "open" });
+            util.StyleUtil.setGlobalStyles(this.#root);
         }
         const frag = document.createDocumentFragment();
 
