@@ -8,8 +8,6 @@ styleSheet.replace(styles);
 
 const StyleUtil = {
     setGlobalStyles(component) {
-        console.log(component);
-        window.eee = component;
         component.adoptedStyleSheets.push(styleSheet);
     },
     getBoundingClientRect(dom) {
