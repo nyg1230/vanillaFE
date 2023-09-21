@@ -41,7 +41,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ["css-loader"],
+                use: ["to-string-loader", "css-loader"],
                 exclude: [/node_modules/]
             }
         ]

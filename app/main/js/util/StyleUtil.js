@@ -1,9 +1,7 @@
 import * as util from "./utils.js";
-import css from "css/common.css";
+import styles from "css/common.css";
 
 const styleSheet = new CSSStyleSheet();
-const [module] = [...css];
-const [pathName, styles, _, obj] = [...module];
 styleSheet.replace(styles);
 
 const StyleUtil = {
