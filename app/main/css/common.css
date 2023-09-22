@@ -1,4 +1,24 @@
+@import url("css/component.css");
+
 :host {
     --color-red: #F00;
     --color-blue: #0000FF;
+    --viva-magenta: #BE3455;
+	--pale-dogwood: #EFD1C6;
+	--gray-sand: #ECD5B8;
+	--gray-lilac: #D4CACD;
+	--pale-khaki: #BFAF92;
+	--fields-of-rye: #B7A990;
+	--agate-gray: #B4B5A5;
+	--plein-air: #BFCAD6;
+}
+
+* {
+    user-select: none;
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

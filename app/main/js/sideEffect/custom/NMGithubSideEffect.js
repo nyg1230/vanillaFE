@@ -102,12 +102,12 @@ class NMGithubSideEffect extends NMSideEffect {
 
             list.forEach((l, idx) => {
                 const { data } = { ...l };
-                const { commit } = { ...data };
                 const { ext } = { ...params[idx] };
-                const { name } = { ...ext };
+                const { name, limit = -1 } = { ...ext };
                 const commitList = [];
+                const _data = limit > 0 ? [...data].splice(0, limit) : [ ...data];
 
-                data.forEach((d) => {
+                _data.forEach((d) => {
                     const { commit } = { ...d };
                     const { author, message } = { ...commit };
                     const { name, date } = { ...author };

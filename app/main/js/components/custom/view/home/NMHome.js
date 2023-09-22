@@ -4,6 +4,7 @@ import { NMView, define } from "main/components/core/view/NMView.js";
 import * as util from "main/util/utils.js";
 /* component */
 import NMChart from "main/components/core/chart/NMChart.js";
+import NMList from "main/components/core/component/NMList.js"
 /* model */
 import NMGithubModel from "main/model/custom/NMGithubModel.js";
 /* intent */
@@ -27,6 +28,7 @@ export default class NMHome extends NMView {
     get styles() {
         return `
             .${this.clsName} {
+                --title-padding: 8px;
                 width: 100%;
                 height: 100%;
                 display: grid;
@@ -35,12 +37,16 @@ export default class NMHome extends NMView {
                     "pie com com"
                     "rec rec rec"
                     "tag tag tag";
-                grid-template-columns: "";
+                grid-template-columns: calc(100% / 3);
                 grid-template-rows:
-                    minmax(25vh, min-content)
-                    minmax(20vh, min-content)
-                    minmax(0, min-content)
-                    minmax(0, min-content);
+                    minmax(25vh, 25vh)
+                    minmax(20vh, 25vh)
+                    minmax(0, 10vh)
+                    minmax(0, 10vh);
+            }
+
+            .title-area {
+                padding-bottom: var(--title-padding);
             }
 
             @media screen and (max-width: 860px) {
@@ -64,8 +70,20 @@ export default class NMHome extends NMView {
                 grid-area: pie;
             }
 
-            .commit-list {
+            .commit-list-area {
                 grid-area: com;
+                --title-height: 20px;
+                
+                & .title-area {
+                    height: var(--title-height);
+                    padding-bottom: var(--title-padding);
+                }
+
+                & .list-area {
+                    overflow-y: scroll;
+                    height: calc(25vh - var(--title-height) - var(--title-padding));
+                }
+
             }
 
             .recent-list-area {
@@ -76,6 +94,23 @@ export default class NMHome extends NMView {
                 grid-area: tag;
             }
 
+            .commit-list {
+                --template-columns: minmax(auto, 15%) minmax(auto, 30%) auto;
+
+                & .row {
+                    .commit-name {
+                        text-align: center;
+                    }
+
+                    .commit-date {
+                        padding-left: 4px;
+                    }
+
+                    .commit-msg {
+                        padding: 0px 4px;
+                    }
+                }
+            }
         `;
     }
 
@@ -88,9 +123,20 @@ export default class NMHome extends NMView {
             <div class="pie-chart-area">
                 <nm-chart class="pie-chart commit-kind-chart"></nm-chart>
             </div>
-            <div class="commit-list">
+            <div class="commit-list-area">
                 <div class="title-area">
                     <nm-label class="" value="commit.list" range="git" param="1,23"></nm-label>
+                </div>
+                <div class="list-area">
+                    <nm-list class="commit-list">
+                        <template>
+                            <div class="row">
+                                <div class="item commit-name ellipsis"><nm-label class="" data-value="name"></nm-label></div>
+                                <div class="item commit-date ellipsis"><nm-label class="" data-value="date"></nm-label></div>
+                                <div class="item commit-msg ellipsis"><nm-label class="" data-value="message"></nm-label></div>
+                            </div>
+                        </template>
+                    </nm-list>
                 </div>
             </div>
             <div class="recent-list-area">
@@ -136,7 +182,7 @@ export default class NMHome extends NMView {
 
         try {
             const pieData = {
-                palette: "pantone",
+                palette: "2023",
                 type: "pie",
                 title: {
                     text: "언어별 커밋량"
@@ -180,7 +226,7 @@ export default class NMHome extends NMView {
             });
 
             const columnData = {
-                palette: "pantone",
+                palette: "2023",
                 type: "column",
                 title: { text: "주간 커밋 횟수" },
                 axis: {
@@ -204,7 +250,10 @@ export default class NMHome extends NMView {
     }
 
     setCommitList(data) {
-        console.log(data);
+        const list = util.DomUtil.querySelector(this, ".commit-list");
+        const [d] = [...data];
+        const { commitList } = { ...d };
+        list.setData(commitList);
     }
 
     getChartDatas() {
@@ -214,7 +263,7 @@ export default class NMHome extends NMView {
             { owner: "nyg1230", repo: "pythonBE", ext: { name: "repo: BE-py" } },
             { owner: "nyg1230", repo: "nyg1230.github.io", ext: { name: "repo: git.io" } }
         ]);
-        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe" } }]);
+        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe", limit: 7 } }]);
     }
 }
 

@@ -1,0 +1,36 @@
+nm-list {
+    display: grid;
+
+    --template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    --gap-r: 8px;
+    --gap-c: 2px;
+    --hover-color-bg: var(--pale-dogwood);
+    --hover-color: #000000;
+    --color-border: var(--plein-air);
+
+    & .row {
+        display: grid;
+        overflow-x: hidden;
+        grid-template-columns: var(--template-columns);
+        column-gap: var(--gap-c);
+        row-gap: var(--gap-r);
+        padding-bottom: 2px;
+
+        &:hover {
+            .item {
+                background-color: var(--hover-color-bg);
+                color: var(--hover-color)
+            }
+        }
+        
+        & .item {
+            border: 1px solid var(--color-border);
+            border-radius: 2px;
+            padding: 2px 4px;
+        }
+    }
+}
+
+.nm-label {
+    line-height: 18px;
+}
