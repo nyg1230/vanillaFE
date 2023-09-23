@@ -9,7 +9,7 @@ module.exports = {
     entry: {},
     resolve: {
         alias: {
-            main: `${rootPath}/app/main/js/`,
+            js: `${rootPath}/app/main/js/`,
             css: `${rootPath}/app/main/css/`
         },
         fallback: {
