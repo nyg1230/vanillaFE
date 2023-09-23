@@ -108,9 +108,13 @@ class Tooltip {
 	}
 
 	setTooltip() {
-		const mouseover = this.onMouseOver.bind(this);
-		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OVER, mouseover, {});
-		this.#events = { [NMConst.eventName.MOUSE_OVER]: mouseover };
+		const mouseMove = this.onMouseMove.bind(this);
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mouseMove, {});
+		this.#events = { [NMConst.eventName.onMouseMove]: mouseMove };
+
+		const mouseOut = this.onMouseOut.bind(this);
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut, {});
+		this.#events = { [NMConst.eventName.onMouseOut]: mouseOut };
 	}
 	
 	clearEventAll() {
@@ -137,27 +141,8 @@ class Tooltip {
 	}
 
 	onMouseOut() {
-		const mouseOut = this.#events[NMConst.eventName.MOUSE_OUT];
-		if (mouseOut) {
-			util.EventUtil.unbindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut, {});
-			delete this.#events[NMConst.eventName.MOUSE_OUT];
-		}
-
-		const mouseMove = this.#events[NMConst.eventName.MOUSE_MOVE];
-		if (mouseMove) {
-			util.EventUtil.unbindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mouseMove, {});
-			delete this.#events[NMConst.eventName.MOUSE_MOVE];
-		}
-	}
-
-	onMouseOver(e) {
-		const mouseOut = this.onMouseOut.bind(this);
-		this.#events[NMConst.eventName.MOUSE_OUT] = mouseOut;
-		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut);
-
-		const mmouseMove = this.onMouseMove.bind(this);
-		this.#events[NMConst.eventName.MOUSE_MOVE] = mmouseMove;
-		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mmouseMove);
+		util.DomUtil.enableClass(this.#tooltip, "hidden", true);
+		this.clearContent();
 	}
 
 	onMouseMove(e) {

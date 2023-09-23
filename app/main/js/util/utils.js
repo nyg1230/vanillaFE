@@ -11,10 +11,12 @@ import ColorUtil from "main/util/ColorUtil.js";
 import AnimateUtil from "main/util/AnimateUtil.js";
 import FetchUtil from "main/util/FetchUtil.js";
 import TranslateUtil from "main/util/TranslateUtil.js";
+import DateUtil from "main/util/DateUtil.js";
 
 export {
     CommonUtil,
 	DomUtil,
+    DateUtil,
     TooltipUtil,
     StyleUtil,
     AopUtil,

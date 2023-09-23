@@ -80,6 +80,7 @@ export default class NMHome extends NMView {
                 }
 
                 & .list-area {
+                    padding: 0px 4px;
                     overflow-y: scroll;
                     height: calc(25vh - var(--title-height) - var(--title-padding));
                 }
@@ -131,9 +132,15 @@ export default class NMHome extends NMView {
                     <nm-list class="commit-list">
                         <template>
                             <div class="row">
-                                <div class="item commit-name ellipsis"><nm-label class="" data-value="name"></nm-label></div>
-                                <div class="item commit-date ellipsis"><nm-label class="" data-value="date"></nm-label></div>
-                                <div class="item commit-msg ellipsis"><nm-label class="" data-value="message"></nm-label></div>
+                                <div class="item commit-name ellipsis">
+                                    <nm-label class="" data-value="name">
+                                </nm-label></div>
+                                <div class="item commit-date ellipsis">
+                                    <nm-label class="" data-value="date" type="date" format="$Y-$M-$d $h:$m:$s" tooltip="true">
+                                </nm-label></div>
+                                <div class="item commit-msg ellipsis">
+                                    <nm-label class="" data-value="message" tooltip="true">
+                                </nm-label></div>
                             </div>
                         </template>
                     </nm-list>
