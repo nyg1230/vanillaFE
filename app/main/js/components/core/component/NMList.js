@@ -10,6 +10,7 @@ export default class NMList extends NMComponent {
     #header = {};
     #items = {};
     #template;
+    #fragment;
 
     static get name() {
         return "nm-list";
@@ -53,7 +54,7 @@ export default class NMList extends NMComponent {
 
         if (!util.CommonUtil.isArray(data)) {
             const { header, list } = { ...data };
-            this.#header = header;
+            this.#header = { item: header };
             tmpList = list;
         } else {
             tmpList = data;
@@ -63,11 +64,13 @@ export default class NMList extends NMComponent {
             this.#items[idx] = { data: d };
         });
 
+        this.#fragment = document.createDocumentFragment();
+        this.renderHeader();
         this.renderList(this.#items);
     }
 
     renderList(items) {
-        const fragment = document.createDocumentFragment();
+        const fragment = this.#fragment;
         const entries = Object.entries(items).sort((a, b) => a[0] > b[0]);
 
         entries.forEach(([idx, v]) => {
@@ -75,11 +78,30 @@ export default class NMList extends NMComponent {
             const row = this.renderRow(idx, data);
             fragment.appendChild(row);
 
-            const node = fragment.querySelector(`[index="${idx}"]`);
+            const node = util.DomUtil.querySelector(fragment, `[index="${idx}"]`);
+            const tmp = fragment.lastElementChild;
             v.node = node;
         });
 
         this.appendChild(fragment);
+    }
+
+    renderHeader() {
+        const { item } = { ...this.#header };
+        
+        if (util.CommonUtil.isNotEmpty(item)) {
+            const node = document.importNode(this.#template.content, true);
+            util.DomUtil.addClass(node.firstElementChild, "header");
+
+            Object.entries(item).forEach(([k, data]) => {
+                const target = util.DomUtil.querySelector(node, `[data-value="${k}"]`);
+                Object.entries(data).forEach(([dk, dv]) => {
+                    target[dk] = dv;
+                });
+            });
+            this.#fragment.appendChild(node);
+            this.#header.node = this.#fragment.lastElementChild;
+        }
     }
 
     renderRow(index, data) {

@@ -260,7 +260,15 @@ export default class NMHome extends NMView {
         const list = util.DomUtil.querySelector(this, ".commit-list");
         const [d] = [...data];
         const { commitList } = { ...d };
-        list.setData(commitList);
+        const listData = {
+            header: {
+                name: { value: "writer", range: "common", tooltip: false },
+                date: { value: "date", range: "common", type: "", tooltip: false },
+                message: { value: "message", range: "common", tooltip: false }
+            },
+            list: commitList
+        };
+        list.setData(listData);
     }
 
     getChartDatas() {
@@ -270,7 +278,7 @@ export default class NMHome extends NMView {
             { owner: "nyg1230", repo: "pythonBE", ext: { name: "repo: BE-py" } },
             { owner: "nyg1230", repo: "nyg1230.github.io", ext: { name: "repo: git.io" } }
         ]);
-        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe", limit: 7 } }]);
+        githubIntent.getCommitLists([{ owner: "nyg1230", repo: "vanillaFE", ext: { name: "fe", limit: 5 } }]);
     }
 }
 

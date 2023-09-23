@@ -129,7 +129,7 @@ export default class NMLabel extends NMComponent {
     }
 
     onChangeAttr(name, old, value) {
-        if (name === "value" || name === "range") {
+        if (name === "value" || name === "range" || name === "type") {
             const text = this.getText();
             this.setText(text);
         }

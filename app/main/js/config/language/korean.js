@@ -1,6 +1,9 @@
 const korean = {
     common: {
-        commit: "커밋"
+        commit: "커밋",
+        writer: "작성자",
+        date: "날짜",
+        message: "메세지"
     },
     board: {
         "recent.list": "최근 목록"

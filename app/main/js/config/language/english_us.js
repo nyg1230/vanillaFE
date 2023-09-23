@@ -1,6 +1,9 @@
 const english_us = {
     common: {
-        commit: "commit"
+        commit: "commit",
+        writer: "Writer",
+        date: "Date",
+        message: "Message"
     },
     board: {
         "recent.list": "Recent List"
