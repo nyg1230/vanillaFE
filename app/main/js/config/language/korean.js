@@ -3,7 +3,9 @@ const korean = {
         commit: "커밋",
         writer: "작성자",
         date: "날짜",
-        message: "메세지"
+        message: "메세지",
+        home: "홈",
+        category: "카테고리"
     },
     board: {
         "recent.list": "최근 목록"

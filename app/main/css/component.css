@@ -35,6 +35,46 @@ nm-list {
     line-height: 18px;
 }
 
+nm-menu {
+    --sub-menu-height: 0px;
+    --sub-menu-display: none;
+    --hover-row-bg-color: var(--pale-dogwood);
+    --hover-row-color: var(--pantone-true-blue);
+    --hover-sub-row-bg-color: var(--pantone-orchid-ice);
+    --hover-sub-row-color: var(--pantone-true-blue);
+
+    & .sub-menu {
+        max-height: var(--sub-menu-height);
+        display: var(--sub-menu-display);
+
+        & .row {
+            &:hover {
+                background-color: var(--hover-sub-row-bg-color);
+                --hover-row-color: var(--hover-sub-row-color);
+            }
+        }
+    }
+
+    & .row {
+        padding: 0px 4px;
+
+        &:hover {
+            background-color: var(--hover-row-bg-color);
+
+            & > nm-label {
+                color: var(--hover-row-color);
+                font-weight: 600;
+            }
+
+            & > nm-menu {
+                --sub-menu-display: block;
+                max-height: 50%;
+                transition: 1000ms;
+            }
+        }
+    }
+}
+
 @media screen and (max-width: 860px) {
     .nm-body {
         .container {

@@ -10,8 +10,12 @@ class NMComponent extends HTMLElement {
     #rect;
     #event = {}
 
-    constructor() {
+    constructor(params = {}) {
         super();
+
+        Object.entries(params).push(([k, v]) => {
+            this[k] = v;
+        });
     }
     
     static get observedAttributes() {

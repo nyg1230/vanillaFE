@@ -81,7 +81,7 @@ class NMChart extends NMComponent {
         }
 
         const wrapper = util.DomUtil.querySelector(this, `.${this.clsName}`);
-        const fn = () => util.CommonUtil.debounce(this, "resize");
+        const fn = (entry) => util.CommonUtil.debounce(this, "resize");
         util.ObserverUtil.resizeObserver(this, [wrapper], fn);
 
         this.#resize();
