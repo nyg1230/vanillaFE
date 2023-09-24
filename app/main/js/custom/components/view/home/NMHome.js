@@ -53,7 +53,7 @@ export default class NMHome extends NMView {
                 .${this.clsName} {
                     grid-template-areas: "col" "pie" "com" "rec" "tag";
                     grid-template-columns: minmax(0, 100vw);
-                    grid-template-rows: repeat(auto-fill, minmax(200px, max-content));
+                    grid-template-rows: repeat(auto-fit, minmax(20vh, 30vh));
                 }
             }
 
@@ -82,7 +82,7 @@ export default class NMHome extends NMView {
                 & .list-area {
                     padding: 0px 4px;
                     overflow-y: scroll;
-                    height: calc(25vh - var(--title-height) - var(--title-padding));
+                    height: calc(100% - var(--title-height) - var(--title-padding));
                 }
 
             }

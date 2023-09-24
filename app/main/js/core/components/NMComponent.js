@@ -232,6 +232,7 @@ class NMComponent extends HTMLElement {
      */
     #destroy() {
         this.unbindEventAll();
+        util.ObserverUtil.disconnectAll(this);
     }
 
     /**

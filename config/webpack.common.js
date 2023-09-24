@@ -10,7 +10,8 @@ module.exports = {
     resolve: {
         alias: {
             js: `${rootPath}/app/main/js/`,
-            css: `${rootPath}/app/main/css/`
+            css: `${rootPath}/app/main/css/`,
+            image: `${rootPath}/app/main/image/`
         },
         fallback: {
             fs: false,

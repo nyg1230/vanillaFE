@@ -47,7 +47,6 @@ class NMChart extends NMComponent {
 
     addEvent() {
         this.bindEvent(this, NMConst.eventName.CHART_DRAW_COMPLETE, this.onChartComplete);
-        this.bindEvent(window, "resize", this.onResize);
     }
 
     onChartComplete(e) {
@@ -60,16 +59,11 @@ class NMChart extends NMComponent {
         }
     }
 
-    onResize(e) {
-        util.CommonUtil.debounce(this, "resize");
-    }
-
     resize() {
         this.#resize();
     }
 
     afterRender() {
-        window.www = this;
         const mainLayer = util.DomUtil.querySelector(this, ".main-layer");
         if (mainLayer) {
             this.#layers.mainLayer = {
@@ -85,6 +79,10 @@ class NMChart extends NMComponent {
                 ctx: subLayer.getContext("2d")
             }
         }
+
+        const wrapper = util.DomUtil.querySelector(this, `.${this.clsName}`);
+        const fn = () => util.CommonUtil.debounce(this, "resize");
+        util.ObserverUtil.resizeObserver(this, [wrapper], fn);
 
         this.#resize();
     }

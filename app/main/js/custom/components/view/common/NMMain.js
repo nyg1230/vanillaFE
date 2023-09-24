@@ -25,6 +25,7 @@ export default class NMMain extends NMView {
             .${this.clsName} {
                 width: 100%;
                 height: 100%;
+                overflow-y: scroll;
             }
         `;
     }
@@ -34,8 +35,6 @@ export default class NMMain extends NMView {
                     <slot></slot>
                 </div>`;
     }
-
-    addEvent() {}
 
     afterRender() {}
 }

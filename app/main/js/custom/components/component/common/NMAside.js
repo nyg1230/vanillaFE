@@ -22,14 +22,22 @@ export default class NMAside extends NMComponent {
     get styles() {
         return `
             .${this.clsName} {
-                border: 1px solid red;
+                height: 100%;
             }
-        `;
+
+            .banner {
+                border: 1px solid var(--plein-air);
+                height: 600px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-image: url(image/banner/banner_vertical.png);
+            }
+            `;
     }
 
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
-                    배너
+                    <div class="banner"></div>
                 </div>`;
     }
 }

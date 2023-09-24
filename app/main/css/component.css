@@ -34,3 +34,24 @@ nm-list {
 .nm-label {
     line-height: 18px;
 }
+
+@media screen and (max-width: 860px) {
+    .nm-body {
+        .container {
+            --width: 100%;
+            margin: 0 0;
+            grid-template-areas: "header" "nav" "aside" "sec" "footer";
+            grid-template-columns: minmax(0, 100vw);
+            grid-template-rows: minmax(0, min-content) minmax(0, min-content) minmax(0, min-content) minmax(0, auto) minmax(0, auto);
+        }
+    }
+
+    .nm-aside {
+        & .banner {
+            height: 75px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-image: url(image/banner/banner_horison.png);
+        }
+    }
+}

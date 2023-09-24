@@ -127,9 +127,38 @@ const ObserverUtil = {
                 }
             });
         }
+    },
+    resizeObserver(parent, observeTargets = [], callback) {
+        !parent.observer && (parent.observer = {});
+        !util.CommonUtil.isFunction(callback) && (callback = () => {});
+
+        const resizeObserver = new ResizeObserver((entries, observer) => {
+            for (const entry of entries) {
+                callback(entry, observer);
+            }
+        });
+
+        observeTargets.forEach((el) => resizeObserver.observe(el));
+
+        parent.observer.resizeObserver = resizeObserver;
+    },
+    disconnect(target, name) {
+        const observer = util.CommonUtil.find(target, `observer.${name}`);
+
+        if (observer) {
+            observer.disconnect();
+            target.observer[name] = null;
+        }
+    },
+    disconnectAll(target) {
+        if (!target.observer) return;
+
+        Object.values(target.observer).forEach((observer) => {
+            observer.disconnect();
+        });
+
+        target.observer = null;
     }
 };
 
-export default {
-    ObserverUtil
-};
+export default ObserverUtil;

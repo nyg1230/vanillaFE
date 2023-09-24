@@ -6,7 +6,6 @@ import * as util from "js/core/util/utils.js";
 import NMHeader from "js/custom/components/component/common/NMHeader.js";
 import NMNav from "js/custom/components/component/common/NMNav.js";
 import NMAside from "js/custom/components/component/common/NMAside.js";
-import NMFooter from "js/custom/components/component/common/NMFooter.js";
 /* model */
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
@@ -53,6 +52,7 @@ export default class NMBody extends NMView {
 			nm-header {
 				position: sticky;
 				height: fit-content;
+				grid-area: header;
 			}
 
 			nm-nav {
@@ -67,17 +67,8 @@ export default class NMBody extends NMView {
 				grid-area: aside;
 			}
 
-			@media screen and (max-width: 860px) {
-				.container {
-					--width: 100%;
-					margin: 0 0;
-					grid-template-areas:
-						"nav"
-						"sec"
-						"aside";
-					grid-template-columns: minmax(0, 100vw);
-					grid-template-rows: minmax(0, min-content) minmax(0, auto) minmax(0, min-content);
-				}
+			nm-footer {
+				grid-area: header;
 			}
         `;
     }
@@ -95,7 +86,6 @@ export default class NMBody extends NMView {
 					<slot></slot>
 				</section>
 			</div>
-            <nm-footer></nm-footer>
         </div>
         `;
     }
