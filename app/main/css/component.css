@@ -31,6 +31,45 @@ nm-list {
     }
 }
 
+nm-grid, .nm-grid {
+	--content-height: 300px;
+	width: 100%;
+	
+	&.container {
+	}
+	
+	& .body {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		overflow-y: scroll;
+		max-height: var(--content-height);
+	}
+
+	& .row {
+		display: flex;
+		border: 1px solid var(--plein-air);
+
+		&.header {
+			& .item {
+				display: flex;
+			}
+		}
+
+		&.content {
+			&:hover {
+				background-color: var(--plein-air);
+				color: var(--viva-magenta);
+			}
+		}
+
+		& .item {
+			padding: 2px 4px;
+			width: 100px;
+		}
+	}
+}
+
 .nm-label {
     line-height: 18px;
 }

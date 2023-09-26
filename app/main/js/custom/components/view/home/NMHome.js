@@ -5,6 +5,7 @@ import * as util from "js/core/util/utils.js";
 /* component */
 import NMChart from "js/core/components/chart/NMChart.js";
 import NMList from "js/core/components/component/NMList.js"
+import NMGrid from "js/core/components/component/NMGrid.js"
 /* model */
 import NMGithubModel from "js/custom/model/NMGithubModel.js";
 /* intent */
@@ -41,8 +42,8 @@ export default class NMHome extends NMView {
                 grid-template-rows:
                     minmax(25vh, 25vh)
                     minmax(20vh, 25vh)
-                    minmax(0, 10vh)
-                    minmax(0, 10vh);
+                    minmax(10vh, auto)
+                    minmax(10vh, auto);
             }
 
             .title-area {
@@ -150,6 +151,9 @@ export default class NMHome extends NMView {
                 <div class="title-area">
                     <nm-label class="" value="recent.list" range="board"></nm-label>
                 </div>
+				<div class="test">
+					<nm-grid class="test"></nm-grid>
+				</div>
             </div>
             <div class="tag-list-area">
                 <div class="title-area">
@@ -167,7 +171,48 @@ export default class NMHome extends NMView {
     afterRender() {
         super.afterRender();
         this.getChartDatas();
+		this.test();
     }
+
+	test() {
+		const grid = util.DomUtil.querySelector(this, "nm-grid.test");
+		const data = {
+			data: {
+				columns: [
+					{ key: "id", name: "Origin ID" },
+					{ key: "name", name: "new Name", sort: true },
+					{ key: "email", name: "longlonglongString", sort: true },
+					{ key: "etc" }
+				],
+				list: [
+					{ id: 0, name: "aaaa", email: "test@gmail.com", etc: "" },
+					{ id: 1, name: "bbbb", email: "test@gmail.com", etc: "" },
+					{ id: 2, name: "cccc", email: "test@gmail.com", etc: "" },
+					{ id: 3, name: "dddd", email: "test@gmail.com", etc: "" },
+					{ id: 4, name: "eeee", email: "test@gmail.com", etc: "" },
+					{ id: 5, name: "ffff", email: "test@gmail.com", etc: "" },
+					{ id: 6, name: "gggg", email: "test@gmail.com", etc: "" },
+					{ id: 7, name: "hhhh", email: "test@gmail.com", etc: "" },
+					{ id: 8, name: "iiii", email: "test@gmail.com", etc: "" },
+					{ id: 5, name: "ffff", email: "test@gmail.com", etc: "" },
+					{ id: 6, name: "gggg", email: "test@gmail.com", etc: "" },
+					{ id: 7, name: "hhhh", email: "test@gmail.com", etc: "" },
+					{ id: 8, name: "iiii", email: "test@gmail.com", etc: "" },
+					{ id: 5, name: "ffff", email: "test@gmail.com", etc: "" },
+					{ id: 6, name: "gggg", email: "test@gmail.com", etc: "" },
+					{ id: 7, name: "hhhh", email: "test@gmail.com", etc: "" },
+					{ id: 8, name: "iiii", email: "test@gmail.com", etc: "" },
+					{ id: 5, name: "ffff", email: "test@gmail.com", etc: "" },
+					{ id: 6, name: "gggg", email: "test@gmail.com", etc: "" },
+					{ id: 7, name: "hhhh", email: "test@gmail.com", etc: "" },
+					{ id: 8, name: "iiii", email: "test@gmail.com", etc: "" }
+				]
+			},
+			option: {}
+		}
+
+		grid.setData(data);
+	}
 
     onModelChange(e) {
         const { detail } = e;
