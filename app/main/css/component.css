@@ -33,29 +33,41 @@ nm-list {
 }
 
 nm-grid, .nm-grid {
-	--content-height: 300px;
-	width: 100%;
-	
-	&.container {
-	}
-	
-	& .body {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		overflow-y: scroll;
-		max-height: var(--content-height);
-	}
+    --header-height: 36px;
 
-	& .row {
-		display: flex;
-		border: 1px solid var(--plein-air);
+    & .row {
+        &.header {
+            /* height: var(--header-height); */
+        }
+    }
+
+    & .header-container {
+        height: var(--header-height);
+    }
+}
+nm-grid {
+    --header-bg-color: var(--gray-sand);
+    --header-color: #000000;
+    --pading-lr: 6px;
+
+    & .row {
+        border-radius: 2px;
+        display: flex;
 
 		&.header {
+            font-weight: 600;
+
 			& .item {
 				display: flex;
+                padding: var(--header-item-padding);
 			}
 		}
+
+        &.content {
+            & .item {
+                padding: var(--body-item-padding);
+            }
+        }
 
 		&.content {
 			&:hover {
@@ -64,11 +76,54 @@ nm-grid, .nm-grid {
 			}
 		}
 
+        --width: 100px;
 		& .item {
 			padding: 2px 4px;
-			width: 100px;
+			width: var(--width);
+            min-width: var(--width);
+            max-width: var(--width);
 		}
 	}
+}
+
+.nm-grid {
+    --content-height: 300px;
+    --header-item-padding: 8px var(--pading-lr);
+    --body-item-padding: 4px var(--pading-lr);
+    border: 1px solid var(--plein-air);
+	
+    & .data-container {
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+
+        & .header-container,
+        & .body-container {
+            position: relative;
+        }
+
+        & .header-content,
+        & .body-content {
+            position: absolute;
+        }
+
+        & .header-container {
+            background-color: var(--header-bg-color);
+            color: var(--header-color);
+
+            & .header-content {
+            }
+        }
+
+
+        & .body-container {
+            height: var(--content-height);
+            overflow: auto;
+
+            & .body-content {
+            }
+        }
+    }
 }
 
 .nm-label {

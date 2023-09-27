@@ -19,7 +19,8 @@ const NMConstant = {
         CHART_COMPLETE: "chartComplete",
         POP_STATE: "popstate",
         HASH_CHANGE: "hashchange",
-        CHANGE_LANGUAGE: "changeLanguage"
+        CHANGE_LANGUAGE: "changeLanguage",
+        SCROLL: "scroll"
     },
     mimeType: {
         TEXT__HTML: "text/html",
