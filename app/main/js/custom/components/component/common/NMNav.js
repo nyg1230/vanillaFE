@@ -4,6 +4,7 @@ import { NMComponent, define } from "js/core/components/NMComponent.js";
 import * as util from "js/core/util/utils.js";
 /* component */
 import NMMenu from "js/core/components/component/NMMenu.js"
+import NMList from "js/core/components/component/NMList.js"
 /* constant */
 import NMConst from "js/core/constant/NMConstant";
 
@@ -26,7 +27,11 @@ export default class NMNav extends NMComponent {
                 border: 1px solid blue;
             }
 
-
+            .link-list {
+                font-size: 12px;
+                font-weight: 700;
+                --row-padding: 0px 4px;
+            }
         `;
     }
 
@@ -35,7 +40,15 @@ export default class NMNav extends NMComponent {
                     <div class="avatar">
                         <nm-image src="test"></nm-image>
                     </div>
-                    <div class="link"></div>
+                    <div class="link">
+                        <nm-list class="link-list">
+                            <template>
+                                <div class="row">
+                                    <nm-label class="" type="text" data-value="name"></nm-label>
+                                </div>
+                            </template>
+                        </nm-list>
+                    </div>
                     <div class="menu">
                         <nm-menu class="category-menu"></nm-menu>
                     </div>
@@ -61,7 +74,9 @@ export default class NMNav extends NMComponent {
         ];
         catMenu.setData(data);
 
-        console.log(NMConst.env.profile.url);
+        const linkList = util.DomUtil.querySelector(this, ".link-list");
+        const linkDatas = Object.values(NMConst.env.profile.url);
+        linkList && linkList.setData(linkDatas);
     }
 }
 
