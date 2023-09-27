@@ -3,7 +3,9 @@ const english_us = {
         commit: "commit",
         writer: "Writer",
         date: "Date",
-        message: "Message"
+        message: "Message",
+        home: "Home",
+        category: "Category"
     },
     board: {
         "recent.list": "Recent List"

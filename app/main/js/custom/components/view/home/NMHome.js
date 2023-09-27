@@ -67,7 +67,7 @@ export default class NMHome extends NMView {
                 padding: 0px 8px;
             }
 
-            .pie-chart-area {
+            .pie-chart {
                 grid-area: pie;
             }
 

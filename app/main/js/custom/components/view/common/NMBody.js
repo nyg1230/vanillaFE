@@ -56,6 +56,7 @@ export default class NMBody extends NMView {
 			}
 
 			nm-nav {
+				margin-top: 0px;
 				grid-area: nav;
 			}
 
