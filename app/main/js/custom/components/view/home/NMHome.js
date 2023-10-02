@@ -181,7 +181,7 @@ export default class NMHome extends NMView {
 				columns: [
 					{ key: "id", name: "Origin ID" },
 					{ key: "name", name: "new Name", sort: true },
-                    { key: "email", name: "longlonglongString", sort: true },
+                    { key: "email", name: "longlonglongString", width: 300, sort: true },
 					{ key: "etc" }
 				],
 				list: [

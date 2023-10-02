@@ -76,7 +76,7 @@ nm-grid {
 			}
 		}
 
-        --width: 100px;
+        /* --width: 100px; */
 		& .item {
 			padding: 2px 4px;
 			width: var(--width);

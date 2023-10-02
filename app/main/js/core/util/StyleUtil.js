@@ -8,6 +8,16 @@ const StyleUtil = {
     setGlobalStyles(component) {
         component.adoptedStyleSheets.push(styleSheet);
     },
+    setStyles(target, styles, replace = true) {
+        const sheet = util.DomUtil.createElement("style");
+        let str = "";
+        Object.entries(styles).forEach(([selector, rule]) => {
+            str += `${selector} {${rule}}`;
+        });
+
+        util.DomUtil.insertAdjacentHTML(sheet, str);
+        target.prepend(sheet);
+    },
     getBoundingClientRect(dom) {
         let rect;
         if (!dom) {

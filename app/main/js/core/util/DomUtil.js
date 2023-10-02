@@ -72,6 +72,16 @@ const DomUtil = {
 		} else {
 			this.removeClass(target, cls);
 		}
+	},
+
+	removeAllChild(target) {
+		let child = target && target.firstChild;
+
+		
+		while (child) {
+			target.removeChild(child);
+			child = target.firstChild;
+		}
 	}
 };
 
