@@ -2,6 +2,8 @@ import * as util from "./utils.js";
 import styles from "css/common.css";
 
 const styleSheet = new CSSStyleSheet();
+console.log(typeof styles);
+console.log(styles);
 styleSheet.replace(styles);
 
 const StyleUtil = {

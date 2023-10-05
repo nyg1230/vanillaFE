@@ -74,6 +74,20 @@ const DomUtil = {
 		}
 	},
 
+	hasClass(target, cls = [], every = false) {
+		let bool = false;
+		const classList = target.classList;
+
+		if (!classList) {
+		} else if (every) {
+			bool = cls.every((a) => classList.contains(a));
+		} else {
+			bool = cls.some((a) => classList.contains(a));
+		}
+
+		return bool;
+	},
+
 	removeAllChild(target) {
 		let child = target && target.firstChild;
 

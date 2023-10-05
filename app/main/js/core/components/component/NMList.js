@@ -17,8 +17,6 @@ export default class NMList extends NMComponent {
     }
 
     get clsName() {
-        window.qqq = this;
-        
         return NMList.name;
     }
 
@@ -41,6 +39,24 @@ export default class NMList extends NMComponent {
 
     get data() {
         return this.#items;
+    }
+
+    addEvent() {
+        this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
+    }
+
+    onClick(e) {
+        const row = util.EventUtil.getDomFromEvent(e, "row", "class");
+
+        if (row) {
+            const index = row.getAttribute("index");
+            const data = this.data[index];
+
+            util.EventUtil.dispatchEvent(this, NMConst.eventName.LIST_ROW_CLICK, { ...data });
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     afterRender() {

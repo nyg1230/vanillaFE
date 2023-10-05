@@ -20,7 +20,8 @@ const NMConstant = {
         POP_STATE: "popstate",
         HASH_CHANGE: "hashchange",
         CHANGE_LANGUAGE: "changeLanguage",
-        SCROLL: "scroll"
+        SCROLL: "scroll",
+        LIST_ROW_CLICK: "listRowClick"
     },
     mimeType: {
         TEXT__HTML: "text/html",

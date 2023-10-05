@@ -171,9 +171,11 @@ class NMRouter {
         }
 
         if (!this.#currentPathName || !this.#currentPathName.startsWith(path)) {
+            const name = path.split("/").pop();
             const cls = this.getView(path);
-            const view = new cls(param)
-            this.#pushRoute(parent, path, view);
+            const view = new cls(param);
+
+            this.#pushRoute(parent, name, view);
         }
 
         this.#currentPathName = path;

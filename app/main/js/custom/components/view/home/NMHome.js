@@ -3,7 +3,7 @@ import { NMView, define } from "js/core/components/view/NMView.js";
 /* common */
 import * as util from "js/core/util/utils.js";
 /* component */
-import NMChart from "js/core/components/chart/NMChart.js";
+import { NMChart } from "js/core/components/chart/NMChart.js";
 import NMList from "js/core/components/component/NMList.js"
 import NMGrid from "js/core/components/component/NMGrid.js"
 /* model */

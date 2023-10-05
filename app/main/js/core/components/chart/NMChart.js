@@ -8,7 +8,6 @@ import charts from "js/core/chart/charts.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-
 class NMChart extends NMComponent {
     #layers = {};
     #chart;

@@ -5,7 +5,7 @@ import router from "js/core/router/NMRouter.js";
 /* component */
 import "js/core/components/element/elements.js";
 /* constant */
-import NMConst from "js/core/constant/NMConstant";
+import NMConst from "js/core/constant/NMConstant.js";
 
 window.onload = (e) => {
     const body = util.DomUtil.querySelector(document, "body");

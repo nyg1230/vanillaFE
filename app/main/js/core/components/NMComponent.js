@@ -3,7 +3,7 @@
 import * as util from "js/core/util/utils.js";
 /* component */
 /* constant */
-import NMConst from "js/core/constant/NMConstant";
+import NMConst from "js/core/constant/NMConstant.js";
 
 class NMComponent extends HTMLElement {
     #root;

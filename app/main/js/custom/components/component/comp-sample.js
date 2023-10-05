@@ -4,7 +4,7 @@ import { NMComponent, define } from "main/components/core/NMComponent.js";
 import * as util from "main/util/utils.js";
 /* component */
 /* constant */
-import NMConst from "main/constant/NMConstant";
+import NMConst from "main/constant/NMConstant.js";
 
 export default class NMCompSample extends NMComponent {
     static get observedAttributes() {

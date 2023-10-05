@@ -6,7 +6,7 @@ import * as util from "js/core/util/utils.js";
 import NMMenu from "js/core/components/component/NMMenu.js"
 import NMList from "js/core/components/component/NMList.js"
 /* constant */
-import NMConst from "js/core/constant/NMConstant";
+import NMConst from "js/core/constant/NMConstant.js";
 
 export default class NMNav extends NMComponent {
     static get observedAttributes() {
