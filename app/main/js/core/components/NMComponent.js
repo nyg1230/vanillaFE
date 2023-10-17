@@ -9,6 +9,7 @@ class NMComponent extends HTMLElement {
     #root;
     #rect;
     #event = {}
+    #data;
 
     constructor(params = {}) {
         super();
@@ -40,6 +41,15 @@ class NMComponent extends HTMLElement {
 
     get template() {
         return ``;
+    }
+
+    get $data() {
+        return this.#data;
+    }
+
+    set $data(data) {
+        this.#data = data;
+        this.#setData(this.#data);
     }
 
     get #proto() {
@@ -179,6 +189,17 @@ class NMComponent extends HTMLElement {
         const { x, y, width, height } = rect;
         this.#rect = new DOMRectReadOnly(x, y, width, height);
     }
+
+    /**
+     * 컴포넌트에 데이터를 등록하고 그에 따른 후행 작업
+     * @param {Object} data 컴포넌트에 사용할 데이터
+     */
+    #setData(data) {
+        this.setData(data);
+    }
+
+    // 하위에서 재정의하여 사용
+    setData(data) {}
 
     /**
      * 컴포넌트가 기본적으로 사용할 style sheet를 반환하는 함수

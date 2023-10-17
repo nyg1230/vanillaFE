@@ -29,6 +29,23 @@ export default class NMMenu extends NMComponent {
         </div>`;
     }
 
+    addEvent() {
+        this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
+    }
+
+    onClick(e) {
+        const path = e.composedPath();
+        
+        const row = util.EventUtil.getDomFromEvent(e, "row", "class");
+
+        if (row) {
+            util.EventUtil.dispatchEvent(this, NMConst.eventName.SELECT_MENU, { data: row.data });
+
+            e.preventDefault();
+			e.stopPropagation();
+        }
+    }
+
     setData(data) {
         this.clear();
         this.#fragment = document.createDocumentFragment();
@@ -38,6 +55,7 @@ export default class NMMenu extends NMComponent {
         data.forEach((d) => {
             const div = util.DomUtil.createElement("div", { class: "row" });
             const { data, ...params } = { ...d };
+            div.data = d;
             
             const row = this.renderRow(params);
             div.appendChild(row);

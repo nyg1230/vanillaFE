@@ -33,7 +33,8 @@ const EventUtil = {
 
             if (attr === "tag") {
                 const reg = new RegExp(value, "i");
-                if (reg.test(value)) result = dom;
+                const { tagName } = dom;
+                if (reg.test(tagName)) result = dom;
             } else if (attr === "class") {
                 if (util.DomUtil.hasClass(dom, [value])) result = dom;
             } else {

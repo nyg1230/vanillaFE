@@ -34,14 +34,14 @@ const DomUtil = {
 		return dom;
 	},
 
-	querySelector(target, selector) {
-		target = target.shadowRoot ?? target;
+	querySelector(target, selector, root = true) {
+		target = root !== true ? target : target.shadowRoot ?? target;
 		const result = target.querySelector(selector);
 		return result;
 	},
 
-	querySelectorAll(target, selector) {
-		target = target.shadowRoot ?? target;
+	querySelectorAll(target, selector, root = true) {
+		target = root !== true ? target : target.shadowRoot ?? target;
 		const result = target.querySelectorAll(selector);
 		return result;
 	},

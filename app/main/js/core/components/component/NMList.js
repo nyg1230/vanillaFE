@@ -6,7 +6,7 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-export default class NMList extends NMComponent {
+class NMList extends NMComponent {
     #header = {};
     #items = {};
     #template;
@@ -46,12 +46,10 @@ export default class NMList extends NMComponent {
     }
 
     onClick(e) {
-        const row = util.EventUtil.getDomFromEvent(e, "row", "class");
+        const row = util.EventUtil.getDomFromEvent(e, NMRow.name);
 
         if (row) {
-            const index = row.getAttribute("index");
-            const data = this.data[index];
-
+            const data = row.$data;
             util.EventUtil.dispatchEvent(this, NMConst.eventName.LIST_ROW_CLICK, { ...data });
         }
 
@@ -81,7 +79,6 @@ export default class NMList extends NMComponent {
         });
 
         this.#fragment = document.createDocumentFragment();
-        this.renderHeader();
         this.renderList(this.#items);
     }
 
@@ -90,64 +87,71 @@ export default class NMList extends NMComponent {
         const entries = Object.entries(items).sort((a, b) => a[0] > b[0]);
 
         entries.forEach(([idx, v]) => {
-            const { data } = { ...v };
-            const row = this.renderRow(idx, data);
-            fragment.appendChild(row);
-
-            const node = util.DomUtil.querySelector(fragment, `[index="${idx}"]`);
-            const tmp = fragment.lastElementChild;
-            v.node = node;
+            try {
+                const { data } = v;
+                const row = this.renderRow(idx, data);
+                fragment.appendChild(row);
+            } catch (e) {
+                console.log(`${this.clsName} renderList error >>>`, e);
+            }
         });
 
         this.appendChild(fragment);
     }
 
-    renderHeader() {
-        const { item } = { ...this.#header };
-        
-        if (util.CommonUtil.isNotEmpty(item)) {
-            const node = document.importNode(this.#template.content, true);
-            util.DomUtil.addClass(node.firstElementChild, "header");
-
-            Object.entries(item).forEach(([k, data]) => {
-                const target = util.DomUtil.querySelector(node, `[data-value="${k}"]`);
-                Object.entries(data).forEach(([dk, dv]) => {
-                    target[dk] = dv;
-                });
-            });
-            this.#fragment.appendChild(node);
-            this.#header.node = this.#fragment.lastElementChild;
-        }
-    }
-
     renderRow(index, data) {
-        const node = document.importNode(this.#template.content, true);
-        const firstEl = node.firstElementChild
+        const cloneNode = document.importNode(this.#template.content, true);
+        const node = cloneNode.firstElementChild;
 
-        firstEl && firstEl.setAttribute("index", index);
-        Object.entries(data).forEach(([k, v]) => {
-            const nodeList = util.DomUtil.querySelectorAll(node, `[data-value="${k}"]`);
-            nodeList.forEach((n) => (n.value = v));
-        });
+        if (node) {
+            node.setAttribute("index", index);
+            node.$data = data;
+        }
+
         return node;
     }
 
     clear() {
-        Object.entries(this.#items).forEach(([k, item]) => {
-            const { node } = { ...item };
-
-            try {
-                node.remove()
-            } finally {
-                if (item) {
-                    item.node = null;
-                    delete this.#items[k];
-                }
-            }
-        });
+        while (this.firstChild) {
+            this.firstChild.remove();
+        }
 
         this.#header = {};
     }
 }
 
+class NMRow extends NMComponent {
+    static get name() {
+        return "nm-row";
+    }
+
+    get clsName() {
+        return NMRow.name;
+    }
+
+    get styles() {
+        return ``;
+    }
+
+    get template() {
+        return `
+        <div class="${this.clsName}" part="${this.clsName}">
+            <slot></slot>
+        </div>`;
+    }
+
+    setData(data) {
+        Object.entries(data).forEach(([k, v]) => {
+            const nodes = util.DomUtil.querySelectorAll(this, `[data-${k}]`, false);
+            nodes.forEach((node) => {
+                const attr = node.getAttribute(`data-${k}`);
+                node[attr] = v;
+            });
+        });
+    }
+}
+
 define(NMList);
+define(NMRow);
+
+export { NMList, NMRow }

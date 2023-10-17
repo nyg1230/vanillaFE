@@ -10,7 +10,7 @@ export default class NMLabel extends NMComponent {
     #text;
 
     static get observedAttributes() {
-        return ["value", "type", "param"];
+        return ["value", "type", "param", "range"];
     }
 
     static get name() {
