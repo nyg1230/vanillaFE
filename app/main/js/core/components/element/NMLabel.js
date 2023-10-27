@@ -8,6 +8,7 @@ import NMConst from "js/core/constant/NMConstant.js";
 
 export default class NMLabel extends NMComponent {
     #text;
+    #tooltip;
 
     static get observedAttributes() {
         return ["value", "type", "param", "range"];
@@ -85,7 +86,7 @@ export default class NMLabel extends NMComponent {
 
     afterRender() {
         const useTooltip = util.CommonUtil.toBoolean(this.tooltip);
-        useTooltip && util.TooltipUtil.setTooltip(this, this.getTooltipText);
+        useTooltip && (this.#tooltip = util.TooltipUtil.setTooltip(this, this.getTooltipText));
     }
 
     getText() {
@@ -133,6 +134,14 @@ export default class NMLabel extends NMComponent {
             const text = this.getText();
             this.setText(text);
         }
+    }
+
+    destroy() {
+        if (this.#tooltip) {
+            this.#tooltip.destroy();
+        }
+
+        super.destroy();
     }
 }
 

@@ -68,7 +68,7 @@ class NMRouter {
     }
     /* setting end */
 
-    getFullPath() {
+    getFullPath(includeQueryString = true) {
         let url;
 
         if (this.#mode === "hash") {
@@ -78,6 +78,10 @@ class NMRouter {
         } else {
             const { pathname, search } = window.location;
             url = `${pathname}${search}`;
+        }
+
+        if (includeQueryString !== true) {
+            url = url.replace(/\?.*$/, "");
         }
 
         return url;
@@ -146,8 +150,10 @@ class NMRouter {
             url = `#${url}`
         }
 
+        const isSameUrl = this.isSameUrl(url);
         window.history.pushState(param, "", url);
-        this.route({ path: this.getPathName(), ...param });
+
+        !isSameUrl && this.route({ path: this.getPathName(), ...param });
     }
 
     route(p) {
@@ -236,6 +242,15 @@ class NMRouter {
         const removePathList = routePath.splice(idx);
         const first = removePathList.shift();
         first.destroy();
+    }
+
+    isSameUrl(url) {
+        const curUrl = this.getFullPath(false);
+        url.replace(/(?<=\#).*?(?=\?)/, (str) => {
+            url = str;
+        });
+
+        return url === curUrl;
     }
 }
 

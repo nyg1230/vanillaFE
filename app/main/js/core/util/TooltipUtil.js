@@ -11,7 +11,7 @@ class Tooltip {
 	#content;
 	#option;
 	#tooltip;
-	#events;
+	#events = {};
 
 	constructor(p) {
 		const { target, content, option } = { ...p };
@@ -109,19 +109,34 @@ class Tooltip {
 
 	setTooltip() {
 		const mouseMove = this.onMouseMove.bind(this);
-		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mouseMove, {});
-		this.#events = { [NMConst.eventName.onMouseMove]: mouseMove };
+		const mouseMoveOption = {};
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_MOVE, mouseMove, mouseMoveOption);
+		this.#events[NMConst.eventName.MOUSE_MOVE] = {
+			fn: mouseMove,
+			option: mouseMoveOption
+		};
 
 		const mouseOut = this.onMouseOut.bind(this);
-		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut, {});
-		this.#events = { [NMConst.eventName.onMouseOut]: mouseOut };
+		const mouseOutOption = {};
+		util.EventUtil.bindEvent(this.#target, NMConst.eventName.MOUSE_OUT, mouseOut, mouseOutOption);
+		this.#events[NMConst.eventName.MOUSE_OUT] = {
+			fn: mouseOut,
+			option: mouseOutOption
+		};
 	}
 	
 	clearEventAll() {
-		Object.entries(this.#events).forEach(([eventName, fn]) => {
-			util.EventUtil.unbindEvent(this.#target, eventName, fn);
-		});
-		this.#events = {};
+		Object.keys(this.#events).forEach((eventName) => {
+			this.clearEvent(eventName);
+		})
+	}
+
+	clearEvent(eventName) {
+		const info = this.#events[eventName];
+		const { fn, option } = { ...info };
+		util.EventUtil.unbindEvent(this.#target, eventName, fn, option);
+
+		delete this.#events[eventName];
 	}
 
 	reset() {
@@ -147,6 +162,11 @@ class Tooltip {
 
 	onMouseMove(e) {
 		this.setContent(e);
+	}
+
+	destroy() {
+		this.clearEventAll();
+		this.#tooltip.remove();
 	}
 }
 

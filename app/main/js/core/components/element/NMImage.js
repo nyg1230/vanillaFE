@@ -7,8 +7,10 @@ import * as util from "js/core/util/utils.js";
 import NMConst from "js/core/constant/NMConstant.js";
 
 export default class NMImage extends NMComponent {
+    #maxErrorCount = 3;
+    #errorCount = 0;
     #img;
-
+    
     static get observedAttributes() {
         return ["src"];
     }
@@ -30,7 +32,17 @@ export default class NMImage extends NMComponent {
     }
 
     get styles() {
-        return ``;
+        return `
+            .${this.clsName} {
+                width: 100%;
+                height: 100%;
+
+                & .image {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        `;
     }
 
     get template() {
@@ -39,15 +51,30 @@ export default class NMImage extends NMComponent {
                 </div>`;
     }
 
+    addEvent() {}
+
+    onError(e) {
+        if (++this.#errorCount > this.#maxErrorCount) {
+            this.#img.removeAttribute("src");
+            this.#errorCount = 0;
+        } else {
+            util.EventUtil.dispatchEvent(this, NMConst.eventName.IMAGE_ERROR);
+        }
+    }
+
     afterRender() {
-        const img = util.DomUtil.querySelector(this, ".image");
-        this.#img = img;
+        this.#img = util.DomUtil.querySelector(this, ".image");
+        this.#img.onerror = this.onError.bind(this);
+        this.src && this.setImageUrl();
+    }
+
+    setImageUrl() {
+        this.#img && this.#img.setAttribute("src", this.src)
     }
 
     onChangeAttr(name, old, value) {
         if (name === "src") {
-            // console.log(name, old, value);
-            console.log(this.#img);
+            this.setImageUrl();
         }
     }
 }
