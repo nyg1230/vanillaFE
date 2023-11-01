@@ -69,7 +69,7 @@ class NMRouter {
     /* setting end */
 
     getFullPath(includeQueryString = true) {
-        let url;
+        let url = "";
 
         if (this.#mode === "hash") {
             location.hash.replace(/(?<=#).*/, (str) => {

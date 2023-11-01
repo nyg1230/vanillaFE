@@ -1,5 +1,5 @@
 /* common */
-import * as util from "/assets/js/core/util/utils.js";
+import * as util from "js/core/util/utils.js";
 
 const EventUtil = {
     createEvent(eventName, option = {}) {
