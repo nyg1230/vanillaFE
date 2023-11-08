@@ -48,6 +48,10 @@ class Chart {
         return {};
     }
 
+    set date(d) {
+        
+    }
+
     setting(p) {
         this.#data = util.CommonUtil.shallowMerge(CommonOption, this.option, p);
         this.#parseData();

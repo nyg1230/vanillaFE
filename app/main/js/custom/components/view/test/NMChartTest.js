@@ -40,7 +40,7 @@ export default class NMChartTest extends NMView {
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
                     <div class="chart-area">
-                        <nm-chart></nm-chart>
+                        <nm-chart class="chart"></nm-chart>
                     </div>
                 </div>`;
     }
@@ -74,7 +74,42 @@ export default class NMChartTest extends NMView {
     }
 
     setWeeklyCommitLists(data) {
-        console.log(data);
+        const chart = util.DomUtil.querySelector(this, ".chart");
+
+        const chartData = {
+            header: {
+                title: "Chart Name"
+            },
+            axis: {
+                x: {
+                    title: "Commit Week"
+                },
+                ly: {
+                    title: "Commit Count",
+                    prefix: "",
+                    suffix: ""
+                },
+                ry: {}
+            },
+            data: []
+        };
+
+        data.forEach((d, idx) => {
+            const { data, name } = { ...d };
+            let newData = data.splice(0, 12);
+            newData = newData.map((nd, idx) => {
+                return {
+                    value: nd,
+                    name: `${idx}주 전`
+                }
+            });
+            chartData.data[idx] = {
+                type: "column",
+                title: name,
+                list: newData
+            }
+        });
+        chart.data = chartData;
     }
 }
 

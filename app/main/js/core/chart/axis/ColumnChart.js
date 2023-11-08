@@ -10,9 +10,14 @@ import NMConst from "js/core/constant/NMConstant.js";
 class ColumnChart extends AxisChart {
     #oldIndex;
     #toottipHTML;
+    #data = [];
 
     get chartType() {
         return "column";
+    }
+
+    add(data) {
+        this.#data.push(data);
     }
 
     parseAxisChartData() {
