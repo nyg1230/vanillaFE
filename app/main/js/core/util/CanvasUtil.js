@@ -177,8 +177,8 @@ const CanvasUtil = {
         const { width, actualBoundingBoxAscent: ba, actualBoundingBoxDescent: bd } = mtx;
         publicCtx.restore();
         return {
-            width,
-            height: ba + bd
+            width: util.CommonUtil.floor(width),
+            height: util.CommonUtil.floor(ba + bd)
         };
     },
     setStyle(ctx, styles) {

@@ -50,15 +50,15 @@ const CommonUtil = {
         return result;
     },
 
-    round(num, round = 1, isPercent = false) {
+    round(num, round = 0, isPercent = false) {
         return this.approximation("round", num, round, isPercent);
     },
 
-    ceil(num, round = 1, isPercent = false) {
+    ceil(num, round = 0, isPercent = false) {
         return this.approximation("ceil", num, round, isPercent);
     },
 
-    floor(num, round = 1, isPercent = false) {
+    floor(num, round = 0, isPercent = false) {
         return this.approximation("floor", num, round, isPercent);
     },
 
