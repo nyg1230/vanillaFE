@@ -8,16 +8,20 @@ import charts from "js/core/chart/charts.js";
 import NMConst from "js/core/constant/NMConstant.js";
 /* option */
 import CommonOption from "js/core/chart/option/CommonOption.js";
+import AxisOption from "js/core/chart/option/AxisOption.js";
 
 const axisChart = ["column", "line", "columnStack"];
+const padding = 4;
 
 class Chart {
+    #originData;
     #data;
     #container;
     #charts = new Map();
     #area;
     #mainLayer;
     #overLayer;
+    #render = {};
 
     constructor(params) {
         const { container } = { ...params };
@@ -31,7 +35,11 @@ class Chart {
     }
 
     set data(d) {
-        this.#data = util.CommonUtil.shallowMerge(d, CommonOption);
+        this.#originData = d;
+        this.#data = util.CommonUtil.shallowMerge(CommonOption, this.#originData);
+        if (this.isAxis()) {
+            this.#data = util.CommonUtil.shallowMerge(AxisOption, this.#data);
+        }
         console.log(this.#data);
         this.parseData();
     }
@@ -39,22 +47,37 @@ class Chart {
     init() {
         const rect = util.StyleUtil.getBoundingClientRect(this.#container);
         const { width, height } = rect;
-        this.#mainLayer = util.DomUtil.createElement("canvas", { className: "main-layer", width, height });
-        this.#overLayer = util.DomUtil.createElement("canvas", { className: "over-layer", width, height });
+        const mainLayer = util.DomUtil.createElement("canvas", { className: "main-layer", width, height });
+        const overLayer = util.DomUtil.createElement("canvas", { className: "over-layer", width, height });
 
-        this.#container.appendChild(this.#mainLayer);
-        this.#container.appendChild(this.#overLayer);
+        this.#mainLayer = {
+            canvas: mainLayer,
+            ctx: mainLayer.getContext("2d")
+        };
+
+        this.#overLayer = {
+            canvas: overLayer,
+            ctx: overLayer.getContext("2d")
+        };
+
+        this.#container.appendChild(mainLayer);
+        this.#container.appendChild(overLayer);
     }
 
     parseData() {
-        const { data = [] } = this.#data;
+        const { data = [], ...other } = this.#data;
 
         data.forEach((d) => {
-            const { type, list } = d;
-            !this.#charts.has(type) && this.#charts.set(type, new charts[type]);
+            const { type, ...remain } = d;
+
+            if (!this.#charts.has(type)) {
+                const chart = new charts[type];
+                chart.option = other;
+                this.#charts.set(type, chart);
+            }
 
             const chart = this.#charts.get(type);
-            chart.add(list);
+            chart.add(remain);
         });
 
         this.calcArea();
@@ -75,33 +98,139 @@ class Chart {
     }
 
     calcArea() {
-        this.#area = { x: 0, y: 0, widht: 0, height: 0 };
+        const { canvas } = { ...this.#mainLayer };
+        const rect = util.StyleUtil.getBoundingClientRect(canvas, null, true);
+        const { width, height } = rect;
+        this.#area = {
+            layer: { x: 0, y: 0, width, height },
+            header: { x: 0, y: 0, width: 0, height: 0 },
+            legend: { x: 0, y: 0, width: 0, height: 0 },
+            axisX: { x: 0, y: 0, width: 0, height: padding },
+            axisLY: { x: 0, y: 0, width: padding, height: 0 },
+            axisRY: { x: 0, y: 0, width: padding, height: 0 },
+            chart: { x: 0, y: 0, width: 0, height: 0 }
+        };
 
-        this.calcHeader();
-        this.calcLegend();
+        this.setHeader();
+        this.setLegend();
+        this.setChart();
         if (this.isAxis()) {
-            this.calcAxis();
+            this.setAxis();
         }
-
-        console.log(this.#area);
     }
 
-    calcHeader() {
+    setHeader() {
         const { header = {} } = this.data;
-        const { title, style } = header;
+        const { title, style, option } = header;
 
         if (util.CommonUtil.isEmpty(title)) return;
 
         const titleSize = util.CanvasUtil.getTextSize(title, { style });
-        const { width, height } = titleSize;
-        console.log(titleSize);
+        const { height } = titleSize;
 
-        this.#area.y += (height + 1);
+        const { header: headerArea, layer } = this.#area;
+        headerArea.width = layer.width;
+        headerArea.height = (height + padding);
+
+        const { width: hw, height: hh } = headerArea;
+
+        this.#render.header = util.CanvasUtil.text(hw / 2, hh / 2 + padding, title, { style, option: { position: "cc"} });
     }
 
-    calcLegend() {}
+    setLegend() {}
+
+    setChart() {
+        const { layer, header, legend, chart } = this.#area;
+        util.CommonUtil.deepMerge(chart, {
+            y: header.height,
+            width: layer.width,
+            height: layer.height - header.height - legend.height
+        });
+    }
     
-    calcAxis() {}
+    setAxis() {
+        this.calcAxisLabel();
+        this.calcAxisY();
+        this.setAxisLY();
+        this.setAxisRY();
+        this.setAxisX();
+    }
+
+    calcAxisY() {
+        const { data } = { ...this.#data };
+
+        const axisInfo = {
+            ly: { list: new Set() },
+            ry: { list: new Set() }
+        };
+
+        data.forEach((d) => {
+            const { axis, list } = { ...d };
+
+            
+            const targetList = axis !== "r" ? axisInfo.ly.list : axisInfo.ry.list;
+            
+            list.forEach((l) => {
+                targetList.add(l.value);
+            });
+        });
+
+        Object.values(axisInfo).forEach((info) => {
+            const { list } = info;
+            const max = Math.max(...list);
+            info.max = max;
+        });
+    }
+
+    getLabelText(text, option, maxWidth = -1) {
+        let result = text;
+        if (maxWidth > 0) {
+            const ttt = "...";
+            let { width } = util.CanvasUtil.getTextSize(result, option);
+            let w = width;
+            let len = text.length;
+
+            while (maxWidth < w) {
+                if (len === 0) {
+                    result = "";
+                    break;
+                }
+
+                result = result.substring(0, --len);
+                width = util.CanvasUtil.getTextSize(result, option).width;
+            }
+        }
+
+        return result
+    }
+
+    calcAxisLabel() {
+        const { data } = { ...this.#data };
+        const hasAxisRY = data.every((d) => d.axis !== "r");
+    }
+
+    setAxisLY() {
+        const axisLY = util.CommonUtil.find(this.#data, "axis.ly", {});
+        const { data } = { ...this.#data };
+        const hasAxisLY = data.some((d) => d.axis !== "r");
+
+        if (!hasAxisLY) return;
+        console.log("axisLY >>> ", axisLY);
+    }
+
+    setAxisRY() {
+        const axisRY = util.CommonUtil.find(this.#data, "axis.ry", {});
+        const { data } = { ...this.#data };
+        const hasAxisRY = data.some((d) => d.axis === "r");
+
+        if (!hasAxisRY) return;
+        console.log("axisRY >>> ", axisRY);
+    }
+
+    setAxisX() {
+        const axisX = util.CommonUtil.find(this.#data, "axis.x", {});
+        console.log(axisX);
+    }
 
     draw() {
         const { animate } = this.#data;
@@ -131,21 +260,32 @@ class Chart {
     }
 
     excute(per) {
-        util.CanvasUtil.clear(this.#mainLayer);
-        this.rednerHeader();
-        this.renderLengend();
-        this.renderAxis();
+        util.CanvasUtil.clear(this.#mainLayer.canvas);
+        const { ctx } = { ...this.#mainLayer };
+        this.rednerHeader(ctx);
+        this.renderLengend(ctx);
+        this.renderAxis(ctx);
 
         this.#charts.forEach((chart) => {
-            chart.draw(per);
+            chart.draw(ctx, per);
         });
     }
 
-    rednerHeader() {}
+    rednerHeader(ctx) {
+        const { header } = { ...this.#render };
 
-    renderLengend() {}
+        if (header) {
+            header.draw(ctx);
+        }
+    }
 
-    renderAxis() {}
+    renderLengend(ctx) {}
+
+    renderAxis(ctx) {}
+
+    refresh() {
+        this.draw();
+    }
 }
 
 export default Chart;

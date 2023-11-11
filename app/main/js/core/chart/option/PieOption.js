@@ -1,9 +1,8 @@
 const option = {
-    chart: {
-        scale: 90,
-        startDegree: -90
-    },
+    scale: 90,
+    startAngle: -90,
     dataLabel: {
+        enable: true,
         position: "outter",
         minHideRatio: 0.05
     }

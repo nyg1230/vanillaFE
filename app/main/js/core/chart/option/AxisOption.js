@@ -1,60 +1,58 @@
 const option = {
-    column: {
-        chart: {},
-        axis: {
-            x: {
-                title: {
-                    text: "",
-                    param: {
-                        style: {
-                            font: "bold 18px auto"
-                        },
-                        option: {
-                            position: "cc"
-                        }
-                    }
-                },
-                label: {
+    axis: {
+        x: {
+            title: {
+                text: "",
+                param: {
                     style: {
-                        font: "bold 12px auto"
+                        font: "bold 18px auto"
                     },
                     option: {
-                        position: "lc",
-                        rotate: 315
+                        position: "cc"
                     }
-                },
-                tooltip: {
-                    text: []
                 }
             },
-            y: {
-                title: {
-                    text: "",
-                    param: {
-                        style: {
-                            font: "bold 18px auto"
-                        }
-                    }
+            label: {
+                style: {
+                    font: "bold 12px auto"
                 },
-                label: {
+                option: {
+                    position: "lc",
+                    rotate: 315
+                }
+            },
+            tooltip: {
+                text: []
+            }
+        },
+        ly: {
+            title: {
+                text: "",
+                param: {
                     style: {
-                        font: "bold 14px auto"
-                    },
-                    option: {
-                        position: "lc"
-                    }
-                },
-                mark: {
-                    major: {
-                        unit: -1
-                    },
-                    minor: {
-                        use: false,
-                        unit: -1
+                        font: "bold 18px auto"
                     }
                 }
+            },
+            label: {
+                style: {
+                    font: "bold 14px auto"
+                },
+                option: {
+                    position: "lc"
+                }
+            },
+            mark: {
+                major: {
+                    unit: -1
+                },
+                minor: {
+                    use: false,
+                    unit: -1
+                }
             }
-        }
+        },
+        ry: {}
     }
 };
 

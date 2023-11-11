@@ -12,6 +12,7 @@ import CommonOption from "js/core/chart/option/CommonOption.js";
 class Chart {
     #data = [];
     #area;
+    #option = {};
 
     constructor() {}
 
@@ -23,8 +24,20 @@ class Chart {
         return this.#area;
     }
 
+    get area() {
+        return this.#area;
+    }
+
     set area(area) {
         this.#area = area;
+    }
+
+    get option() {
+        return this.#option;
+    }
+
+    set option(option) {
+        this.#option = option;
     }
 
     add(data) {

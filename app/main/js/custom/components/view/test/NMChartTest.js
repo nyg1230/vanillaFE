@@ -27,6 +27,7 @@ export default class NMChartTest extends NMView {
                 width: 100%;
                 height: 100%;
                 padding: 8px;
+                display: flex;
 
                 & .chart-area {
                     width: 800px;
@@ -40,7 +41,11 @@ export default class NMChartTest extends NMView {
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
                     <div class="chart-area">
-                        <nm-chart class="chart"></nm-chart>
+                        <nm-chart class="column"></nm-chart>
+                    </div>
+
+                    <div class="chart-area">
+                        <nm-chart class="pie"></nm-chart>
                     </div>
                 </div>`;
     }
@@ -66,6 +71,7 @@ export default class NMChartTest extends NMView {
     }
 
     getChartData() {
+        githubIntent.getCommitLanguages([{ owner: "nyg1230", repo: "vanillaFE" }]);
         githubIntent.getWeeklyCommitCount([
             { owner: "nyg1230", repo: "vanillaFE", ext: { name: "repo: FE-js" } },
             { owner: "nyg1230", repo: "pythonBE", ext: { name: "repo: BE-py" } },
@@ -73,8 +79,33 @@ export default class NMChartTest extends NMView {
         ]);
     }
 
+    setCommitLanguages(data) {
+        const chart = util.DomUtil.querySelector(this, ".pie");
+        const chartData = {
+            palette: "pantone",
+            header: {
+                title: "Pie Chart",
+                style: {
+                    font: "bold 40px auto"
+                }
+            },
+            data: []
+        };
+
+        const parse = Object.entries(data).map(([k, v]) => {
+            return { title: k, value: v };
+        });
+
+        chartData.data.push({
+            type: "pie",
+            list: parse
+        })
+
+        chart.data = chartData;
+    }
+
     setWeeklyCommitLists(data) {
-        const chart = util.DomUtil.querySelector(this, ".chart");
+        const chart = util.DomUtil.querySelector(this, ".column");
 
         const chartData = {
             header: {
@@ -86,8 +117,10 @@ export default class NMChartTest extends NMView {
                 },
                 ly: {
                     title: "Commit Count",
-                    prefix: "",
-                    suffix: ""
+                    label: {
+                        prefix: "",
+                        suffix: ""
+                    }
                 },
                 ry: {}
             },
@@ -100,7 +133,7 @@ export default class NMChartTest extends NMView {
             newData = newData.map((nd, idx) => {
                 return {
                     value: nd,
-                    name: `${idx}주 전`
+                    title: `${idx}주 전`
                 }
             });
             chartData.data[idx] = {
@@ -109,7 +142,7 @@ export default class NMChartTest extends NMView {
                 list: newData
             }
         });
-        chart.data = chartData;
+        // chart.data = chartData;
     }
 }
 

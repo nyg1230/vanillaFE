@@ -172,6 +172,17 @@ const CommonUtil = {
         let result = a % b;
         result = result < 0 ? result + b : result;
         return result;
+    },
+
+    radianToDegree(radian) {
+        return radian / Math.PI * 180;
+    },
+
+    degreeToRadian(degree) {
+        const dg = this.modulo(degree, 360);
+        let radian = dg / 180 * Math.PI;
+        radian = radian < Math.PI ? radian : radian - 2 * Math.PI;
+        return radian;
     }
 };
 

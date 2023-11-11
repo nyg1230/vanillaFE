@@ -12,7 +12,7 @@ import CommonOption from "js/core/chart/option/CommonOption.js";
 
 class ColumnChart extends Chart {
     parse() {
-        console.log(this.data);
+        // console.log(this.data);
         console.log("parse");
     }
 }

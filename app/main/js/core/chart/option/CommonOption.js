@@ -8,7 +8,8 @@ const commonOption = {
     },
     animate: {
         use: true,
-        delay: 1000
+        duration: 1000,
+        type: "speedly"
     },
     legend: {
         use: false,
