@@ -7,18 +7,18 @@ const commonOption = {
         }
     },
     animate: {
-        use: true,
+        enable: true,
         duration: 1000,
         type: "speedly"
     },
     legend: {
-        use: false,
+        enable: false,
         style: {
             font: "bold 12px auto"
         }
     },
     dataLabel: {
-        use: true,
+        enable: true,
         param: {
             style: {
                 font: "bold 12px auto"

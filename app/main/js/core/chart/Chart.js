@@ -7,6 +7,7 @@ import charts from "js/core/chart/charts.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 /* option */
+import options from "js/core/chart/option/options.js";
 import CommonOption from "js/core/chart/option/CommonOption.js";
 import AxisOption from "js/core/chart/option/AxisOption.js";
 
@@ -27,7 +28,7 @@ class Chart {
         const { container } = { ...params };
         this.#container = container;
 
-        this.init();
+        this.#init();
     }
 
     get data() {
@@ -36,15 +37,16 @@ class Chart {
 
     set data(d) {
         this.#originData = d;
-        this.#data = util.CommonUtil.shallowMerge(CommonOption, this.#originData);
+        this.#data = util.CommonUtil.shallowMerge(options.common, this.#originData);
+
+        const opt = []
         if (this.isAxis()) {
-            this.#data = util.CommonUtil.shallowMerge(AxisOption, this.#data);
+            this.#data = util.CommonUtil.shallowMerge(options.axis, this.#data);
         }
-        console.log(this.#data);
         this.parseData();
     }
 
-    init() {
+    #init() {
         const rect = util.StyleUtil.getBoundingClientRect(this.#container);
         const { width, height } = rect;
         const mainLayer = util.DomUtil.createElement("canvas", { className: "main-layer", width, height });
@@ -62,7 +64,11 @@ class Chart {
 
         this.#container.appendChild(mainLayer);
         this.#container.appendChild(overLayer);
+
+        this.init();
     }
+
+    init() {}
 
     parseData() {
         const { data = [], ...other } = this.#data;
@@ -234,14 +240,14 @@ class Chart {
 
     draw() {
         const { animate } = this.#data;
-        const { use: animateUse, type, duration } = animate;
+        const { enable: aniEnable, type, duration } = animate;
         const animateFunction = util.AnimateUtil.getFunction(type);
         const st = performance.now();
         const fn = (t) => {
             const gap = t - st;
             let per;
 
-            if (!animateUse) {
+            if (!aniEnable) {
                 per = 1;
             } else {
                 per = gap / duration;

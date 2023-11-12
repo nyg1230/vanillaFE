@@ -37,7 +37,12 @@ class Chart {
     }
 
     set option(option) {
-        this.#option = option;
+        this.#option = util.CommonUtil.shallowMerge(this.defaultOption, option);
+        
+    }
+
+    get defaultOption() {
+        return {};
     }
 
     add(data) {

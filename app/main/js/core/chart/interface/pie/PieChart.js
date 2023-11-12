@@ -18,19 +18,25 @@ class PieChart extends Chart {
     };
     #info;
 
+    get defaultOption() {
+        return PieOption;
+    }
+
     parse() {
         const [data] = [...this.data];
-        this.#data = util.CommonUtil.shallowMerge(PieOption, data);
+        this.#data = data;
         this.setInfo();
         const { x, y, r } = this.#info;
         const { palette } = this.option;
-        const { list = [], startAngle } = this.#data;
+        const { list = [] } = this.#data;
+        const { startAngle } = this.option;
+        list.sort((a, b) => a.value < b.value ? -1 : 1);
         const { pie, dataLabel } = this.#draw;
         const total = list.reduce((acc, d) => acc + Number(d.value), 0);
 
         let currentRadian = util.CommonUtil.degreeToRadian(startAngle);
-        const parseList = list.map((d, idx) => {
-            const { value } = { ...d };
+        list.forEach((d, idx) => {
+            const { value, title } = { ...d };
             const ratio = value / total;
 
             const radian = Math.PI * 2 * ratio;
@@ -40,14 +46,43 @@ class PieChart extends Chart {
 
             const arc = util.CanvasUtil.arc(x, y, r, currentRadian, endRadian, { style: { fillStyle: color } });
             pie.push(arc);
+
+            const centerRadian = currentRadian + radian / 2;
+            const text = this.#getDataLabel(title, centerRadian, ratio);
+            text && dataLabel.push(text);
+
             currentRadian = endRadian;
-            return {
-                ...d,
-                ratio,
-                startRadian: currentRadian,
-                endRadian: endRadian
-            };
         });
+    }
+
+    #getDataLabel(text, radian, ratio) {
+        const { x, y, r } = this.#info;
+        const { dataLabel } = this.option;
+        const { enable, position, param, minHideRatio } = dataLabel;
+
+        if (enable !== true) return;
+        if (ratio < minHideRatio) return;
+
+        let tx = x;
+        let ty = y;
+        let parseR;
+        radian = util.CommonUtil.modulo(radian, Math.PI * 2);
+
+        let align = "cc";
+        if (position !== "outter") {
+            parseR = r / 2;
+        } else {
+            parseR = r * 1.02;
+        }
+        console.log(r, );
+
+        tx += Math.cos(radian) * parseR;
+        ty += Math.sin(radian) * parseR;
+
+        const p = util.CommonUtil.shallowMerge(param, { option: { position: align }});
+        const label = util.CanvasUtil.text(tx, ty, text, p);
+
+        return label;
     }
 
     setInfo() {
@@ -58,7 +93,7 @@ class PieChart extends Chart {
             y: height / 2 + y,
         };
         
-        let { scale } = { ...this.#data };
+        let { scale } = { ...this.option };
         if (scale > 90 || scale < 1) scale = 90;
 
         this.#info.r = Math.min(width, height) / 2 * scale / 100;

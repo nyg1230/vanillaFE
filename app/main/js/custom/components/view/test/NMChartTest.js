@@ -89,6 +89,13 @@ export default class NMChartTest extends NMView {
                     font: "bold 40px auto"
                 }
             },
+            dataLabel: {
+                param: {
+                    style: {
+                        font: "bold 12px auto"
+                    }
+                }
+            },
             data: []
         };
 

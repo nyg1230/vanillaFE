@@ -38,9 +38,7 @@ const option = {
                 style: {
                     font: "bold 14px auto"
                 },
-                option: {
-                    position: "lc"
-                }
+                option: {}
             },
             mark: {
                 major: {
@@ -52,7 +50,31 @@ const option = {
                 }
             }
         },
-        ry: {}
+        ry: {
+            title: {
+                text: "",
+                param: {
+                    style: {
+                        font: "bold 18px auto"
+                    }
+                }
+            },
+            label: {
+                style: {
+                    font: "bold 14px auto"
+                },
+                option: {}
+            },
+            mark: {
+                major: {
+                    unit: -1
+                },
+                minor: {
+                    use: false,
+                    unit: -1
+                }
+            }
+        }
     }
 };
 
