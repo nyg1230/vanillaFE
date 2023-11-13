@@ -4,7 +4,7 @@ const option = {
     dataLabel: {
         enable: true,
         position: "outter",
-        minHideRatio: 0.05
+        minHideRatio: 0
     }
 };
 

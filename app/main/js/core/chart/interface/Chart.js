@@ -56,6 +56,23 @@ class Chart {
     }
 
     draw() {}
+
+    getTooltip(x, y, ctx, e) {
+        let html = "";
+
+        if (this.#contains(x, y, e)) {
+            html += this.getTooltipContent(x, y, ctx, e);
+        }
+
+        return html;
+    }
+
+    #contains(x, y, e) {
+        return this.contains(x, y, e);
+    }
+    contains() {}
+
+    getTooltipContent() {}
 }
 
 export default Chart;

@@ -18,11 +18,12 @@ class Chart {
     #originData;
     #data;
     #container;
-    #charts = new Map();
+    #charts;
     #area;
     #mainLayer;
     #overLayer;
     #render = {};
+    #tooltip;
 
     constructor(params) {
         const { container } = { ...params };
@@ -43,6 +44,8 @@ class Chart {
         if (this.isAxis()) {
             this.#data = util.CommonUtil.shallowMerge(options.axis, this.#data);
         }
+
+        this.#charts = new Map();
         this.parseData();
     }
 
@@ -69,6 +72,36 @@ class Chart {
     }
 
     init() {}
+
+    #setTooltip() {
+        this.#tooltip = util.TooltipUtil.setTooltip(this.#container, this.#getTooltipContent.bind(this));
+    }
+
+    #removeTooltip() {
+        if (this.#tooltip) {
+            this.#tooltip.destroy();
+            this.#tooltip = null;
+        }
+    }
+
+    #getTooltipContent(e) {
+        let html = "";
+
+        const { left, top } = util.StyleUtil.getBoundingClientRect(this.#container);
+        const { clientX, clientY } = e;
+        const stX = clientX - left;
+        const stY = clientY - top;
+
+        const { canvas, ctx } = this.#overLayer;
+        util.CanvasUtil.clear(canvas);
+
+        this.#charts.forEach((chart, type) => {
+            const content = chart.getTooltip(stX, stY, ctx, e);
+            content && (html += content);
+        });
+
+        return html;
+    }
 
     parseData() {
         const { data = [], ...other } = this.#data;
@@ -257,17 +290,19 @@ class Chart {
             this.excute(per);
             if (per === 1) {
                 window.cancelAnimationFrame(fn);
+                this.#setTooltip();
             } else {
                 window.requestAnimationFrame(fn);
             }
         };
 
+        this.#removeTooltip();
         window.requestAnimationFrame(fn);
     }
 
     excute(per) {
-        util.CanvasUtil.clear(this.#mainLayer.canvas);
-        const { ctx } = { ...this.#mainLayer };
+        const { ctx, canvas } = this.#mainLayer;
+        util.CanvasUtil.clear(canvas);
         this.rednerHeader(ctx);
         this.renderLengend(ctx);
         this.renderAxis(ctx);
