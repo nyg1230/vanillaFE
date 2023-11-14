@@ -26,59 +26,18 @@ class Tooltip {
 		return `tooltip-wrapper`;
 	}
 
-	get styles () {
-		return `<style>
-					.hidden {
-						display: none;
-					}
-				
-					:root {
-						--background-color: #000000;
-						--opacity: 0.9;
-					}
-				
-					.tooltip-wrapper {
-						position: fixed;
-						user-select: none;
-						width: fit-content;
-						height: auto;
-						background-color: var(--background-color);
-						opacity: var(--opacity);
-						color: #FFFFFF;
-						font-size: 12px;
-						font-weight: 600;
-						border-radius: 8px;
-						padding: 8px 4px;
-					}
-				
-					.tooltip-wrapper::after {
-						opacity: var(--opacity);
-						--border-size: 4px;
-						border-top: var(--border-size) solid var(--background-color);
-						border-left: var(--border-size) solid transparent;
-						border-right: var(--border-size) solid transparent;
-						border-bottom: 0px solid transparent;
-						content: "";
-						position: absolute;
-						top: 100%;
-						left: calc(50% - var(--border-size));
-					}
-				</style>`;
-	}
-
 	getTooltip() {
 		this.#tooltip = util.DomUtil.querySelector(document, `.${this.clsName}`);
 
 		if (!this.#tooltip) {
 			const html = `
 				<div class="${this.clsName} hidden">
-					${this.styles}
 					<div class="tooltip">
 						<div class="content"></div>
 					</div>
 				</div>`;
 			
-			const elem = util.DomUtil.querySelector(document, "body");
+			const elem = util.DomUtil.querySelector(document, "nm-main");
 			elem && util.DomUtil.insertAdjacentHTML(elem, html);
 			this.#tooltip = util.DomUtil.querySelector(document, `.${this.clsName}`);
 		}

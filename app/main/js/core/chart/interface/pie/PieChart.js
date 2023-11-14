@@ -140,7 +140,7 @@ class PieChart extends Chart {
         const data = list[idx];
         let html = "";
         if (data) {
-            html = this.#getTooltipHtml(data);
+            html = this.#getTooltipHtml(data, idx);
             this.#setDim(idx, ctx);
         }
 
@@ -173,12 +173,15 @@ class PieChart extends Chart {
         return radian;
     }
 
-    #getTooltipHtml(data) {
+    #getTooltipHtml(data, idx) {
         const { title, value } = data;
+        const { palette } = this.option;
+        const color = util.ColorUtil.getPaletteColor(palette, idx);
 
-        return `<div class="flex">
-                    <div>${title}</div>
-                    <div>${value}</div>
+        return `<div class="info">
+                    <div class="color" style="--bg-color: ${color};"></div>
+                    <div class="title">${title}</div>
+                    <div class="value">${value}</div>
                 </div>`;
     }
 }

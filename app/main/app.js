@@ -12,6 +12,7 @@ window.onload = (e) => {
     const option = {
         mode: "hash"
     };
+    util.StyleUtil.setGlobalStyles(document);
     router.setOption(option);
     router.setContainer(body);
     router.init();
