@@ -188,6 +188,20 @@ class Chart {
     }
     
     setAxis() {
+        /**
+         * ly, ry minmax 구하기
+         * ly, ry 라벨 구간 구해서 미리 더하기
+         * major, minor mark value 정해진 값 없으면 가변 구간 구하기
+         * x, ly, ry 축 타이틀 높이 구하기
+         * 계산 순서
+         *  ly, ry label 너비 계산
+         *  x label 높이 계산
+         *  x title 높이 계산
+         *  ly, ry title 높이 계산
+         *  다시 x label area를 통한 title 재계산
+         *  변동사항이 있다면 다시 ly, ry title 계산
+         *  변동사항이 연속해서 존재하면 사이즈가 맞을 때 까지 진행
+         */
         this.calcAxisLabel();
         this.calcAxisY();
         this.setAxisLY();

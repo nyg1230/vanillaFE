@@ -41,13 +41,19 @@ const option = {
                 option: {}
             },
             mark: {
+                unit: "",
+                format: "",
                 major: {
-                    unit: -1
+                    value: -1
                 },
                 minor: {
                     use: false,
-                    unit: -1
+                    value: -1
                 }
+            },
+            info: {
+                min: Number.MAX_SAFE_INTEGER,
+                max: -Number.MAX_SAFE_INTEGER
             }
         },
         ry: {
@@ -66,13 +72,19 @@ const option = {
                 option: {}
             },
             mark: {
+                unit: "",
+                format: "",
                 major: {
-                    unit: -1
+                    value: -1
                 },
                 minor: {
                     use: false,
-                    unit: -1
+                    value: -1
                 }
+            },
+            info: {
+                min: Number.MAX_SAFE_INTEGER,
+                max: -Number.MAX_SAFE_INTEGER
             }
         }
     }

@@ -116,7 +116,10 @@ export default class NMChartTest extends NMView {
 
         const chartData = {
             header: {
-                title: "Chart Name"
+                title: "Column Chart",
+                style: {
+                    font: "bold 40px auto"
+                }
             },
             axis: {
                 x: {
@@ -149,7 +152,7 @@ export default class NMChartTest extends NMView {
                 list: newData
             }
         });
-        // chart.data = chartData;
+        chart.data = chartData;
     }
 }
 
