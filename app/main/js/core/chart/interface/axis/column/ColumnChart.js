@@ -38,8 +38,17 @@ class ColumnChart extends AxisChart {
         });
 
         console.log(this.option);
-        console.log(this.#data);
+        console.log(this.data);
+        console.log(this.area);
         console.log(this.#draw);
+    }
+
+    draw(ctx, per) {
+        const { chart } = this.area;
+        const { x, y, width, height } = chart;
+
+        const rect = util.CanvasUtil.rect(x, y, width, height, { style: { fillStyle: "gray" } });
+        rect.draw(ctx);
     }
 }
 

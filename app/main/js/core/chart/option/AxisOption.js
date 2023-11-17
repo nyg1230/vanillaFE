@@ -13,12 +13,14 @@ const option = {
                 }
             },
             label: {
-                style: {
-                    font: "bold 12px auto"
-                },
-                option: {
-                    position: "lc",
-                    rotate: 315
+                param: {
+                    style: {
+                        font: "bold 12px auto"
+                    },
+                    option: {
+                        position: "cb",
+                        rotate: 0
+                    }
                 }
             },
             tooltip: {
@@ -35,10 +37,12 @@ const option = {
                 }
             },
             label: {
-                style: {
-                    font: "bold 14px auto"
-                },
-                option: {}
+                param: {
+                    style: {
+                        font: "bold 14px auto"
+                    },
+                    option: {}
+                }
             },
             mark: {
                 unit: "",
@@ -66,10 +70,12 @@ const option = {
                 }
             },
             label: {
-                style: {
-                    font: "bold 14px auto"
-                },
-                option: {}
+                param: {
+                    style: {
+                        font: "bold 14px auto"
+                    },
+                    option: {}
+                }
             },
             mark: {
                 unit: "",

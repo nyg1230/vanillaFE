@@ -1,7 +1,7 @@
 const commonOption = {
     palette: "rainbow",
-    title: {
-        text: "",
+    header: {
+        title: "",
         style: {
             font: "bold 24px auto"
         }

@@ -11,8 +11,13 @@ import options from "js/core/chart/option/options.js";
 import CommonOption from "js/core/chart/option/CommonOption.js";
 import AxisOption from "js/core/chart/option/AxisOption.js";
 
-const axisChart = ["column", "line", "columnStack"];
-const padding = 4;
+const chartTypes = {
+    pie: ["pie"],
+    axisColumn: ["column", "line"],
+    axisColumnStack: ["columnStack"]
+};
+
+const padding = 6;
 
 class Chart {
     #originData;
@@ -20,10 +25,10 @@ class Chart {
     #container;
     #charts;
     #area;
-    #mainLayer;
-    #overLayer;
-    #render = {};
+    #layer = {};
+    #draw = {};
     #tooltip;
+    #chartType;
 
     constructor(params) {
         const { container } = { ...params };
@@ -40,8 +45,9 @@ class Chart {
         this.#originData = d;
         this.#data = util.CommonUtil.shallowMerge(options.common, this.#originData);
 
-        const opt = []
-        if (this.isAxis()) {
+        this.#chartType = this.getChartType();
+
+        if (this.isAxisChart()) {
             this.#data = util.CommonUtil.shallowMerge(options.axis, this.#data);
         }
 
@@ -55,12 +61,12 @@ class Chart {
         const mainLayer = util.DomUtil.createElement("canvas", { className: "main-layer", width, height });
         const overLayer = util.DomUtil.createElement("canvas", { className: "over-layer", width, height });
 
-        this.#mainLayer = {
+        this.#layer.mainLayer = {
             canvas: mainLayer,
             ctx: mainLayer.getContext("2d")
         };
 
-        this.#overLayer = {
+        this.#layer.overLayer = {
             canvas: overLayer,
             ctx: overLayer.getContext("2d")
         };
@@ -92,7 +98,7 @@ class Chart {
         const stX = clientX - left;
         const stY = clientY - top;
 
-        const { canvas, ctx } = this.#overLayer;
+        const { canvas, ctx } = this.#layer.overLayer;
         util.CanvasUtil.clear(canvas);
 
         this.#charts.forEach((chart, type) => {
@@ -105,6 +111,10 @@ class Chart {
 
     parseData() {
         const { data = [], ...other } = this.#data;
+
+        if (this.isAxisChart("axis")) {
+            this.parseAxisData();
+        }
 
         data.forEach((d) => {
             const { type, ...remain } = d;
@@ -129,31 +139,72 @@ class Chart {
         this.draw();
     }
 
-    isAxis() {
-        const { data = [] } = { ...this.#data };
-        const result = data.some((d) => axisChart.includes(d.type));
+    getChartType() {
+        const { data = [] } = this.#data;
+        const types = new Set(data.map((d) => d.type));
+        const entry = Object.entries(chartTypes);
+        const len = entry.length;
+
+        let result = "";
+        for (let idx = 0; idx < len; idx++) {
+            const [type, list] = entry[idx];
+
+            if ([...types].every((t) => list.some(l => l === t))) {
+                result = type;
+                break;
+            }
+        }
 
         return result;
     }
 
+    isAxisChart() {
+        return this.#chartType.startsWith("axis");
+    }
+
+    parseAxisData() {
+        const { data = [], axis = {} } = this.#data;
+        const { x, ly, ry } = axis;
+        const tickList = new Set();
+
+        data.forEach((d) => {
+            const { axis, list = [] } = d;
+            const axisType = axis === "r" ? "ly" : "ly";
+            const info = util.CommonUtil.find(this.#data, `axis.${axisType}.info`);
+            
+            list.forEach((l) => {
+                const { title, value } = l;
+                info.max = Math.max(info.max, value);
+                info.min = Math.min(info.min, value);
+                tickList.add(title);
+            });
+
+            info.min = 0;
+        });
+
+        x.label.list = [...tickList];
+    }
+
     calcArea() {
-        const { canvas } = { ...this.#mainLayer };
+        const { canvas } = { ...this.#layer.mainLayer };
         const rect = util.StyleUtil.getBoundingClientRect(canvas, null, true);
         const { width, height } = rect;
         this.#area = {
             layer: { x: 0, y: 0, width, height },
             header: { x: 0, y: 0, width: 0, height: 0 },
             legend: { x: 0, y: 0, width: 0, height: 0 },
-            axisX: { x: 0, y: 0, width: 0, height: padding },
-            axisLY: { x: 0, y: 0, width: padding, height: 0 },
-            axisRY: { x: 0, y: 0, width: padding, height: 0 },
             chart: { x: 0, y: 0, width: 0, height: 0 }
         };
 
         this.setHeader();
         this.setLegend();
         this.setChart();
-        if (this.isAxis()) {
+
+        if (this.isAxisChart()) {
+            const { chart } = this.#area;
+            chart.x += padding;
+            chart.width -= padding * 2;
+            chart.height -= padding;
             this.setAxis();
         }
     }
@@ -169,11 +220,11 @@ class Chart {
 
         const { header: headerArea, layer } = this.#area;
         headerArea.width = layer.width;
-        headerArea.height = (height + padding);
+        headerArea.height = (height + padding * 2);
 
         const { width: hw, height: hh } = headerArea;
 
-        this.#render.header = util.CanvasUtil.text(hw / 2, hh / 2 + padding, title, { style, option: { position: "cc"} });
+        this.#draw.header = util.CanvasUtil.text(hw / 2, hh / 2, title, { style, option: { position: "cc"} });
     }
 
     setLegend() {}
@@ -188,101 +239,120 @@ class Chart {
     }
     
     setAxis() {
-        /**
-         * ly, ry minmax 구하기
-         * ly, ry 라벨 구간 구해서 미리 더하기
-         * major, minor mark value 정해진 값 없으면 가변 구간 구하기
-         * x, ly, ry 축 타이틀 높이 구하기
-         * 계산 순서
-         *  ly, ry label 너비 계산
-         *  x label 높이 계산
-         *  x title 높이 계산
-         *  ly, ry title 높이 계산
-         *  다시 x label area를 통한 title 재계산
-         *  변동사항이 있다면 다시 ly, ry title 계산
-         *  변동사항이 연속해서 존재하면 사이즈가 맞을 때 까지 진행
-         */
-        this.calcAxisLabel();
-        this.calcAxisY();
+        this.calcAxisArea();
+        this.#draw.axis = {};
+        this.setAxisX();
         this.setAxisLY();
         this.setAxisRY();
-        this.setAxisX();
     }
 
-    calcAxisY() {
-        const { data } = { ...this.#data };
+    hasAxisLY() {
+        const { data = [] } = this.data;
+        return data.some((d) => d.type !== "r");
+    }
 
-        const axisInfo = {
-            ly: { list: new Set() },
-            ry: { list: new Set() }
+    hasAxisRY() {
+        const { data = [] } = this.data;
+        return data.some((d) => d.type === "r");
+    }
+
+    calcAxisArea() {
+        const { axis = {}, data } = this.#data;
+        const { chart = {} } = this.#area;
+
+        const calcX = () => {
+            const { title, label } = axis.x;
+            const titleSize = util.CanvasUtil.getTextSize(title.text, title.param);
+            const labelSize = util.CanvasUtil.getTextSize("Pq", label.param);
+
+            chart.height -= (titleSize.height + labelSize.height + padding * 2);
         };
 
-        data.forEach((d) => {
-            const { axis, list } = { ...d };
+        const calcLY = () => {
+            // 좌측 y축이 없는 경우 미계산
+            if (!this.hasAxisLY()) return;
 
-            
-            const targetList = axis !== "r" ? axisInfo.ly.list : axisInfo.ry.list;
-            
-            list.forEach((l) => {
-                targetList.add(l.value);
-            });
-        });
+            const { title, label, info } = axis.ly;
+            const { prefix = "", suffix = "" } = label;
+            const { max } = info;
+            const labelText = `${prefix}${max}${suffix}`
 
-        Object.values(axisInfo).forEach((info) => {
-            const { list } = info;
-            const max = Math.max(...list);
-            info.max = max;
-        });
-    }
+            const titleSize = util.CanvasUtil.getTextSize(title.text, title.param);
+            const labelSize = util.CanvasUtil.getTextSize(labelText, label.param);
 
-    getLabelText(text, option, maxWidth = -1) {
-        let result = text;
-        if (maxWidth > 0) {
-            const ttt = "...";
-            let { width } = util.CanvasUtil.getTextSize(result, option);
-            let w = width;
-            let len = text.length;
+            const width = titleSize.height + labelSize.width + padding * 2;
+            chart.x += width;
+            chart.width -= width;
+        };
 
-            while (maxWidth < w) {
-                if (len === 0) {
-                    result = "";
-                    break;
-                }
+        const calcRY = () => {
+            if (!this.hasAxisRY()) return;
+        };
 
-                result = result.substring(0, --len);
-                width = util.CanvasUtil.getTextSize(result, option).width;
-            }
-        }
+        calcX();
+        calcLY();
+        calcRY();
 
-        return result
-    }
-
-    calcAxisLabel() {
-        const { data } = { ...this.#data };
-        const hasAxisRY = data.every((d) => d.axis !== "r");
-    }
-
-    setAxisLY() {
-        const axisLY = util.CommonUtil.find(this.#data, "axis.ly", {});
-        const { data } = { ...this.#data };
-        const hasAxisLY = data.some((d) => d.axis !== "r");
-
-        if (!hasAxisLY) return;
-        console.log("axisLY >>> ", axisLY);
-    }
-
-    setAxisRY() {
-        const axisRY = util.CommonUtil.find(this.#data, "axis.ry", {});
-        const { data } = { ...this.#data };
-        const hasAxisRY = data.some((d) => d.axis === "r");
-
-        if (!hasAxisRY) return;
-        console.log("axisRY >>> ", axisRY);
+        const labelX = util.CommonUtil.find(axis, "x.label", {});
+        labelX.width = util.CommonUtil.round(chart.width / labelX.list.length, 2);
     }
 
     setAxisX() {
-        const axisX = util.CommonUtil.find(this.#data, "axis.x", {});
-        console.log(axisX);
+        const { axis } = this.#draw;
+        axis.x = { line: [], label: [], title: [] };
+        const { line, label, title } = axis.x;
+
+        const { chart } = this.#area;
+        const { x, y, width, height } = chart;
+
+        // x axis start
+        const stX = x;
+        const stY = y + height;
+        const edX = x + width
+        const edY = stY;
+        const lineX = util.CanvasUtil.line([[stX, stY], [edX, edY]]);
+        line.push(lineX);
+        // x axis end
+
+        // x label start
+        const labelInfo = util.CommonUtil.find(this.#data, "axis.x.label");
+        const { list = [], width: tickWidth, param } = labelInfo;
+        const labelY = stY + padding;
+
+        list.forEach((name, idx) => {
+            const str = util.CanvasUtil.getElipsisText(name, tickWidth, param);
+            const x = stX + tickWidth * idx + tickWidth / 2;
+            const text = util.CanvasUtil.text(x, labelY, str, param);
+            label.push(text);
+        })
+        // x label end
+
+        // x title start
+        const titleInfo = util.CommonUtil.find(this.data, "axis.x.title", {});
+        const { text: titleText, param: titleParam } = titleInfo;
+
+        if (util.CommonUtil.isNotEmpty(titleText)) {
+            const { layer, legend } = this.#area;
+
+            const str = util.CanvasUtil.getElipsisText(titleText, width, titleParam);
+            const titleSize = util.CanvasUtil.getTextSize(str, titleParam);
+
+            const titleX = x + width / 2;
+            const titleY = layer.height - legend.height - titleSize.height / 2 - padding;
+
+            const text = util.CanvasUtil.text(titleX, titleY, str, titleParam);
+            title.push(text);
+        }
+        // xtitle end
+    }
+
+    setAxisLY() {
+        if (!this.hasAxisLY()) return;
+        console.log("setAxisLY");
+    }
+
+    setAxisRY() {
+        if (!this.hasAxisRY()) return;
     }
 
     draw() {
@@ -315,19 +385,23 @@ class Chart {
     }
 
     excute(per) {
-        const { ctx, canvas } = this.#mainLayer;
+        const { ctx, canvas } = this.#layer.mainLayer;
         util.CanvasUtil.clear(canvas);
+
         this.rednerHeader(ctx);
         this.renderLengend(ctx);
-        this.renderAxis(ctx);
 
         this.#charts.forEach((chart) => {
             chart.draw(ctx, per);
         });
+
+        if (this.isAxisChart()) {
+            this.renderAxis(ctx);
+        }
     }
 
     rednerHeader(ctx) {
-        const { header } = { ...this.#render };
+        const { header } = { ...this.#draw };
 
         if (header) {
             header.draw(ctx);
@@ -336,7 +410,14 @@ class Chart {
 
     renderLengend(ctx) {}
 
-    renderAxis(ctx) {}
+    renderAxis(ctx) {
+        const { axis = {} } = { ...this.#draw };
+        Object.values(axis).forEach((d) => {
+            Object.values(d).forEach((dd) => {
+                dd.forEach((a) => a.draw(ctx));
+            })
+        });
+    }
 
     refresh() {
         this.draw();

@@ -181,6 +181,28 @@ const CanvasUtil = {
             height: util.CommonUtil.floor(ba + bd)
         };
     },
+    getElipsisText(text, width, param) {
+        const originText = text;
+        const elipsis = "...";
+        let size = this.getTextSize(text, param);
+        
+        if (width < size.width) {
+            const len = text.length;
+            for (let idx = len - 1; idx > -1; idx--) {
+                text = `${originText.substring(0, idx)}${elipsis}`;
+                size = this.getTextSize(text, param);
+
+                if (width > size.width) {
+                    break;
+                } else if (idx === 0) {
+                    text = "";
+                    break;
+                }
+            }
+        }
+
+        return text;
+    },
     setStyle(ctx, styles) {
         if (util.CommonUtil.isObject(styles)) {
             Object.entries(styles).forEach(([k, v]) => {

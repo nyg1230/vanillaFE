@@ -123,10 +123,24 @@ export default class NMChartTest extends NMView {
             },
             axis: {
                 x: {
-                    title: "Commit Week"
+                    title: {
+                        text: "Commit Week",
+                        param: {
+                            style: {
+                                font: "bold 24px auto"
+                            }
+                        }
+                    }
                 },
                 ly: {
-                    title: "Commit Count",
+                    title: {
+                        text: "Commit Count",
+                        param: {
+                            style: {
+                                font: "bold 24px auto"
+                            }
+                        }
+                    },
                     label: {
                         prefix: "",
                         suffix: ""
