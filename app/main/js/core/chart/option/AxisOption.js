@@ -23,6 +23,14 @@ const option = {
                     }
                 }
             },
+            line: {
+                param: {
+                    style: {
+                        lineWidth: 0.5
+                    },
+                    option: {}
+                }
+            },
             tooltip: {
                 text: []
             }
@@ -33,6 +41,10 @@ const option = {
                 param: {
                     style: {
                         font: "bold 18px auto"
+                    },
+                    option: {
+                        position: "cc",
+                        rotate: -90
                     }
                 }
             },
@@ -40,6 +52,17 @@ const option = {
                 param: {
                     style: {
                         font: "bold 14px auto"
+                    },
+                    option: {
+                        position: "lc",
+                        rotate: 0
+                    }
+                }
+            },
+            line: {
+                param: {
+                    style: {
+                        lineWidth: 0.5
                     },
                     option: {}
                 }
@@ -51,7 +74,7 @@ const option = {
                     value: -1
                 },
                 minor: {
-                    use: false,
+                    enable: false,
                     value: -1
                 }
             },
@@ -84,8 +107,16 @@ const option = {
                     value: -1
                 },
                 minor: {
-                    use: false,
+                    enable: false,
                     value: -1
+                }
+            },
+            line: {
+                param: {
+                    style: {
+                        lineWidth: 0.5
+                    },
+                    option: {}
                 }
             },
             info: {

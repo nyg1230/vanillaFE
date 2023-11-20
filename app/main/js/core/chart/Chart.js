@@ -17,7 +17,7 @@ const chartTypes = {
     axisColumnStack: ["columnStack"]
 };
 
-const padding = 6;
+const padding = 8;
 
 class Chart {
     #originData;
@@ -165,7 +165,7 @@ class Chart {
     parseAxisData() {
         const { data = [], axis = {} } = this.#data;
         const { x, ly, ry } = axis;
-        const tickList = new Set();
+        const xTickList = new Set();
 
         data.forEach((d) => {
             const { axis, list = [] } = d;
@@ -176,13 +176,32 @@ class Chart {
                 const { title, value } = l;
                 info.max = Math.max(info.max, value);
                 info.min = Math.min(info.min, value);
-                tickList.add(title);
+                xTickList.add(title);
             });
 
             info.min = 0;
         });
 
-        x.label.list = [...tickList];
+        x.label.list = [...xTickList];
+
+        if (this.hasAxisLY()) {
+            const { mark, info } = ly;
+            const { major = {}, minor = {} } = mark;
+            let { min, max } = info;
+            max = util.CommonUtil.ceil(max, -`${max}`.length + 1)
+            info.max = max;
+
+            if (major.value <= 0) {
+                const pow = `${max}`.length - 1;
+                const refValue = 5 * 10 ** pow;
+                const value = max < refValue ? 5 * 10 ** (pow - 1) : 10 ** pow;
+                major.value = value;
+            }
+
+            if (minor.enable && minor.value <= 0) {
+                minor.value = major.value / 5;
+            }
+        }
     }
 
     calcArea() {
@@ -294,7 +313,22 @@ class Chart {
         calcRY();
 
         const labelX = util.CommonUtil.find(axis, "x.label", {});
-        labelX.width = util.CommonUtil.round(chart.width / labelX.list.length, 2);
+        labelX.width = util.CommonUtil.round(chart.width / labelX.list.length, 12);
+
+        if (this.hasAxisLY()) {
+            const { ly } = axis;
+            const { info, mark } = ly;
+            const { min, max } = info;
+            const { major, minor } = mark;
+            const total = Math.abs(max - min);
+            let tickCount = util.CommonUtil.ceil(total / major.value);
+            tickCount = tickCount > 0 ? tickCount : 1;
+            major.height = util.CommonUtil.round(chart.height / tickCount, 12);
+            major.count = tickCount + 1;
+
+            if (minor.enable) {
+            }
+        }
     }
 
     setAxisX() {
@@ -310,7 +344,9 @@ class Chart {
         const stY = y + height;
         const edX = x + width
         const edY = stY;
-        const lineX = util.CanvasUtil.line([[stX, stY], [edX, edY]]);
+        const lineInfo = util.CommonUtil.find(this.#data, "axis.x.line");
+        const { param: lineParam } = lineInfo;
+        const lineX = util.CanvasUtil.line([[stX, stY], [edX, edY]], lineParam);
         line.push(lineX);
         // x axis end
 
@@ -348,7 +384,61 @@ class Chart {
 
     setAxisLY() {
         if (!this.hasAxisLY()) return;
-        console.log("setAxisLY");
+        const { axis } = this.#draw;
+        axis.ly = { line: [], label: [], title: [], scale: [] };
+        const { line, label, title, scale } = axis.ly;
+
+        const { chart } = this.#area;
+        const { x, y, width, height } = chart;
+
+        const ly = util.CommonUtil.find(this.#data, "axis.ly", {});
+        const { line: lineInfo, title: titleInfo, mark, label: labelInfo, info } = ly;
+        const { min, max } = info;
+
+        // ly axis start
+        const stX = x;
+        const stY = y;
+        const edX = stX;
+        const edY = y + height;
+        const { param: lineParam } = lineInfo;
+        const lineLY = util.CanvasUtil.line([[stX, stY], [edX, edY]], lineParam);
+        line.push(lineLY);
+        // ly axis end
+
+        // ly label start
+        console.log("setAxisLY >>> ", labelInfo);
+        console.log("mark >>> ", mark);
+        const { param: labelParam } = labelInfo;
+        const { major, minor } = mark;
+        const { value: majorValue, count: majorCount } = major;
+        const majorScaleWidth = 4;
+
+        // major scale
+        for (let idx = 0; idx < majorCount; idx++) {
+            const scaleValue = major.value * idx;
+            const scaleY = y + height - major.height * idx;
+            const scaleLine = util.CanvasUtil.line([[x, scaleY], [x - majorScaleWidth, scaleY]]);
+            scale.push(scaleLine);
+            const scaleText = util.CanvasUtil.text(x - padding, scaleY, scaleValue, labelParam);
+            label.push(scaleText);
+        }
+
+        // minor scale
+        // ly label end
+
+        // ly title start
+        const { text: titleText, param: titleParam } = titleInfo;
+        
+        if (util.CommonUtil.isNotEmpty(titleText)) {
+            const str = util.CanvasUtil.getElipsisText(titleText, height, titleParam);
+            const titleSize = util.CanvasUtil.getTextSize(str, titleParam);
+
+            const titleX = padding + titleSize.height / 2;
+            const titleY = y + height / 2;
+            const text = util.CanvasUtil.text(titleX, titleY, str, titleParam);
+            title.push(text);
+        }
+        // ly title end
     }
 
     setAxisRY() {
