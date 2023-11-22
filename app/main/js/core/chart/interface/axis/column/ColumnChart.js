@@ -109,7 +109,13 @@ class ColumnChart extends AxisChart {
     }
 
     #getTooltipContent(idx) {
-        const data = this.data.map((d) => d.list[idx]);
+        const data = [];
+        const len = util.CommonUtil.length(this.data);
+        for (let i = 0; i < len; i++) {
+            const { title, list } = this.data[i];
+            const d = { title, value: util.CommonUtil.find(list, `${idx}.value`) };
+            data.push(d);
+        }
         const { palette } = this.option;
 
         return data.map((d, idx) => {

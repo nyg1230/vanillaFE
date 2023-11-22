@@ -115,7 +115,7 @@ export default class NMChartTest extends NMView {
         const chart = util.DomUtil.querySelector(this, ".column");
 
         const chartData = {
-            palette: "2023",
+            palette: "pantone",
             header: {
                 title: "Column Chart",
                 style: {
