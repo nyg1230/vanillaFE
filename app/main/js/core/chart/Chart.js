@@ -317,6 +317,7 @@ class Chart {
 
         if (this.hasAxisLY()) {
             const { ly } = axis;
+            ly.enable = true;
             const { info, mark } = ly;
             const { min, max } = info;
             const { major, minor } = mark;
