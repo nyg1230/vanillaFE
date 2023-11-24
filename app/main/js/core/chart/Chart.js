@@ -188,20 +188,37 @@ class Chart {
             const { mark, info } = ly;
             const { major = {}, minor = {} } = mark;
             let { min, max } = info;
+            max = Math.max(Math.abs(min), Math.abs(max));
             max = util.CommonUtil.ceil(max, -`${max}`.length + 1)
-            info.max = max;
 
-            if (major.value <= 0) {
+            // ly major scale start
+            let { value: majorValue } = major;
+            if (majorValue <= 0) {
                 const pow = `${max}`.length - 1;
                 const refValue = 5 * 10 ** pow;
                 const value = max < refValue ? 5 * 10 ** (pow - 1) : 10 ** pow;
                 major.value = value;
+                majorValue = value;
+            } else {
+                if (max < majorValue) {
+                    max = majorValue;
+                } else {max > majorValue} {
+                    const mul = util.CommonUtil.ceil(max / majorValue);
+                    max = majorValue * mul;
+                }
             }
+            info.max = max;
+            // ly major scale end
 
-            if (minor.enable && minor.value <= 0) {
-                minor.value = major.value / 5;
+            // ly minor scale start
+            const { enable: minorEnable, value: minorValue } = minor;
+            if (minorEnable) {
+                if (minorValue) minor.value = majorValue / 5;
             }
+            // ly major scale end
         }
+
+        if (this.hasAxisRY()) {}
     }
 
     calcArea() {
@@ -328,6 +345,7 @@ class Chart {
             major.count = tickCount + 1;
 
             if (minor.enable) {
+                minor.height = util.CommonUtil.round(major.height * (minor.value / major.value), 12);
             }
         }
     }
@@ -386,8 +404,8 @@ class Chart {
     setAxisLY() {
         if (!this.hasAxisLY()) return;
         const { axis } = this.#draw;
-        axis.ly = { line: [], label: [], title: [], scale: [] };
-        const { line, label, title, scale } = axis.ly;
+        axis.ly = { line: [], label: [], title: [], scale: [], guide: [] };
+        const { line, label, title, scale, guide } = axis.ly;
 
         const { chart } = this.#area;
         const { x, y, width, height } = chart;
@@ -407,8 +425,6 @@ class Chart {
         // ly axis end
 
         // ly label start
-        console.log("setAxisLY >>> ", labelInfo);
-        console.log("mark >>> ", mark);
         const { param: labelParam } = labelInfo;
         const { major, minor } = mark;
         const { value: majorValue, count: majorCount } = major;
@@ -422,10 +438,39 @@ class Chart {
             scale.push(scaleLine);
             const scaleText = util.CanvasUtil.text(x - padding, scaleY, scaleValue, labelParam);
             label.push(scaleText);
+
+            if (scaleValue !== 0) {
+                const guideLine = util.CanvasUtil.line([[x, scaleY], [x + width, scaleY]], lineParam);
+                guide.push(guideLine);
+            }
         }
 
         // minor scale
-        // ly label end
+        const { enable: minorEnable, value: minorValue, height: minorHeight } = minor;
+
+        if (minorEnable) {
+            const minorScaleWidth = majorScaleWidth / 2;
+            let curValue;
+            let stY = y + height;
+            if (util.CommonUtil.modulo(min, majorValue) === 0) {
+                curValue = min;
+            } else {
+                const mul = util.CommonUtil.floor(min * minorValue);
+                curValue = mul * minorValue;
+                stY -= minorHeight * Math.abs(min - curValue) / minorValue;
+            }
+
+            for (let idx = 0; ; idx++) {
+                const value = curValue + minorValue * idx;
+                if (value >= max) {
+                    break;
+                } else if (util.CommonUtil.modulo(minorValue, majorValue) !== 0) {
+                    const scaleY = stY - minorHeight * idx;
+                    const line = util.CanvasUtil.line([[x, scaleY], [x - minorScaleWidth, scaleY]]);
+                    scale.push(line);
+                }
+            }
+        }
 
         // ly title start
         const { text: titleText, param: titleParam } = titleInfo;
@@ -482,13 +527,13 @@ class Chart {
         this.rednerHeader(ctx);
         this.renderLengend(ctx);
 
-        this.#charts.forEach((chart) => {
-            chart.draw(ctx, per);
-        });
-
         if (this.isAxisChart()) {
             this.renderAxis(ctx);
         }
+
+        this.#charts.forEach((chart) => {
+            chart.draw(ctx, per);
+        });
     }
 
     rednerHeader(ctx) {

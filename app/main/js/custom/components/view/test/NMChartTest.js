@@ -145,6 +145,15 @@ export default class NMChartTest extends NMView {
                     label: {
                         prefix: "",
                         suffix: ""
+                    },
+                    mark: {
+                        major: {
+                            value: -1
+                        },
+                        minor: {
+                            enable: true,
+                            value: -1
+                        }
                     }
                 },
                 ry: {}
