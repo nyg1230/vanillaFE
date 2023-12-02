@@ -14,7 +14,7 @@ import NMConst from "js/core/constant/NMConstant.js";
  */
 const routePath = [];
 class NMRouter {
-    #home = "main/test/chart";
+    #home = "main/body/home";
     #route = route;
     #_mode;
     #container;

@@ -5,7 +5,6 @@ import * as util from "js/core/util/utils.js";
 /* component */
 /* model */
 /* intent */
-import githubIntent from "js/custom/intent/NMGithubIntent.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
