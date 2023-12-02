@@ -38,11 +38,8 @@ class NMView extends NMComponent {
 
     }
 
-    addEvent() {
-        this.#addEvent();
-    }
-
-    #addEvent() {
+    initBind() {
+        super.initBind();
         this.bindEvent(this, NMConst.eventName.MODEL_CHANGE, this.onModelChange);
     }
 

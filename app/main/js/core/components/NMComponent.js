@@ -48,8 +48,7 @@ class NMComponent extends HTMLElement {
     }
 
     set $data(data) {
-        this.#data = data;
-        this.#setData(this.#data);
+        this.#setData(data);
     }
 
     get #proto() {
@@ -57,8 +56,9 @@ class NMComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.#addEvent();        
+        this.#initBind();
         this.#render();
+        this.#addEvent();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -66,18 +66,19 @@ class NMComponent extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.destroy();
+        this.#destroy();
     }
 
+    #initBind() {
+        this.initBind();
+    }
+
+    initBind() {}
+
     #addEvent() {
-        this.bindEvent(this, NMConst.eventName.MODEL_CHANGE);
         this.addEvent();
     }
 
-    /* component event function start */
-    /**
-     * 렌더링 이후 이벤트를 추가를 위해 호출하는 함수
-     */
     addEvent() {}
 
     /**
@@ -195,7 +196,8 @@ class NMComponent extends HTMLElement {
      * @param {Object} data 컴포넌트에 사용할 데이터
      */
     #setData(data) {
-        this.setData(data);
+        this.#data = data;
+        this.setData(this.#data);
     }
 
     // 하위에서 재정의하여 사용
@@ -256,16 +258,15 @@ class NMComponent extends HTMLElement {
      * ex) 이벤트 삭제
      */
     #destroy() {
-        this.unbindEventAll();
         util.ObserverUtil.disconnectAll(this);
+        this.unbindEventAll();
+        this.destroy();
     }
 
     /**
      * 상속받는 객체에서 삭제 시 추가적인 행위를 위하면 해당 함수를 사용함
      */
-    destroy() {
-        this.#destroy();
-    }
+    destroy() {}
     /* component remove function end */
 }
 
@@ -273,7 +274,4 @@ const define = (element) => {
     customElements.define(element.name, element);
 };
 
-export {
-    NMComponent,
-    define
-};
+export { NMComponent, define };

@@ -6,10 +6,14 @@ const EventUtil = {
         return new CustomEvent(eventName, option);
     },
     bindEvent(target, eventName, fn, option) {
-        target.addEventListener(eventName, fn, option);
+        if (util.CommonUtil.isFunction(fn)) {
+            target.addEventListener(eventName, fn, option);
+        }
     },
     unbindEvent(target, eventName, fn, option) {
-        target.removeEventListener(eventName, fn, option);
+        if (util.CommonUtil.isFunction(fn)) {
+            target.removeEventListener(eventName, fn, option);
+        }
     },
     dispatchEvent(target, eventName, param, option) {
         const p = {
