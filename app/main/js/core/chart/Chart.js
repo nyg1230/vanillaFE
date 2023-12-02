@@ -189,7 +189,8 @@ class Chart {
             const { major = {}, minor = {} } = mark;
             let { min, max } = info;
             max = Math.max(Math.abs(min), Math.abs(max));
-            max = util.CommonUtil.ceil(max, -`${max}`.length + 1)
+            const num = max < 10 ? -1 : -`${max}`.length + 1;
+            max = util.CommonUtil.ceil(max, num);
 
             // ly major scale start
             let { value: majorValue } = major;
@@ -439,7 +440,7 @@ class Chart {
             const scaleText = util.CanvasUtil.text(x - padding, scaleY, scaleValue, labelParam);
             label.push(scaleText);
 
-            if (scaleValue !== 0) {
+            if (scaleValue !== 0 && scaleValue !== max) {
                 const guideLine = util.CanvasUtil.line([[x, scaleY], [x + width, scaleY]], lineParam);
                 guide.push(guideLine);
             }
