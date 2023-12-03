@@ -18,7 +18,8 @@ const TranslateUtil = {
         if (util.CommonUtil.isNotEmpty(target)) {
             text = target[key];
             
-            if (util.CommonUtil.isArray(data)) {
+            if (util.CommonUtil.isNull(text)) {
+            } else if (util.CommonUtil.isArray(data)) {
                 data.forEach((d, idx) => {
                     const reg = new RegExp(`\\{${idx}\\}`);
                     text = text.replace(reg, d);

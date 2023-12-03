@@ -6,7 +6,7 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-export default class NMImage extends NMComponent {
+class NMImage extends NMComponent {
     #maxErrorCount = 3;
     #errorCount = 0;
     #img;
@@ -80,3 +80,5 @@ export default class NMImage extends NMComponent {
 }
 
 define(NMImage);
+
+export { NMImage, define };

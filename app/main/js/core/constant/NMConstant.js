@@ -7,6 +7,11 @@ import * as util from "js/core/util/utils.js";
 import NMCustomConstant from "js/custom/constant/NMCustomConstant.js";
 
 const NMConstant = {
+    actionName: {
+        INSERT: "insert",
+        UPDATE: "update",
+        DELETE: "delete"
+    },
     eventName: {
         CLICK: "click",
         MOUSE_MOVE: "mousemove",

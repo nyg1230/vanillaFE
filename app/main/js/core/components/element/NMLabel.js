@@ -6,12 +6,12 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-export default class NMLabel extends NMComponent {
+class NMLabel extends NMComponent {
     #text;
     #tooltip;
 
-    static get observedAttributes() {
-        return ["value", "type", "param", "range"];
+    static get defineProperty() {
+        return { value: "", type: "", param: "", range: "common", format: "", tooltip: false };
     }
 
     static get name() {
@@ -30,54 +30,6 @@ export default class NMLabel extends NMComponent {
 
     get template() {
         return `<span class="${this.clsName}" part="${this.clsName}"><slot></slot></span>`;
-    }
-
-    get value() {
-        return this.getAttribute("value");
-    }
-
-    set value(value) {
-        this.setAttribute("value", value);
-    }
-
-    get range() {
-        return this.getAttribute("range") || "common";
-    }
-
-    set range(range) {
-        this.setAttribute("range", range)
-    }
-
-    get tooltip() {
-        return this.getAttribute("tooltip");
-    }
-
-    set tooltip(tooltip) {
-        this.setAttribute("tooltip", tooltip);
-    }
-
-    get type() {
-        return this.getAttribute("type");
-    }
-
-    set type(type) {
-        this.setAttribute("type", type);
-    }
-
-    get format() {
-        return this.getAttribute("format");
-    }
-
-    set format(format) {
-        this.setAttribute("format", format);
-    }
-
-    get param() {
-        return this.getAttribute("param");
-    }
-
-    set param(param) {
-        this.setAttribute("param", param);
     }
 
     addEvent() {
@@ -146,3 +98,5 @@ export default class NMLabel extends NMComponent {
 }
 
 define(NMLabel);
+
+export { NMLabel, define };

@@ -6,11 +6,11 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-export default class NMInput extends NMComponent {
+class NMInput extends NMComponent {
     #input;
 
-    static get observedAttributes() {
-        return ["value", "type"];
+    static get defineProperty() {
+        return { value: "", type: "text" };
     }
 
     static get name() {
@@ -25,14 +25,9 @@ export default class NMInput extends NMComponent {
         return `
             .${this.clsName} {
                 --width: 50px;
-                display: block;
-                width: 100%;
+                width: calc(var(--width) + 8px);
 
-                &:hover {
-                    background-color: red;
-                }
-
-                &input {
+                & input {
                     width: var(--width);
                 }
             }
@@ -42,29 +37,13 @@ export default class NMInput extends NMComponent {
     get template() {
         return `
         <div class="${this.clsName}" part="${this.clsName}">
-            <input type="text" part="input"/>
+            <input type="${this.type}" part="input"/>
         </div>`;
     }
 
     get input() {
         !this.#input && (this.#input = util.DomUtil.querySelector(this, "input"));
         return this.#input;
-    }
-
-    get value() {
-        return this.getAttribute("value");
-    }
-
-    set value(value) {
-        this.setAttribute("value", value);
-    }
-
-    get type() {
-        return this.getAttribute("type");
-    }
-
-    set type(type) {
-        this.setAttribute("type", type);
     }
 
     addEvent() {}
@@ -81,7 +60,6 @@ export default class NMInput extends NMComponent {
     }
 
     onChangeAttr(name, old, value) {
-        
         if (old !== value) {
             if (name === "value") {
                 this.input && (this.input.value = value);
@@ -103,3 +81,5 @@ export default class NMInput extends NMComponent {
 }
 
 define(NMInput);
+
+export { NMInput, define };

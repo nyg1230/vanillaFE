@@ -10,6 +10,8 @@ class NMComponent extends HTMLElement {
     #rect;
     #event = {}
     #data;
+    #isRender = false;
+    #invoke = {};
 
     constructor(params = {}) {
         super();
@@ -17,10 +19,18 @@ class NMComponent extends HTMLElement {
         Object.entries(params).push(([k, v]) => {
             this[k] = v;
         });
+
+        this.init();
+    }
+
+    static get defineProperty() {
+        return {};
     }
     
     static get observedAttributes() {
-        return [];
+        const attrs = [];
+        Object.keys(this.defineProperty).forEach((key) => attrs.push(key));
+        return attrs;
     }
 
     static get name() {
@@ -55,14 +65,63 @@ class NMComponent extends HTMLElement {
         return this.__proto__.constructor;
     }
 
+    init() {
+        const proto = this.#proto;
+        Object.entries(proto.defineProperty).forEach(([key, defaultValue]) => {
+            Object.defineProperty(this, key, {
+                get: () => this.getAttribute(key) || defaultValue,
+                set: (v) => this.setAttribute(key, v)
+            })
+        });
+    }
+
+    invoke(type, condition, params) {
+        !this.#invoke[type] && (this.#invoke[type] = []);
+
+        if (util.CommonUtil.isFunction(condition)) {
+            condition = condition();
+        } else if (util.CommonUtil.isString(condition)) {
+            condition = this[condition]();
+        }
+
+        const target = this.#invoke[type];
+
+        if (condition) {
+            this.executeInvoke(params);
+        } else {
+            target.push(params);
+        }
+    }
+
+    executeInvoke(params) {
+        const { scope = this, arg, fn } = { ...params };
+        fn.apply(scope, arg);
+    }
+    
+    flushInvoke() {
+        Object.entries(this.#invoke).forEach(([key, invokeList = []]) => {
+            while (util.CommonUtil.isNotEmpty(invokeList)) {
+                const param = invokeList.shift();
+                this.executeInvoke(param);
+            }
+
+            delete this.#invoke[key];
+        });
+    }
+
     connectedCallback() {
         this.#initBind();
         this.#render();
+        this.flushInvoke();
         this.#addEvent();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        this.onChangeAttr(name, oldValue, newValue);
+        const p = {
+            arg: [name, oldValue, newValue],
+            fn: this.onChangeAttr
+        };
+        this.invoke("attr", this.#isRender, p);
     }
 
     disconnectedCallback() {
@@ -169,6 +228,7 @@ class NMComponent extends HTMLElement {
         frag.appendChild(template.content);
 
         this.#root.appendChild(frag);
+        this.#isRender = true;
         this.#afterRender();
     }
 
@@ -230,15 +290,19 @@ class NMComponent extends HTMLElement {
      * @returns Template tag 객체
      */
     #getTemplate() {
-        const proto = this.#proto;
+        // const proto = this.#proto;
 
-        if (!proto.template) {
-            const tmpl = util.DomUtil.createElement("template");
-            tmpl.innerHTML = this.template;
-            proto.template = tmpl;
-        }
+        // if (!proto.template) {
+        //     const tmpl = util.DomUtil.createElement("template");
+        //     tmpl.innerHTML = this.template;
+        //     proto.template = tmpl;
+        // }
 
-        const template = proto.template.cloneNode(true);
+        // const template = proto.template.cloneNode(true);
+
+        const tmpl = util.DomUtil.createElement("template");
+        tmpl.innerHTML = this.template;
+        const template = tmpl;
 
         return template;
     }
