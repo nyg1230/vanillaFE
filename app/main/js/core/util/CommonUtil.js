@@ -183,6 +183,11 @@ const CommonUtil = {
         let radian = dg / 180 * Math.PI;
         radian = radian < Math.PI ? radian : radian - 2 * Math.PI;
         return radian;
+    },
+
+    execute(exec, params = []) {
+        const result = this.isFunction(exec) ? exec(...params) : exec;
+        return result;
     }
 };
 

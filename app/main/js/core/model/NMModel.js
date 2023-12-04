@@ -61,6 +61,10 @@ class NMModel {
         return "model";
     }
 
+    static get() {
+        return this.model.#data;
+    }
+
     get clsName() {
         return NMModel.name;
     }

@@ -5,7 +5,10 @@ const korean = {
         date: "날짜",
         message: "메세지",
         home: "홈",
-        category: "카테고리"
+        category: "카테고리",
+        signin: "로그인",
+        "find.info": "계정 찾기",
+        signup: "회원가입"
     },
     board: {
         "recent.list": "최근 목록"

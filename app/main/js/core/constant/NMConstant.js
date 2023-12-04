@@ -47,6 +47,11 @@ const NMConstant = {
     },
     env: {
         baseUrl: "",
+        api: {
+            protocol: "http",
+            host: "127.0.0.1",
+            port: "5000"
+        },
         github: {
             apiVersion: "2022-11-28"
         }

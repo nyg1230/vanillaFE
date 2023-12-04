@@ -6,28 +6,43 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-const FetchUtil = {
-    async fetch(url, method = NMConst.method.GET, option) {
-        const baseOption = {};
-        option = util.CommonUtil.shallowMerge(baseOption, option);
+const { protocol, host, port } = NMConst.env.api;
+const hostUrl = `${protocol}://${host}:${port}`;
+
+class FetchUtil {
+    static async #fetch(url, method = NMConst.method.GET, option) {
+        option = util.CommonUtil.shallowMerge(this.#header, option);
         option.method = method;
-        const request = new Request(url, option)
-        const response = await fetch(request);
+        const requestUrl = `${hostUrl}${url}`;
+        const request = new Request({}, option)
+        console.log(request);
+        const response = await fetch(requestUrl, request);
         console.log(response);
         return response;
-    },
-    async GET(url, option) {
-        return await this.fetch(url, NMConst.method.GET, option);
-    },
-    async POST(url, option) {
-        return await this.fetch(url, NMConst.method.POST, option);
-    },
-    async PUT(url, option) {
-        return await this.fetch(url, NMConst.method.PUT, option);
-    },
-    async DELETE(url, option) {
-        return await this.fetch(url, NMConst.method.DELETE, option);
     }
-};
+
+    static get #header() {
+        return {
+            mode: "cors"
+        }
+    }
+
+    static async GET(url, option) {
+        return await this.#fetch(url, NMConst.method.GET, option);
+    }
+
+    static async POST(url, option) {
+        return await this.#fetch(url, NMConst.method.POST, option);
+    }
+
+    static async PUT(url, option) {
+        return await this.#fetch(url, NMConst.method.PUT, option);
+    }
+
+    static async DELETE(url, option) {
+        return await this.#fetch(url, NMConst.method.DELETE, option);
+    }
+}
+
 
 export default FetchUtil;

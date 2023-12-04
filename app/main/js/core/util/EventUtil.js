@@ -50,6 +50,20 @@ const EventUtil = {
         }
 
         return result;
+    },
+    eventFilters(list = []) {
+        const len = util.CommonUtil.length(list);
+
+        for (let idx = 0; idx < len; idx++) {
+            const filter = list[idx];
+            const { condition, callback, justOne } = filter;
+            const result = util.CommonUtil.execute(condition);
+            
+            if (result) {
+                util.CommonUtil.isFunction(callback) && callback(result);
+                break;
+            }
+        }
     }
 }
 

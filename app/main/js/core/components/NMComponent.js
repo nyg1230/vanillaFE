@@ -23,6 +23,10 @@ class NMComponent extends HTMLElement {
         this.init();
     }
 
+    static get staticAttrs() {
+        return [];
+    }
+
     static get defineProperty() {
         return {};
     }
@@ -72,6 +76,15 @@ class NMComponent extends HTMLElement {
                 get: () => this.getAttribute(key) || defaultValue,
                 set: (v) => this.setAttribute(key, v)
             })
+        });
+
+        proto.staticAttrs.forEach((attr) => {
+            const v = this.getAttribute(attr);
+            this.removeAttribute(attr);
+
+            Object.defineProperty(this, attr, {
+                get: () => v
+            });
         });
     }
 
@@ -129,10 +142,13 @@ class NMComponent extends HTMLElement {
     }
 
     #initBind() {
+        this.bindEvent(this, NMConst.eventName.VALUE_CHANGE, this.onValueChange);
         this.initBind();
     }
 
     initBind() {}
+
+    onValueChange() {}
 
     #addEvent() {
         this.addEvent();

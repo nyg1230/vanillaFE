@@ -77,6 +77,9 @@ const DomUtil = {
 	hasClass(target, cls = [], every = false) {
 		let bool = false;
 		const classList = target.classList;
+		if (!util.CommonUtil.isArray(cls)) {
+			cls = [cls];
+		}
 
 		if (!classList) {
 		} else if (every) {

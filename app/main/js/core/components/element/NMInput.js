@@ -9,6 +9,10 @@ import NMConst from "js/core/constant/NMConstant.js";
 class NMInput extends NMComponent {
     #input;
 
+    static get staticAttrs() {
+        return ["name"];
+    }
+
     static get defineProperty() {
         return { value: "", type: "text" };
     }
@@ -73,7 +77,7 @@ class NMInput extends NMComponent {
                     type = NMConst.actionName.UPDATE;
                 }
 
-                const p = { name: this.name, old, value, type, target: this }
+                const p = { property: this.name, old, value, type, target: this }
                 util.EventUtil.dispatchEvent(this, NMConst.eventName.VALUE_CHANGE, p);
             }
         }
