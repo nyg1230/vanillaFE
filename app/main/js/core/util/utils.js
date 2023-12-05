@@ -12,6 +12,7 @@ import AnimateUtil from "js/core/util/AnimateUtil.js";
 import FetchUtil from "js/core/util/FetchUtil.js";
 import TranslateUtil from "js/core/util/TranslateUtil.js";
 import DateUtil from "js/core/util/DateUtil.js";
+import ProxyUtil from "js/core/util/ProxyUtil.js";
 
 export {
     CommonUtil,
@@ -27,5 +28,6 @@ export {
     ColorUtil,
     FetchUtil,
     TranslateUtil,
+    ProxyUtil,
     store
 };

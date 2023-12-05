@@ -12,6 +12,7 @@ const store = util.store;
 class NMModel {
     #viewList;
     #data;
+    #proxy;
 
     static async createModel() {
         if (util.CommonUtil.isNotNull(store.get("model", this.name))) return;
@@ -78,13 +79,19 @@ class NMModel {
         return NMModel.name;
     }
 
-    init() {}
+    get proxy() {
+        return this.#proxy;
+    }
+
+    init() {
+        this.#proxy = util.ProxyUtil.create(this.#data);
+    }
 
     set(props = [], data) {
 		const _props = [...props];
 
 		const lastProp = _props.pop();
-		let cur = this.#data;
+		let cur = this.#proxy;
 		const len = util.CommonUtil.length(_props);
 		for (let idx = 0; idx < len; idx++) {
 			const prop = _props[idx];
@@ -103,7 +110,7 @@ class NMModel {
             name: this.clsName,
 			path: props,
             property: lastProp,
-            data: data
+            data: cur[lastProp]
         };
 
         this.#viewList.forEach((v) => {

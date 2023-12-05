@@ -10,24 +10,60 @@ const { protocol, host, port } = NMConst.env.api;
 const hostUrl = `${protocol}://${host}:${port}`;
 
 class FetchUtil {
-    static async #fetch(url, method = NMConst.method.GET, option) {
-        option = util.CommonUtil.shallowMerge(this.#header, option);
-        option.method = method;
+    static async #fetch(url, method = NMConst.method.GET, option = {}) {
+        const { headers } = { ...option };
+        delete option[headers]
+
+        option = util.CommonUtil.shallowMerge(
+            this.#options,
+            option,
+            {
+                method,
+                headers: this.#headers(headers),
+                body: {
+                    "qwer": "asdf"
+                }
+            }
+        );
+
         const requestUrl = `${hostUrl}${url}`;
-        const request = new Request({}, option)
+        const request = new Request(requestUrl, option)
 		let response;
-		try {
-			response = await fetch(requestUrl, request);
+
+        let result;
+        try {
+			response = await fetch(request);
+            const { contentType } = option;
+
+            if (contentType === "text") {
+                result = await response.text();
+            } else {
+                result = await response.json();
+            }
 		} catch (e) {
-			console.log(e);
+            result = { state: "error", msg: e };
 		}
-        return response;
+        return result;
     }
 
-    static get #header() {
+    static get #options() {
         return {
-            mode: "cors"
-        }
+            cache: "no-cache",          // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            redirect: "follow",         // manual, *follow, error
+            referrer: "no-referrer",    // no-referrer, *client
+            mode: "cors",               // no-cors, cors, *same-origin
+            contentType: "json"
+        };
+    }
+
+    static #headers(params) {
+        const headers = new Headers({
+            // "Content-Type": "application/json",
+            ...params
+        });
+
+        return headers;
     }
 
     static async GET(url, option) {

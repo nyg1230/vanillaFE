@@ -17,6 +17,7 @@ class NMSignSideEffect extends NMSideEffect {
 
     async doSignIn() {
 		const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, {});
+        console.log("state >>> ", state);
         NMUserModel.set("login", state);
     }
 }
