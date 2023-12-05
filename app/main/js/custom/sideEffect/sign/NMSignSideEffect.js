@@ -9,16 +9,15 @@ import NMUserModel from "js/custom/model/user/NMUserModel.js";
 import NMConst from "js/core/constant/NMConstant.js";
 
 class NMSignSideEffect extends NMSideEffect {
-    static url() {
+    static get url() {
         return {
             login: "/user/login"
         };
     }
 
     async doSignIn() {
-        NMUserModel.set("login", "test");
-        const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, {});
-        console.log(state);
+		const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, {});
+        NMUserModel.set("login", state);
     }
 }
 

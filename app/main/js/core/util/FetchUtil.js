@@ -15,9 +15,12 @@ class FetchUtil {
         option.method = method;
         const requestUrl = `${hostUrl}${url}`;
         const request = new Request({}, option)
-        console.log(request);
-        const response = await fetch(requestUrl, request);
-        console.log(response);
+		let response;
+		try {
+			response = await fetch(requestUrl, request);
+		} catch (e) {
+			console.log(e);
+		}
         return response;
     }
 

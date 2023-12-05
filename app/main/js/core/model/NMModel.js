@@ -22,10 +22,6 @@ class NMModel {
         return store.get("model", this.name);
     }
     
-    // static set model(model) {
-    //     NMModel.model.data = data;
-    // }
-
     static async subscribe(view, option) {
         util.CommonUtil.isNull(store.get("model", this.name)) && await this.createModel();
         this.model.setView(view, option);
@@ -43,9 +39,26 @@ class NMModel {
         });
     }
 
-    static set(property, data) {
+    static get(props) {
+		let data;
+
+		if (util.CommonUtil.isEmpty(props)) {
+			data = this.model.#data;
+		} else {
+			if (!util.CommonUtil.isArray(props)) {
+				props = [props];
+			}
+
+			data = util.CommonUtil.find(this.model.#data, props);
+		}
+		
+        return data;
+    }
+
+    static set(props, data) {
         if (this.model) {
-            this.model.set(property, data);
+			!util.CommonUtil.isArray(props) && (props = [props]);
+            this.model.set(props, data);
         } else {
             console.log(`model is not exist...`);
         }
@@ -61,22 +74,35 @@ class NMModel {
         return "model";
     }
 
-    static get() {
-        return this.model.#data;
-    }
-
     get clsName() {
         return NMModel.name;
     }
 
     init() {}
 
-    set(key, data) {
-        this.#data[key] = data;
+    set(props = [], data) {
+		const _props = [...props];
+
+		const lastProp = _props.pop();
+		let cur = this.#data;
+		const len = util.CommonUtil.length(_props);
+		for (let idx = 0; idx < len; idx++) {
+			const prop = _props[idx];
+			const tmp = cur[prop];
+
+			if (!tmp || !util.CommonUtil.isObject(tmp)) {
+				cur[prop] = {};
+			}
+
+			cur = cur[prop];
+		}
+
+		cur[lastProp] = data;
 
         const param = {
             name: this.clsName,
-            property: key,
+			path: props,
+            property: lastProp,
             data: data
         };
 
