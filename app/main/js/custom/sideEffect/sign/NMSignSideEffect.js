@@ -11,7 +11,8 @@ import NMConst from "js/core/constant/NMConstant.js";
 class NMSignSideEffect extends NMSideEffect {
     static get url() {
         return {
-            login: "/user/login"
+            login: "/user/login",
+            signup: "/user/signup"
         };
     }
 
@@ -19,6 +20,13 @@ class NMSignSideEffect extends NMSideEffect {
 		const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, {});
         console.log("state >>> ", state);
         NMUserModel.set("login", state);
+    }
+
+    async doSignUp() {
+        const data = NMUserModel.get("signup");
+        console.log(data);
+        const result = await util.FetchUtil.POST(NMSignSideEffect.url.signup, {});
+        console.log(result);
     }
 }
 

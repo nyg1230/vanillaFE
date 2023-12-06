@@ -17,6 +17,7 @@ const ProxyUtil = {
 
                 if (util.CommonUtil.isObject(value)) {
                     result = ProxyUtil.create(value);
+                    target[prop] = result
                 } else {
                     Reflect.set(target, prop, value, receiver);
                     result = true;

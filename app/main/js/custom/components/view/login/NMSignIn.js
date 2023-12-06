@@ -2,6 +2,7 @@
 import { NMView, define } from "js/core/components/view/NMView.js";
 /* common */
 import * as util from "js/core/util/utils.js";
+import router from "js/core/router/NMRouter.js";
 /* component */
 /* model */
 import NMUserModel from "js/custom/model/user/NMUserModel.js";
@@ -24,7 +25,8 @@ export default class NMSignIn extends NMView {
     get styles() {
         return `
             .${this.clsName} {
-                width: 100%;
+                width: fit-content;
+                display: block;
                 padding: 8px 16px;
                 background-color: var(--gray-lilac);
             }
@@ -34,6 +36,7 @@ export default class NMSignIn extends NMView {
                 grid-template-columns: auto auto;
                 grid-column-gap: 2px;
                 grid-row-gap: 4px;
+                padding-bottom: 4px;
 
                 & .title {
                 }
@@ -49,6 +52,7 @@ export default class NMSignIn extends NMView {
             .button-area {
                 display: flex;
                 justify-content: center;
+                padding-bottom: 4px;
             }
 
             .mpre-area {
@@ -68,13 +72,13 @@ export default class NMSignIn extends NMView {
                             <nm-label class="" value="account"></nm-label>
                         </div>
                         <div class="input">
-                            <nm-input name="account" class=""></nm-input>
+                            <nm-input nm-prop="account" class=""></nm-input>
                         </div>
                         <div class="title">
                             <nm-label class="" value="password"></nm-label>
                         </div>
                         <div class="input">
-                            <nm-input name="password" type="password" class=""></nm-input>
+                            <nm-input nm-prop="password" type="password" class=""></nm-input>
                         </div>
                     </div>
                     <div class="button-area">
@@ -98,10 +102,16 @@ export default class NMSignIn extends NMView {
                 callback: (btn) => {
                     if (util.DomUtil.hasClass(btn, "signin")) {
                         this.signIn();
+                    } else if (util.DomUtil.hasClass(btn, "signup")) {
+                        this.goSignUp();
                     }
                 }
             }
         ]);
+    }
+
+    goSignUp() {
+        router.pushState("main/login/signup");
     }
 
     signIn() {
@@ -121,7 +131,6 @@ export default class NMSignIn extends NMView {
 
     onValueChange(e) {
         const { detail } = e;
-
         const { property, type, value } = detail;
 
         if (property === "account") {

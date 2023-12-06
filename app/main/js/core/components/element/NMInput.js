@@ -10,7 +10,7 @@ class NMInput extends NMComponent {
     #input;
 
     static get staticAttrs() {
-        return ["name"];
+        return ["nm-prop"];
     }
 
     static get defineProperty() {
@@ -29,7 +29,7 @@ class NMInput extends NMComponent {
         return `
             .${this.clsName} {
                 --width: 50px;
-                width: calc(var(--width) + 8px);
+                width: fit-content;
 
                 & input {
                     width: var(--width);
@@ -77,7 +77,7 @@ class NMInput extends NMComponent {
                     type = NMConst.actionName.UPDATE;
                 }
 
-                const p = { property: this.name, old, value, type, target: this }
+                const p = { property: this["nm-prop"], old, value, type, target: this }
                 util.EventUtil.dispatchEvent(this, NMConst.eventName.VALUE_CHANGE, p);
             }
         }

@@ -30,7 +30,9 @@ export default class NMLogin extends NMView {
 
             .wrapper {
                 position: absolute;
-                margin: 0 auto;
+                top: 50%;
+                left: 50%;
+                translate: -50% -50%;
             }
         `;
     }

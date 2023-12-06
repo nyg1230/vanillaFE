@@ -8,7 +8,12 @@ const english_us = {
         category: "Category",
         signin: "Sign In",
         "find.info": "find Account",
-        signup: "Sign Up"
+        signup: "Sign Up",
+        account: "Account",
+        password: "Password",
+        "password.check": "Password Check",
+        email: "Email",
+        back: "Back"
     },
     board: {
         "recent.list": "Recent List"
