@@ -16,17 +16,23 @@ class NMSignSideEffect extends NMSideEffect {
         };
     }
 
-    async doSignIn() {
-		const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, {});
-        console.log("state >>> ", state);
+    async signin() {
+        const data = NMUserModel.get("signin");
+		const state = await util.FetchUtil.POST(NMSignSideEffect.url.login, data);
         NMUserModel.set("login", state);
     }
 
-    async doSignUp() {
+    async signup() {
         const data = NMUserModel.get("signup");
         console.log(data);
-        const result = await util.FetchUtil.POST(NMSignSideEffect.url.signup, {});
-        console.log(result);
+        const info = {
+            account: data.account,
+            pwd: data.pwd,
+            email: `${data.email.account}@${data.email.domain}`
+        };
+
+        const result = await util.FetchUtil.POST(NMSignSideEffect.url.signup, info);
+        return result;
     }
 }
 

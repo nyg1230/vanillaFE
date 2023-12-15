@@ -29,7 +29,9 @@ const NMConstant = {
         LIST_ROW_CLICK: "listRowClick",
 		SCROLL_TO: "scrollTo",
         SELECT_MENU: "selectMenu",
-        IMAGE_ERROR: "imageError"
+        IMAGE_ERROR: "imageError",
+        KEY_UP: "keyup",
+        KEY_DOWN: "keydown"
     },
     mimeType: {
         TEXT__HTML: "text/html",

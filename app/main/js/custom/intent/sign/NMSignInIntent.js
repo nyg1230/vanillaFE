@@ -12,15 +12,15 @@ import NMConst from "js/core/constant/NMConstant.js";
 
 class NMSignInIntent extends NMIntent {
     setAccount(account) {
-        NMUserModel.set("account", account);
+        NMUserModel.set(["signin", "account"], account);
     }
 
     setPassword(pw) {
-        NMUserModel.set("pw", pw);
+        NMUserModel.set(["signin", "pwd"], pw);
     }
 
     doSignIn() {
-        signEffect.doSignIn();
+        signEffect.signin();
     }
 }
 

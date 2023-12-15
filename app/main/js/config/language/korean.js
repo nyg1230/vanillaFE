@@ -13,7 +13,8 @@ const korean = {
         password: "비밀번호",
         "password.check": "비밀번호 확인",
         email: "이메일",
-        back: "뒤로가기"
+        back: "뒤로가기",
+        sex: "성별"
     },
     board: {
         "recent.list": "최근 목록"
@@ -23,6 +24,9 @@ const korean = {
     },
     git: {
         "commit.list": "커밋 리스트"
+    },
+    error: {
+        "u_00001": ""
     }
 };
 

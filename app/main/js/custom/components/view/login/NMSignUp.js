@@ -84,6 +84,12 @@ export default class NMSignUp extends NMView {
                             <nm-input type="password" nm-prop="password.check"></nm-input>
                         </div>
                         <div class="name-area">
+                            <nm-label class="subtitle medium" value="sex"></nm-label>
+                        </div>
+                        <div class="enter-area">
+                            <nm-radio type="radio" nm-prop="sex" class="radio"></nm-radio>
+                        </div>
+                        <div class="name-area">
                             <nm-label class="subtitle medium" value="email"></nm-label>
                         </div>
                         <div class="enter-area">
@@ -120,12 +126,35 @@ export default class NMSignUp extends NMView {
         ]);
     }
 
+    afterRender() {
+        super.afterRender()
+        const radio = util.DomUtil.querySelector(this, ".radio");
+    }
+
     register() {
-        signUpIntent.register();
+        this.vaildCheck() && signUpIntent.register();
     }
 
     goSignIn() {
         router.pushState("main/login/signin");
+    }
+
+    vaildCheck() {
+        const data = NMUserModel.get("signup") || {};
+        let vaild = false;
+        console.log(data);
+
+        if (!data.account) {
+            console.log("account");
+        } else if (!data.pwd) {
+            console.log("pwd");
+        } else if (!data.pwdCheck) {
+            console.log("pwdCheck")
+        } else {
+            vaild = true;
+        }
+
+        return vaild;
     }
 
     onValueChange(e) {
@@ -135,13 +164,15 @@ export default class NMSignUp extends NMView {
         if (property === "account") {
             signUpIntent.setInfo("account", value);
         } else if (property === "password") {
-            signUpIntent.setInfo("password", value);
+            signUpIntent.setInfo("pwd", value);
         } else if (property === "e-account") {
             signUpIntent.setInfo(["email", "account"], value);
         } else if (property === "e-domain") {
             signUpIntent.setInfo(["email", "doamin"], value);
         } else if (property === "password.check") {
             signUpIntent.checkPassword(value);
+        } else if (property === "sex") {
+            signUpIntent.setInfo("sex", value);
         }
     }
 }

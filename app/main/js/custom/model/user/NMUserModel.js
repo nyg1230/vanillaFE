@@ -13,7 +13,6 @@ class NMUserModel extends NMModel {
     }
 
     get clsName() {
-        window.qqq = this;
         return NMUserModel.name;
     }
 

@@ -19,10 +19,7 @@ class FetchUtil {
             option,
             {
                 method,
-                headers: this.#headers(headers),
-                body: {
-                    "qwer": "asdf"
-                }
+                headers: this.#headers(headers)
             }
         );
 
@@ -35,14 +32,21 @@ class FetchUtil {
 			response = await fetch(request);
             const { contentType } = option;
 
+            let data;
             if (contentType === "text") {
-                result = await response.text();
+                data = await response.text();
             } else {
-                result = await response.json();
+                data = await response.json();
+            }
+
+            result = {
+                data,
+                state: response.ok
             }
 		} catch (e) {
             result = { state: "error", msg: e };
 		}
+
         return result;
     }
 
@@ -59,26 +63,27 @@ class FetchUtil {
 
     static #headers(params) {
         const headers = new Headers({
-            // "Content-Type": "application/json",
+            "Content-Type": "application/json",
             ...params
         });
 
         return headers;
     }
 
-    static async GET(url, option) {
+    static async GET(url, data, option) {
         return await this.#fetch(url, NMConst.method.GET, option);
     }
 
-    static async POST(url, option) {
+    static async POST(url, data = {}, option = {}) {
+        option.body = JSON.stringify(data);
         return await this.#fetch(url, NMConst.method.POST, option);
     }
 
-    static async PUT(url, option) {
+    static async PUT(url, data, option) {
         return await this.#fetch(url, NMConst.method.PUT, option);
     }
 
-    static async DELETE(url, option) {
+    static async DELETE(url, data, option) {
         return await this.#fetch(url, NMConst.method.DELETE, option);
     }
 }

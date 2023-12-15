@@ -55,9 +55,10 @@ export default class NMSignIn extends NMView {
                 padding-bottom: 4px;
             }
 
-            .mpre-area {
+            .more-area {
                 display: flex;
                 justify-content: center;
+                gap: 4px;
             }
         `;
     }
@@ -84,7 +85,7 @@ export default class NMSignIn extends NMView {
                     <div class="button-area">
                         <nm-button class="signin" value="signin"></nm-button>
                     </div>
-                    <div class="mpre-area">
+                    <div class="more-area">
                         <nm-button class="find-info" value="find.info"></nm-button>
                         <nm-button class="signup" value="signup"></nm-button>
                     </div>
@@ -93,6 +94,7 @@ export default class NMSignIn extends NMView {
 
     addEvent() {
         this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
+        this.bindEvent(this, NMConst.eventName.KEY_UP, this.onKeyUp)
     }
 
     onClick(e) {
@@ -110,22 +112,36 @@ export default class NMSignIn extends NMView {
         ]);
     }
 
+    onKeyUp(e) {
+        const { keyCode } = e;
+
+        if (keyCode === 13) {
+            this.signIn();
+        }
+    }
+
     goSignUp() {
         router.pushState("main/login/signup");
     }
 
     signIn() {
         const info = NMUserModel.get();
-        console.log(info);
         signInIntent.doSignIn();
     }
 
     onModelChange(e) {
         const { detail } = e;
-        const { name, property, value } = detail;
+        const { name, property, data } = detail;
 
-        if (NMUserModel.name === name) {
-            console.log(e);
+        if (name === NMUserModel.name) {
+            if (property === "login") {
+                const { data: info, state } = { ...data };
+                if (state) {
+                    // router.pushState("main/home");
+                } else {
+                    alert(JSON.stringify(info));
+                }
+            }
         }
     }
 

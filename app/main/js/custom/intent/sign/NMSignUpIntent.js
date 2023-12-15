@@ -12,14 +12,7 @@ import NMConst from "js/core/constant/NMConstant.js";
 
 class NMSignUpIntent extends NMIntent {
     register() {
-        // vaild check
-        let vaild = false;
-
-        if (vaild) {
-            signEffect.doSignUp();
-        } else {
-            // 변수 저장 없이 state만 전달하는 기능 추가 필요
-        }
+        signEffect.signup()
     }
 
     setInfo(prop = [], value) {
@@ -30,9 +23,9 @@ class NMSignUpIntent extends NMIntent {
     }
 
     checkPassword(value) {
-        const pw = NMUserModel.get(["signup", "password"]);
+        const pw = NMUserModel.get(["signup", "pwd"]);
         const state = util.CommonUtil.isNotEmpty(pw) && pw === value;
-        NMUserModel.set(["signup", "pwCheck"], state);
+        NMUserModel.set(["signup", "pwdCheck"], state);
     }
 }
 

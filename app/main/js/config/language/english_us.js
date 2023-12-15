@@ -13,7 +13,8 @@ const english_us = {
         password: "Password",
         "password.check": "Password Check",
         email: "Email",
-        back: "Back"
+        back: "Back",
+        sex: "Sex"
     },
     board: {
         "recent.list": "Recent List"
