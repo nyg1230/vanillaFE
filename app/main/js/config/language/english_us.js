@@ -14,7 +14,9 @@ const english_us = {
         "password.check": "Password Check",
         email: "Email",
         back: "Back",
-        sex: "Sex"
+        sex: "Sex",
+        male: "Male",
+        female: "Female"
     },
     board: {
         "recent.list": "Recent List"

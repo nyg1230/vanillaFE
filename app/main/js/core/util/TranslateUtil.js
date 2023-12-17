@@ -12,6 +12,7 @@ let pack;
 
 const TranslateUtil = {
     translate(key, range = "common", data = []) {
+        range = util.CommonUtil.falsy(range) ? "common" : range;
         const target = util.CommonUtil.find(pack, range);
 
         let text;

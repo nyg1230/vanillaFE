@@ -41,6 +41,17 @@ const CommonUtil = {
         return bool;
     },
 
+    falsy(v) {
+        const list = ["null", "0", "undefined"];
+        const isFalsy = list.some((d) => d === `${v}`);
+
+        return isFalsy;
+    },
+
+    truthy(v) {
+        return !this.falsy(v) 
+    },
+
     approximation(type, num, round, isPercent = false) {
         let result = 0;
         const corr = 10 ** round;

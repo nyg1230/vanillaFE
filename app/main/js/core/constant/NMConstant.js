@@ -14,6 +14,9 @@ const NMConstant = {
     },
     eventName: {
         CLICK: "click",
+        CHANGE: "change",
+        INPUT: "input",
+        CHECK: "check",
         MOUSE_MOVE: "mousemove",
         MOUSE_OUT: "mouseout",
         MOUSE_OVER: "mouseover",

@@ -73,7 +73,17 @@ class NMComponent extends HTMLElement {
         const proto = this.#proto;
         Object.entries(proto.defineProperty).forEach(([key, defaultValue]) => {
             Object.defineProperty(this, key, {
-                get: () => this.getAttribute(key) || defaultValue,
+                get: () => {
+                    let value = this.getAttribute(key);
+
+                    if (!value) {
+                        if (util.CommonUtil.isFunction(defaultValue)) {
+                            result = defaultValue.call(this);
+                        }
+                    }
+
+                    return value;
+                },
                 set: (v) => this.setAttribute(key, v)
             })
         });

@@ -54,8 +54,7 @@ class NMInput extends NMComponent {
 
     afterRender() {
         this.input && (this.#input.value = this.value);
-        this.bindEvent(this.input, "change", this.onChange);
-        this.bindEvent(this.input, "input", this.onInput);
+        this.bindEvent(this.input, NMConst.eventName.INPUT, this.onInput);
     }
 
     onInput(e) {

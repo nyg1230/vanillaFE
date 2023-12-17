@@ -14,7 +14,9 @@ const korean = {
         "password.check": "비밀번호 확인",
         email: "이메일",
         back: "뒤로가기",
-        sex: "성별"
+        sex: "성별",
+        male: "남성",
+        female: "여성"
     },
     board: {
         "recent.list": "최근 목록"

@@ -129,6 +129,10 @@ export default class NMSignUp extends NMView {
     afterRender() {
         super.afterRender()
         const radio = util.DomUtil.querySelector(this, ".radio");
+        radio.$data = [
+            { title: "male", value: "m" },
+            { title: "female", value: "f" }
+        ];
     }
 
     register() {
