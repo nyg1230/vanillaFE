@@ -43,6 +43,9 @@ class FetchUtil {
                 data,
                 state: response.ok
             }
+
+            const token = response.headers.get(NMConst.header.token);
+            util.store.setLocalStorage(NMConst.header.token, token);
 		} catch (e) {
             result = { state: "error", msg: e };
 		}
@@ -63,7 +66,9 @@ class FetchUtil {
 
     static #headers(params) {
         const headers = new Headers({
+            "Access-Control-Expose-Headers": "*",
             "Content-Type": "application/json",
+            "X-AUTH-TOKEN": "",
             ...params
         });
 

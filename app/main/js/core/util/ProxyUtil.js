@@ -6,8 +6,9 @@ import * as util from "js/core/util/utils.js";
 import NMConst from "js/core/constant/NMConstant.js";
 
 const ProxyUtil = {
-    create(data = {}) {
-        console.log(data, typeof data);
+    create(data) {
+        if (util.CommonUtil.isNull(data)) data = {};
+
         const proxy = new Proxy(data, {
             get(target, prop, receiver) {
                 return Reflect.get(target, prop, receiver);

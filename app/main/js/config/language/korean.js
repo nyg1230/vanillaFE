@@ -16,7 +16,9 @@ const korean = {
         back: "뒤로가기",
         sex: "성별",
         male: "남성",
-        female: "여성"
+        female: "여성",
+        nickname: "닉네임",
+        "double.check": "중복 확인"
     },
     board: {
         "recent.list": "최근 목록"

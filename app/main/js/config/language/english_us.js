@@ -16,7 +16,9 @@ const english_us = {
         back: "Back",
         sex: "Sex",
         male: "Male",
-        female: "Female"
+        female: "Female",
+        nickname: "Nickname",
+        "double.check": "Double Check"
     },
     board: {
         "recent.list": "Recent List"

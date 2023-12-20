@@ -44,6 +44,7 @@ export default class NMSignUp extends NMView {
 
                 & .enter-area {
                     display: flex;
+                    gap: 4px;
                 }
             }
 
@@ -70,6 +71,7 @@ export default class NMSignUp extends NMView {
                         </div>
                         <div class="enter-area">
                             <nm-input nm-prop="account"></nm-input>
+                            <nm-button value="double.check" name="doubleCheck"></nm-button>
                         </div>
                         <div class="name-area">
                             <nm-label class="subtitle medium" value="password"></nm-label>
@@ -82,6 +84,12 @@ export default class NMSignUp extends NMView {
                         </div>
                         <div class="enter-area">
                             <nm-input type="password" nm-prop="password.check"></nm-input>
+                        </div>
+                        <div class="name-area">
+                            <nm-label class="subtitle medium" value="nickname"></nm-label>
+                        </div>
+                        <div class="enter-area">
+                            <nm-input nm-prop="nickname"></nm-input>
                         </div>
                         <div class="name-area">
                             <nm-label class="subtitle medium" value="sex"></nm-label>
@@ -97,12 +105,10 @@ export default class NMSignUp extends NMView {
                             @
                             <nm-input nm-prop="e-domain"></nm-input>
                         </div>
-                        <div></div>
-                        
                     </div>
                     <div class="button-area">
-                        <nm-button class="register" value="signup"></nm-button>
-                        <nm-button class="back" value="back"></nm-button>
+                        <nm-button name="register" value="signup"></nm-button>
+                        <nm-button name="back" value="back"></nm-button>
                     </div>
                 </div>`;
     }
@@ -116,10 +122,13 @@ export default class NMSignUp extends NMView {
             {
                 condition: () => util.EventUtil.getDomFromEvent(e, "nm-button"),
                 callback: (btn) => {
-                    if (util.DomUtil.hasClass(btn, "register")) {
+                    const name = btn.name;
+                    if (name === "register") {
                         this.register();
-                    } else if (util.DomUtil.hasClass(btn, "back")) {
+                    } else if (name === "back") {
                         this.goSignIn();
+                    } else if (name === "doubleCheck") {
+                        this.doubleCheck();
                     }
                 }
             }
@@ -146,19 +155,52 @@ export default class NMSignUp extends NMView {
     vaildCheck() {
         const data = NMUserModel.get("signup") || {};
         let vaild = false;
-        console.log(data);
 
-        if (!data.account) {
-            console.log("account");
+        if (!data.doubleCheck) {
+            alert("u need double check");
         } else if (!data.pwd) {
-            console.log("pwd");
+            alert("pwd is not valid");
         } else if (!data.pwdCheck) {
-            console.log("pwdCheck")
+            alert("pwd is not same");
+        } else if (!data.nickname) {
+            alert("nickname is not valid");
+        } else if (!data.sex) {
+            alert("sex is not check");
         } else {
             vaild = true;
         }
 
         return vaild;
+    }
+
+    doubleCheck() {
+        const data = NMUserModel.get("signup");
+        const { account } = { ...data };
+
+        if (util.CommonUtil.isEmpty(account)) {
+            alert("account is empty");
+        } else {
+            signUpIntent.doubleCheck();
+        }
+    }
+
+    onModelChange(e) {
+        const { detail } = e;
+        const { name, property, data } = { ...detail };
+
+        if (name === NMUserModel.name) {
+            if (property === "account") {
+                signUpIntent.setInfo("doubleCheck", false);
+            } else if (property === "duplicate") {
+                if (data) {
+                    alert("is duplicate");
+                } else {
+                    alert("enable account")
+                }
+
+                signUpIntent.setInfo("doubleCheck", !data);
+            }
+        }
     }
 
     onValueChange(e) {
@@ -172,11 +214,13 @@ export default class NMSignUp extends NMView {
         } else if (property === "e-account") {
             signUpIntent.setInfo(["email", "account"], value);
         } else if (property === "e-domain") {
-            signUpIntent.setInfo(["email", "doamin"], value);
+            signUpIntent.setInfo(["email", "domain"], value);
         } else if (property === "password.check") {
             signUpIntent.checkPassword(value);
         } else if (property === "sex") {
             signUpIntent.setInfo("sex", value);
+        } else if (property === "nickname") {
+            signUpIntent.setInfo("nickname", value);
         }
     }
 }

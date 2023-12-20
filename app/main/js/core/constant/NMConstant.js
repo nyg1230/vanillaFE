@@ -50,6 +50,9 @@ const NMConstant = {
         PUT: "put",
         DELETE: "delete"
     },
+    header: {
+        token: "X-AUTH-TOKEN"
+    },
     env: {
         baseUrl: "",
         api: {

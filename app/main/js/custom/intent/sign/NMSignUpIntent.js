@@ -27,6 +27,10 @@ class NMSignUpIntent extends NMIntent {
         const state = util.CommonUtil.isNotEmpty(pw) && pw === value;
         NMUserModel.set(["signup", "pwdCheck"], state);
     }
+
+    doubleCheck() {
+        signEffect.doubleCheck();
+    }
 }
 
 const signUpIntent = new NMSignUpIntent();

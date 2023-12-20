@@ -9,6 +9,10 @@ import NMConst from "js/core/constant/NMConstant.js";
 class NMRadio extends NMComponent {
     #value;
 
+    static get staticAttrs() {
+        return ["nm-prop"];
+    }
+
     static get defineProperty() {
         return {};
     }
@@ -26,24 +30,6 @@ class NMRadio extends NMComponent {
         .${this.clsName} {
             display: flex;
             gap: 4px;
-        }
-
-        input {
-            &[type="radio"] {
-                display: none;
-            }
-        }
-
-        .radio-wapper {
-            cursor: pointer;
-            border-radius: 4px;
-            padding: 0px 4px;
-            --bg-color: #FFFFFF;
-            background-color: var(--bg-color);
-
-            &:hover {
-                --bg-color: gray;
-            }
         }
         `;
     }
@@ -111,7 +97,12 @@ class NMRadio extends NMComponent {
         util.EventUtil.dispatchEvent(this, NMConst.eventName.VALUE_CHANGE, p);
     }
 
-    clear() {}
+    clear() {
+        const units = util.DomUtil.querySelectorAll(this, NMRadioUnit.name);
+        units.forEach((unit) => {
+            unit.remove();
+        });
+    }
 }
 
 class NMRadioUnit extends NMComponent {
@@ -145,13 +136,13 @@ class NMRadioUnit extends NMComponent {
             padding: 0px 4px;
 
             &:hover {
-                --bg-color: gray;
+                --bg-color: var(--pantone-frost-gray);
                 --color: white;
             }
 
             &.check {
-                --bg-color: blue;
-                --color: white;
+                --bg-color: var(--pantone-true-blue);
+                --color: var(--pantone-bright-white);
             }
         }
         `;
@@ -178,6 +169,9 @@ class NMRadioUnit extends NMComponent {
                 }
             }
         ]);
+
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     onChangeAttr(name, old, value) {

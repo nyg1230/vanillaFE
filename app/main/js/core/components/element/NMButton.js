@@ -10,7 +10,7 @@ class NMButton extends NMComponent {
     #input;
 
     static get defineProperty() {
-        return { value: "" };
+        return { value: "", name: "" };
     }
 
     static get name() {

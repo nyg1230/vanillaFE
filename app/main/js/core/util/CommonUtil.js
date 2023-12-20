@@ -42,8 +42,8 @@ const CommonUtil = {
     },
 
     falsy(v) {
-        const list = ["null", "0", "undefined"];
-        const isFalsy = list.some((d) => d === `${v}`);
+        const list = ["null", "0", "undefined", ""];
+        const isFalsy = list.some((d) => d === `${v}`.trim());
 
         return isFalsy;
     },

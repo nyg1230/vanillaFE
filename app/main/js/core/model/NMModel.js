@@ -65,9 +65,14 @@ class NMModel {
         }
     }
 
+    static clear() {
+        if (this.model) {
+            this.model.clear();
+        }
+    }
+
     constructor() {
         this.#viewList = [];
-        this.#data = {};
         this.init();
     }
 
@@ -84,6 +89,7 @@ class NMModel {
     }
 
     init() {
+        this.#data = {};
         this.#proxy = util.ProxyUtil.create(this.#data);
     }
 
@@ -117,6 +123,10 @@ class NMModel {
             const { view } = { ...v };
             util.EventUtil.dispatchEvent(view, NMConst.eventName.MODEL_CHANGE, param);
         });
+    }
+
+    clear() {
+        this.init();
     }
 
     setView(view, option) {

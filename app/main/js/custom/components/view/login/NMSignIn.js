@@ -37,6 +37,8 @@ export default class NMSignIn extends NMView {
                 grid-column-gap: 2px;
                 grid-row-gap: 4px;
                 padding-bottom: 4px;
+                row-gap: 2px;
+                column-gap: 4px;
 
                 & .title {
                 }
@@ -136,8 +138,12 @@ export default class NMSignIn extends NMView {
         if (name === NMUserModel.name) {
             if (property === "login") {
                 const { data: info, state } = { ...data };
+                console.log(data, state);
                 if (state) {
-                    // router.pushState("main/home");
+                    NMUserModel.clear();
+                    NMUserModel.set("user", data);
+                    // router.pushState("main/body/home");
+                    router.init();
                 } else {
                     alert(JSON.stringify(info));
                 }
@@ -154,6 +160,10 @@ export default class NMSignIn extends NMView {
         } else if (property === "password") {
             signInIntent.setPassword(value);
         }
+    }
+
+    destroy() {
+        super.destroy();
     }
 }
 

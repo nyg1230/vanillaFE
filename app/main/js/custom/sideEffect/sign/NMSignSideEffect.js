@@ -12,7 +12,8 @@ class NMSignSideEffect extends NMSideEffect {
     static get url() {
         return {
             login: "/user/login",
-            signup: "/user/signup"
+            signup: "/user/signup",
+            doubleCheck: "/user/doubleCheck"
         };
     }
 
@@ -24,15 +25,29 @@ class NMSignSideEffect extends NMSideEffect {
 
     async signup() {
         const data = NMUserModel.get("signup");
-        console.log(data);
+        const { account, pwd, nickname, email = {}, sex } = data;
         const info = {
-            account: data.account,
-            pwd: data.pwd,
-            email: `${data.email.account}@${data.email.domain}`
+            account,
+            pwd,
+            nickname,
+            sex
         };
 
+        if (util.CommonUtil.isNotEmpty(email)) {
+            info.email = `${data.email.account}@${data.email.domain}`;
+        }
+
         const result = await util.FetchUtil.POST(NMSignSideEffect.url.signup, info);
-        return result;
+        NMUserModel.set("register", result);
+    }
+
+    async doubleCheck() {
+        const data = NMUserModel.get("signup");
+        const { account } = { ...data };
+
+        const result = await util.FetchUtil.POST(NMSignSideEffect.url.doubleCheck, { account });
+        const duplicate = util.CommonUtil.find(result, "data.duplicate");
+        NMUserModel.set("duplicate", duplicate);
     }
 }
 

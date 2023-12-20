@@ -2,6 +2,7 @@
 /* common */
 import * as util from "js/core/util/utils.js";
 import route from "js/custom/router/route.js";
+import UserContext from "js/config/user/UserContext.js";
 /* component */
 /* model */
 /* constant */
@@ -14,7 +15,8 @@ import NMConst from "js/core/constant/NMConstant.js";
  */
 const routePath = [];
 class NMRouter {
-    #home = "main/login/signin";
+    #home = "main/body/home";
+    #login = "main/login/signin";
     #route = route;
     #_mode;
     #container;
@@ -49,11 +51,14 @@ class NMRouter {
     init() {
         let path = this.getPathName();
         // path = util.CommonUtil.isNotEmpty(path) ? path : this.#home;
-        
+
+        const valid = UserContext.isValid();
+        if (!valid) path = this.#login;
+
         if (util.CommonUtil.isNotEmpty(path)) {
             this.route({ path });
         } else {
-            this.pushState(this.#home);
+            this.pushState(path || this.#home);
         }
     }
 
