@@ -10,6 +10,7 @@ class StoreUtil {
     #store;
 
     constructor() {
+        window.qqq = this;
         this.#store = {};
         this.init();
     }
@@ -51,6 +52,10 @@ class StoreUtil {
         localStorage.setItem(key, value);
     }
 
+    removeLocalStorage(key) {
+        localStorage.removeItem(key);
+    }
+
     getSessionStorage(key, defaultValue = null) {
         const result = sessionStorage.getItem(key);
 
@@ -63,6 +68,10 @@ class StoreUtil {
 
     setSessrionStorage(key, value) {
         return sessionStorage.setItem(key, value);
+    }
+
+    removeSessionStorage(key) {
+        sessionStorage.removeItem(key);
     }
 }
 

@@ -28,7 +28,7 @@ export default class NMSignIn extends NMView {
                 width: fit-content;
                 display: block;
                 padding: 8px 16px;
-                background-color: var(--gray-lilac);
+                background-color: var(--almond-peach);
             }
 
             .input-area {
@@ -142,7 +142,6 @@ export default class NMSignIn extends NMView {
                 if (state) {
                     NMUserModel.clear();
                     NMUserModel.set("user", data);
-                    // router.pushState("main/body/home");
                     router.init();
                 } else {
                     alert(JSON.stringify(info));

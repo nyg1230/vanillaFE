@@ -16,7 +16,7 @@ class NMComponent extends HTMLElement {
     constructor(params = {}) {
         super();
 
-        Object.entries(params).push(([k, v]) => {
+        Object.entries(params).filter(([k, v]) => {
             this[k] = v;
         });
 
@@ -77,8 +77,10 @@ class NMComponent extends HTMLElement {
                     let value = this.getAttribute(key);
 
                     if (!value) {
-                        if (util.CommonUtil.isFunction(defaultValue)) {
-                            result = defaultValue.call(this);
+                        try {
+                            value = defaultValue.call(this);
+                        } catch {
+                            value = defaultValue;
                         }
                     }
 
@@ -327,7 +329,7 @@ class NMComponent extends HTMLElement {
         // const template = proto.template.cloneNode(true);
 
         const tmpl = util.DomUtil.createElement("template");
-        tmpl.innerHTML = this.template;
+        tmpl.innerHTML = util.CommonUtil.isFunction(this.template) ? this.template() : this.template;
         const template = tmpl;
 
         return template;

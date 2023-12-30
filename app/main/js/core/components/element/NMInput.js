@@ -76,7 +76,7 @@ class NMInput extends NMComponent {
                     type = NMConst.actionName.UPDATE;
                 }
 
-                const p = { property: this["nm-prop"], old, value, type, target: this }
+                const p = { property: this["nm-prop"], old, value, type, target: this };
                 util.EventUtil.dispatchEvent(this, NMConst.eventName.VALUE_CHANGE, p);
             }
         }

@@ -7,12 +7,13 @@ import * as util from "js/core/util/utils.js";
 import NMConst from "js/core/constant/NMConstant.js";
 
 const { protocol, host, port } = NMConst.env.api;
-const hostUrl = `${protocol}://${host}:${port}`;
+const hostUrl = `${protocol}://${host}:${port}/`;
 
 class FetchUtil {
     static async #fetch(url, method = NMConst.method.GET, option = {}) {
-        const { headers } = { ...option };
-        delete option[headers]
+        const { headers, host } = { ...option };
+        delete option.headers;
+        delete option.host;
 
         option = util.CommonUtil.shallowMerge(
             this.#options,
@@ -23,7 +24,7 @@ class FetchUtil {
             }
         );
 
-        const requestUrl = `${hostUrl}${url}`;
+        const requestUrl = `${host || hostUrl}${url}`;
         const request = new Request(requestUrl, option)
 		let response;
 
@@ -45,7 +46,7 @@ class FetchUtil {
             }
 
             const token = response.headers.get(NMConst.header.token);
-            util.store.setLocalStorage(NMConst.header.token, token);
+            token && util.store.setLocalStorage(NMConst.header.token, token);
 		} catch (e) {
             result = { state: "error", msg: e };
 		}
@@ -90,6 +91,26 @@ class FetchUtil {
 
     static async DELETE(url, data, option) {
         return await this.#fetch(url, NMConst.method.DELETE, option);
+    }
+
+    static async getIcon(path) {
+        const url = `image/icon/${path}.svg`;
+        const option = { host: "/", contentType: "text", headers: { "Content-type": "image/svg+xml" } };
+
+        let icon = util.store.get("icon", path);
+        
+        if (!icon) {
+            const result = await this.#fetch(url, NMConst.method.GET, option);
+            const { data: html } = result;
+            const div = util.DomUtil.createElement("div");
+            div.innerHTML = html;
+            const svg = util.DomUtil.querySelector(div, "svg");
+            util.store.set("icon", path, svg);
+            div.remove();
+            icon = svg;
+        }
+
+        return icon;
     }
 }
 

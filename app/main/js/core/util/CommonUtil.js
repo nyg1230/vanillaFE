@@ -1,3 +1,5 @@
+import * as util from "js/core/util/utils.js";
+
 const CommonUtil = {
     isArray(obj) {
         return Array.isArray(obj);

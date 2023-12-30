@@ -18,7 +18,11 @@ const korean = {
         male: "남성",
         female: "여성",
         nickname: "닉네임",
-        "double.check": "중복 확인"
+        "double.check": "중복 확인",
+        "welcome-user": "{0}님 환영합니다.",
+        "my.profile": "내 정보",
+        setting: "설정",
+        logout: "로그아웃"
     },
     board: {
         "recent.list": "최근 목록"

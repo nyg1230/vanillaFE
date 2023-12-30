@@ -27,7 +27,6 @@ class NMList extends NMComponent {
     }
 
     get template() {
-        window.qqq = this;
         return `
         <div class="${this.clsName}" part="${this.clsName}">
             <div class="header-area"></div>

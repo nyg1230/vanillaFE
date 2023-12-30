@@ -82,7 +82,7 @@ class NMLabel extends NMComponent {
     }
 
     onChangeAttr(name, old, value) {
-        if (name === "value" || name === "range" || name === "type") {
+        if (name === "value" || name === "range" || name === "type" || name === "param") {
             const text = this.getText();
             this.setText(text);
         }

@@ -18,7 +18,11 @@ const english_us = {
         male: "Male",
         female: "Female",
         nickname: "Nickname",
-        "double.check": "Double Check"
+        "double.check": "Double Check",
+        "welcome-user": "Welcome, ${0}",
+        "my.profile": "My Profile",
+        setting: "Setting",
+        logout: "Logout"
     },
     board: {
         "recent.list": "Recent List"

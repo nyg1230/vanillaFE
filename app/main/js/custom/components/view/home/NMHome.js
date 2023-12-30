@@ -24,7 +24,10 @@ export default class NMHome extends NMView {
     }
 
     get template() {
-        return ``;
+        return `
+        <div class="${this.clsName}" part="${this.clsName}">
+            home
+        </div>`;
     }
 
     addEvent() {}

@@ -3,6 +3,8 @@ import { NMView, define } from "js/core/components/view/NMView.js";
 /* common */
 import * as util from "js/core/util/utils.js";
 /* component */
+import NMHeader from "js/custom/components/component/common/NMHeader.js";
+import NMSideBar from "js/custom/components/component/common/NMSideBar.js";
 /* model */
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
@@ -20,11 +22,34 @@ export default class NMBody extends NMView {
     }
 
     get styles() {
-        return ``;
+        return `
+            .${this.clsName} {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .container {
+                height: 100%;
+                border: 1px solid black;
+            }
+
+            nm-side-bar {
+                position: fixed;
+                height: 100%;
+            }
+        `;
     }
 
     get template() {
-        return ``;
+        return `
+        <div class="${this.clsName}" part="${this.clsName}">
+            <nm-header></nm-header>
+            <nm-side-bar></nm-side-bar>
+            <div class="container">
+                <slot></slot>
+            </div>
+        </div>`;
     }
 
     addEvent() {}

@@ -24,7 +24,7 @@ export default class NMLogin extends NMView {
             .${this.clsName} {
                 width: 100%;
                 height: 100%;
-                background: var(--gray-sand);
+                background: var(--peach-fuzz);
                 position: relative;
             }
 

@@ -3,11 +3,15 @@ import { NMButton } from "js/core/components/element/NMButton.js";
 import { NMLabel } from "js/core/components/element/NMLabel.js";
 import { NMImage } from "js/core/components/element/NMImage.js";
 import { NMRadio } from "js/core/components/element/NMRadio.js";
+import { NMPulldown } from "js/core/components/element/NMPulldown.js";
+import { NMIcon } from "js/core/components/element/NMIcon.js";
 
 export {
     NMInput,
     NMButton,
     NMLabel,
     NMImage,
-    NMRadio
+    NMRadio,
+    NMPulldown,
+    NMIcon
 };

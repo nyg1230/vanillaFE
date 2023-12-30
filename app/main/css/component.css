@@ -1,3 +1,7 @@
+nm-pulldown {
+    align-self: center;
+}
+
 nm-list {
     --hover-color-bg: var(--pale-dogwood);
     --hover-color: #000000;

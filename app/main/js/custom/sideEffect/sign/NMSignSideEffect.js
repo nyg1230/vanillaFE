@@ -11,9 +11,9 @@ import NMConst from "js/core/constant/NMConstant.js";
 class NMSignSideEffect extends NMSideEffect {
     static get url() {
         return {
-            login: "/user/login",
-            signup: "/user/signup",
-            doubleCheck: "/user/doubleCheck"
+            login: "user/login",
+            signup: "user/signup",
+            doubleCheck: "user/doubleCheck"
         };
     }
 
