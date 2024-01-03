@@ -63,8 +63,9 @@ class NMIcon extends NMComponent {
 
     setSize() {
         if (this.#icon) {
-            this.#icon.setAttribute("width", this.size);
-            this.#icon.setAttribute("height", this.size);
+            const size = util.CommonUtil.falsy(this.size) ? NMIcon.defineProperty.size : this.size;
+            this.#icon.setAttribute("width", size);
+            this.#icon.setAttribute("height", size);
         }
     }
 

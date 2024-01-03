@@ -18,7 +18,7 @@ class NMView extends NMComponent {
         return "nm-view";
     }
 
-    get name() {
+    get clsName() {
         return NMView.name;
     }
 

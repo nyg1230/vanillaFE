@@ -44,13 +44,14 @@ class NMPulldown extends NMComponent {
                 right: var(--r);
                 bottom: var(--b);
 
-                display: var(--display);
-                --display: none;
+                overflow: hidden;
+                transition: 1500ms;
+                max-height: 0px;
 
                 position: fixed;
 
                 &.active {
-                    --display: block;
+                    max-height: 100%;
                 }
             }
         `;
@@ -100,7 +101,7 @@ class NMPulldown extends NMComponent {
 
     onMouseOut() {
         this.setActiveMenu(false);
-        this.resetPosition();
+        // this.resetPosition();
     }
 
     setData(data) {
@@ -137,6 +138,7 @@ class NMPulldown extends NMComponent {
 
     setPosition() {
         if (!this.#menu) return;
+        this.#menu.style = ""
 
         const rect = util.StyleUtil.getBoundingClientRect(this);
         const bRect = util.StyleUtil.getBoundingClientRect(document.body);

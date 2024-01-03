@@ -22,7 +22,8 @@ const korean = {
         "welcome-user": "{0}님 환영합니다.",
         "my.profile": "내 정보",
         setting: "설정",
-        logout: "로그아웃"
+        logout: "로그아웃",
+        menu: "메뉴"
     },
     board: {
         "recent.list": "최근 목록"

@@ -22,7 +22,8 @@ const english_us = {
         "welcome-user": "Welcome, ${0}",
         "my.profile": "My Profile",
         setting: "Setting",
-        logout: "Logout"
+        logout: "Logout",
+        menu: "Menu"
     },
     board: {
         "recent.list": "Recent List"

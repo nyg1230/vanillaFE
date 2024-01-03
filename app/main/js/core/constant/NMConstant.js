@@ -37,7 +37,8 @@ const NMConstant = {
         SELECT_MENU: "selectMenu",
         IMAGE_ERROR: "imageError",
         KEY_UP: "keyup",
-        KEY_DOWN: "keydown"
+        KEY_DOWN: "keydown",
+        KEY_PRESS: "keypress"
     },
     mimeType: {
         TEXT__HTML: "text/html",

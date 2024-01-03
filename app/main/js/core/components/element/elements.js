@@ -5,6 +5,7 @@ import { NMImage } from "js/core/components/element/NMImage.js";
 import { NMRadio } from "js/core/components/element/NMRadio.js";
 import { NMPulldown } from "js/core/components/element/NMPulldown.js";
 import { NMIcon } from "js/core/components/element/NMIcon.js";
+import { NMMenu } from "js/core/components/element/NMMenu.js";
 
 export {
     NMInput,
@@ -13,5 +14,6 @@ export {
     NMImage,
     NMRadio,
     NMPulldown,
-    NMIcon
+    NMIcon,
+    NMMenu
 };

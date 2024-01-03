@@ -14,7 +14,7 @@ class NMModel {
     #data;
     #proxy;
 
-    static async createModel() {
+    static createModel() {
         if (util.CommonUtil.isNotNull(store.get("model", this.name))) return;
         store.set("model", this.name, new this());
     }
@@ -23,8 +23,8 @@ class NMModel {
         return store.get("model", this.name);
     }
     
-    static async subscribe(view, option) {
-        util.CommonUtil.isNull(store.get("model", this.name)) && await this.createModel();
+    static subscribe(view, option) {
+        util.CommonUtil.isNull(store.get("model", this.name)) && this.createModel();
         this.model.setView(view, option);
     }
 
@@ -129,7 +129,7 @@ class NMModel {
         this.init();
     }
 
-    setView(view, option) {
+    async setView(view, option) {
         this.#viewList.push({ view, option });
     }
 

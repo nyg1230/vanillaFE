@@ -7,14 +7,14 @@ import * as util from "js/core/util/utils.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
-class NMUserModel extends NMModel {
+class NMChartModel extends NMModel {
     static get name() {
-        return "user";
+        return "chart";
     }
 
     get clsName() {
-        return NMUserModel.name;
+        return NMChartModel.name;
     }
 }
 
-export default NMUserModel;
+export default NMChartModel;
