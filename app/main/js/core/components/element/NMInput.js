@@ -81,6 +81,17 @@ class NMInput extends NMComponent {
             }
         }
     }
+
+    focus() {
+        window.setTimeout(() => {
+            this.input && this.input.focus()
+        });
+    }
+
+    destroy() {
+        this.#input = null;
+        super.destroy();
+    }
 }
 
 define(NMInput);

@@ -3,6 +3,7 @@ import { NMView, define } from "js/core/components/view/NMView.js";
 /* common */
 import * as util from "js/core/util/utils.js";
 /* component */
+import { NMChart } from "js/core/components/chart/NMChart";
 /* model */
 import NMChartModel from "js/custom/model/chart/NMChartModel.js";
 /* intent */
@@ -35,7 +36,7 @@ export default class NMHome extends NMView {
                 ;
 
                 & > div {
-                    border: 1px solid black;
+                    // border: 1px solid black;
                 }
 
                 & .period-status-area {
@@ -65,7 +66,7 @@ export default class NMHome extends NMView {
 
     get template() {
         return `
-        <div class="${this.clsName} test-border" part="${this.clsName}">
+        <div class="${this.clsName}" part="${this.clsName}">
             <!-- 총 지출 현황 지정 년도 또는 월 -->
             <div class="period-status-area">
                 <nm-chart class="period-status"></nm-chart>
@@ -107,18 +108,22 @@ export default class NMHome extends NMView {
     }
 
     setSpendingRatio(data) {
-        const { list } = data;
+        const { list } = { ...data };
         console.log(list);
 
         const param = {
-            palette: "pantone",
+            palette: "",
             header: {},
             dataLabel: {},
-            data: list
+            data: [
+                {
+                    type: "pie",
+                    list: list
+                }
+            ]
         };
-
         const chart = util.DomUtil.querySelector(this, ".spending-ratio");
-        chart.data = param;
+        chart.$data = param;
     }
 }
 

@@ -7,6 +7,10 @@ import * as util from "js/core/util/utils.js";
 import NMConst from "js/core/constant/NMConstant.js";
 
 class NMMenu extends NMComponent {
+    static get staticAttrs() {
+        return ["nm-prop"];
+    }
+
     static get name() {
         return "nm-menu";
     }
@@ -37,14 +41,18 @@ class NMMenu extends NMComponent {
     }
 
     onClick(e) {
-        const row = util.EventUtil.getDomFromEvent(e, "row", "class");
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, NMMenuItem.name),
+                callback: (item) => {
+                    const { value } = item.$data;
+                    util.EventUtil.dispatchEvent(this, NMConst.eventName.SELECT_MENU, { property: this["nm-prop"], value });
 
-        if (row) {
-            util.EventUtil.dispatchEvent(this, NMConst.eventName.SELECT_MENU, { data: row.data });
-
-            e.preventDefault();
-			e.stopPropagation();
-        }
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        ]);
     }
 
     setData(data) {

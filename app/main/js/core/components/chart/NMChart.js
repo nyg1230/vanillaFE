@@ -12,6 +12,7 @@ class NMChart extends NMComponent {
     #layers = {};
     #chart;
     #tooltip;
+    #refresh;
 
     static get name() {
         return "nm-chart"
@@ -37,10 +38,6 @@ class NMChart extends NMComponent {
         `;
     }
 
-    set data(d) {
-        this.#chart.data = d;
-    }
-
     get template() {
         return `<div class="${this.clsName}" part="${this.clsName}">
                 <div>`;
@@ -57,7 +54,6 @@ class NMChart extends NMComponent {
     initChart() {
         const container = util.DomUtil.querySelector(this, `.${this.clsName}`);
         this.#chart = new Chart({ container });
-        console.log(this.#chart);
     }
 
     onChartComplete(e) {
@@ -67,7 +63,28 @@ class NMChart extends NMComponent {
 
         if (tooltip === true) {
         }
+
+        const chart = util.DomUtil.querySelector(this, `.${this.clsName}`);
+
+        util.ObserverUtil.resizeObserver(this, [chart], (e, o) => {
+            if (this.#refresh) {
+                this.#refresh = true;
+                util.CommonUtil.debounce(this, "refresh");
+            } else {
+                this.#refresh = true;
+            }
+        });
     }
+
+    setData(data) {
+        this.#chart.data = data;
+    }
+
+    refresh() {
+        this.#chart.refresh();
+        this.#refresh = false;
+    }
+
 }
 
 define(NMChart);

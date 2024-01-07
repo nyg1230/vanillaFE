@@ -136,9 +136,9 @@ class NMComponent extends HTMLElement {
 
     connectedCallback() {
         this.#initBind();
+        this.#addEvent();
         this.#render();
         this.flushInvoke();
-        this.#addEvent();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -285,7 +285,10 @@ class NMComponent extends HTMLElement {
      */
     #setData(data) {
         this.#data = data;
-        this.setData(this.#data);
+        this.invoke("data", this.#isRender, {
+            arg: [this.#data],
+            fn: this.setData
+        });
     }
 
     // 하위에서 재정의하여 사용

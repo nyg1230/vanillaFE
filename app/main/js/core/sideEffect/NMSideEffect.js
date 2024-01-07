@@ -11,6 +11,19 @@ class NMSideEffect {
     get model() {
         return NMModel; 
     }
+
+    async api(url, method, data, option) {
+        let result;
+        try {
+            method = method.toUpperCase();
+        } catch {
+            method = NMConst.method.GET;
+        } finally {
+            result = await util.FetchUtil[method](url, data, option);
+        }
+
+        return result;
+    }
 }
 
 export default NMSideEffect;

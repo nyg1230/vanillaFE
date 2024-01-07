@@ -57,7 +57,9 @@ class Chart {
 
     #init() {
         const rect = util.StyleUtil.getBoundingClientRect(this.#container);
-        const { width, height } = rect;
+        let { width, height } = rect;
+        width = util.CommonUtil.round(width, 0);
+        height = util.CommonUtil.round(height, 0);
         const mainLayer = util.DomUtil.createElement("canvas", { className: "main-layer", width, height });
         const overLayer = util.DomUtil.createElement("canvas", { className: "over-layer", width, height });
 
@@ -78,6 +80,31 @@ class Chart {
     }
 
     init() {}
+
+    #resize() {
+        const { mainLayer, overLayer } = { ...this.#layer };
+        const rect = util.StyleUtil.getBoundingClientRect(this.#container);
+        let { width, height } = rect;
+        width = util.CommonUtil.round(width, 2);
+        height = util.CommonUtil.round(height, 2);
+
+        mainLayer.canvas.setAttribute("width", width);
+        mainLayer.canvas.setAttribute("height", height);
+        overLayer.canvas.setAttribute("width", width);
+        overLayer.canvas.setAttribute("height", height);
+
+        this.calcArea();
+
+        this.init();
+        this.resize();
+    }
+
+    resize() {
+        this.#charts.forEach((chart) => {
+            chart.area = this.#area;
+            chart.parse();
+        });
+    }
 
     #setTooltip() {
         this.#tooltip = util.TooltipUtil.setTooltip(this.#container, this.#getTooltipContent.bind(this));
@@ -512,6 +539,7 @@ class Chart {
             if (per === 1) {
                 window.cancelAnimationFrame(fn);
                 this.#setTooltip();
+                util.EventUtil.dispatchEvent(this.#container, NMConst.eventName.CHART_DRAW_COMPLETE);
             } else {
                 window.requestAnimationFrame(fn);
             }
@@ -557,6 +585,7 @@ class Chart {
     }
 
     refresh() {
+        this.#resize();
         this.draw();
     }
 }

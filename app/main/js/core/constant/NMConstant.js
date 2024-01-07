@@ -38,7 +38,8 @@ const NMConstant = {
         IMAGE_ERROR: "imageError",
         KEY_UP: "keyup",
         KEY_DOWN: "keydown",
-        KEY_PRESS: "keypress"
+        KEY_PRESS: "keypress",
+        REMOVE: "remove"
     },
     mimeType: {
         TEXT__HTML: "text/html",
@@ -49,10 +50,10 @@ const NMConstant = {
 
     },
     method: {
-        GET: "get",
-        POST: "post",
-        PUT: "put",
-        DELETE: "delete"
+        GET: "GET",
+        POST: "POST",
+        PUT: "PUT",
+        DELETE: "DELETE"
     },
     header: {
         token: "X-AUTH-TOKEN"

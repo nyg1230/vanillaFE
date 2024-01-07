@@ -69,7 +69,7 @@ class FetchUtil {
         const headers = new Headers({
             "Access-Control-Expose-Headers": "*",
             "Content-Type": "application/json",
-            "X-AUTH-TOKEN": "",
+            [NMConst.header.token]: util.store.getLocalStorage(NMConst.header.token),
             ...params
         });
 

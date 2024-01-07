@@ -2,6 +2,7 @@
 import { NMComponent, define } from "js/core/components/NMComponent.js";
 /* common */
 import * as util from "js/core/util/utils.js";
+import router from "js/core/router/NMRouter.js";
 /* component */
 /* model */
 /* intent */
@@ -51,6 +52,7 @@ export default class NMSideBar extends NMComponent {
                         <nm-label class="title large" value="menu"></nm-label>
                         <nm-menu class="common" nm-prop="common"></nm-menu>
                         <hr/>
+                        <nm-label class="title large" value="account.book" range="account"></nm-label>
                         <nm-menu class="account" nm-prop="account"></nm-menu>
                         <hr/>
                     </div>
@@ -72,9 +74,9 @@ export default class NMSideBar extends NMComponent {
 
         const accountMenu = util.DomUtil.querySelector(this, "nm-menu.account");
         accountMenu && (accountMenu.$data = [
-            { icon: "home", title: "look.calendar", range: "", value: "calendar" },
-            { icon: "home", title: "add.account", range: "", value: "home" },
-            { icon: "home", title: "home", range: "", value: "home" },
+            { icon: "home", title: "view.calendar", range: "account", value: "main/body/account/calendar" },
+            { icon: "home", title: "view.list", range: "account", value: "main/body/account/list" },
+            { icon: "home", title: "add.account", range: "account", value: "main/body/account/add" },
             { icon: "home", title: "home", range: "", value: "home" },
             { icon: "home", title: "home", range: "", value: "home" },
         ]);
@@ -83,6 +85,7 @@ export default class NMSideBar extends NMComponent {
     addEvent() {
         this.bindEvent(this, NMConst.eventName.MOUSE_OVER, this.onMouseOver);
         this.bindEvent(this, NMConst.eventName.MOUSE_OUT, this.onMouseOut);
+        this.bindEvent(this, NMConst.eventName.SELECT_MENU, this.onSelectMenu);
     }
 
     onMouseOver(e) {
@@ -93,6 +96,16 @@ export default class NMSideBar extends NMComponent {
     onMouseOut(e) {
         this.setActive(false);
         this.setIcon("arrow-right-circle");
+    }
+
+    onSelectMenu(e) {
+        const { detail } = e;
+        const { property, value } = detail;
+
+        if (property === "account") {
+            router.pushState(value);
+        }
+        console.log(property, value);
     }
 
     setActive(active) {

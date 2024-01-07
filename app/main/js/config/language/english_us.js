@@ -25,6 +25,20 @@ const english_us = {
         logout: "Logout",
         menu: "Menu"
     },
+    account: {
+        "account.book": "Account Book",
+        "add.account": "Add",
+        "view.calendar": "View On Calendar",
+        "view.list": "View On List",
+        income: "Income",
+        expenditure: "Expenditure",
+        history: "History",
+        division: "Division",
+        price: "Price",
+        memo: "Memo",
+        date: "Date",
+        remove: "Remove"
+    },
     board: {
         "recent.list": "Recent List"
     },

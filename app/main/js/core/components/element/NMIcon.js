@@ -25,6 +25,9 @@ class NMIcon extends NMComponent {
         return `
             .${this.clsName} {
                 display: flex;
+
+                svg {
+                }
             }
         `;
     }

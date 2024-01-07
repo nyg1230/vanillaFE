@@ -25,6 +25,20 @@ const korean = {
         logout: "로그아웃",
         menu: "메뉴"
     },
+    account: {
+        "account.book": "가계부",
+        "add.account": "등록하기",
+        "view.calendar": "캘린더로 보기",
+        "view.list": "목록으로 보기",
+        income: "수입",
+        expenditure: "지출",
+        history: "내역",
+        division: "구분",
+        price: "금액",
+        memo: "메모",
+        date: "날자",
+        remove: "삭제"
+    },
     board: {
         "recent.list": "최근 목록"
     },

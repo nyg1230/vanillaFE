@@ -129,6 +129,8 @@ const ObserverUtil = {
         }
     },
     resizeObserver(parent, observeTargets = [], callback) {
+        this.disconnect(parent, "resizeObserver");
+
         !parent.observer && (parent.observer = {});
         !util.CommonUtil.isFunction(callback) && (callback = () => {});
 

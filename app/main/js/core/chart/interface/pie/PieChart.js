@@ -12,17 +12,23 @@ import PieOption from "js/core/chart/option/PieOption.js";
 
 class PieChart extends Chart {
     #data;
-    #draw = {
-        pie: [],
-        dataLabel: []
-    };
+    #draw;
     #info;
 
     get defaultOption() {
         return PieOption;
     }
 
+    init() {
+        this.#draw = {
+            pie: [],
+            dataLabel: []
+        };
+    }
+
     parse() {
+        this.init();
+
         const [data] = [...this.data];
         this.#data = data;
         this.setInfo();

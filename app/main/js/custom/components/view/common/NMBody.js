@@ -31,12 +31,13 @@ export default class NMBody extends NMView {
 
             .container {
                 height: 100%;
-                border: 1px solid black;
+                // border: 1px solid black;
             }
 
             nm-side-bar {
                 position: fixed;
                 height: 100%;
+                z-index: 1;
             }
         `;
     }

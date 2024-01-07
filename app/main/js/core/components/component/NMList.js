@@ -29,32 +29,86 @@ class NMList extends NMComponent {
             <slot></slot>
         </div>`;
     }
+
+    set $add(data) {
+        this.#addData(data);
+    }
+
+    addEvent() {
+        this.bindEvent(this, NMConst.eventName.REMOVE, this.onRemove);
+    }
+
     afterRender() {
         const template = util.DomUtil.querySelector(this, "template", false);
-        this.#template = template.cloneNode();
+        this.#template = template;
         template.remove();
     }
 
+    onRemove(e) {
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, NMRow.name),
+                callback: (row) => {
+                    const { list } = this.$data
+                    const idx = list.findIndex((d) => d === row.$data);
+
+                    if (idx > -1) {
+                        list.splice(idx, 1);
+                        row.remove();
+                    }
+                }
+            }
+        ]);
+    }
+
     setData(data) {
-        this.clear();
+        this.clear(false);
         const { list = [] } = data;
 
-        cosnt frag = document.createDocumentFragment();
+        const frag = document.createDocumentFragment();
 
         list.forEach((d) => {
-            const row = new NMRow();
-            const node = document.importNode(this.#template, true);
-            row.appendChild(node);
-            row.$data = d;
-
+            const row = this.#getRow(d);
             frag.appendChild(row);
         });
 
         this.appendChild(frag);
     }
 
-    clear() {
+    #addData(data) {
+        const { list = [] } = this.$data;
+
+        if (!util.CommonUtil.isArray(data)) {
+            data = [data];
+        }
+
+        data.forEach((d) => {
+            const row = this.#getRow(d);
+            list.push(d);
+            this.appendChild(row);
+        });
+    }
+
+    #getRow(data) {
+        const row = new NMRow();
+        const node = document.importNode(this.#template.content, true);
+        row.appendChild(node);
+        row.$data = data;
+
+        return row;
+    }
+
+    clear(init = true) {
         util.DomUtil.removeAllChild(this);
+        if (init) {
+            const { list } = this.$data;
+            list.splice(0);
+        }
+    }
+
+    destroy() {
+        this.#template = null;
+        super.destroy();
     }
 }
 
@@ -78,9 +132,13 @@ class NMRow extends NMComponent {
         </div>`;
     }
 
+    afterRender() {
+        util.EventUtil.dispatchEvent(this, "add-row", { target: this });
+    }
+
     setData(data) {
         Object.entries(data).forEach(([k, v]) => {
-            const nodes = util.DomUtil.quertSelectorAll(this, `[nm-${k}]`, false);
+            const nodes = util.DomUtil.querySelectorAll(this, `[nm-${k}]`, false);
             nodes.forEach((node) => {
                 const attr = node.getAttribute(`nm-${k}`);
                 node[attr] = v;
@@ -92,4 +150,4 @@ class NMRow extends NMComponent {
 define(NMList);
 define(NMRow);
 
-export { NMList, NMRow }
+export { NMList }

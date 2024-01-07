@@ -29,7 +29,7 @@ class NMRadio extends NMComponent {
         return `
         .${this.clsName} {
             display: flex;
-            gap: 4px;
+            gap: 0px;
         }
         `;
     }
@@ -46,6 +46,20 @@ class NMRadio extends NMComponent {
 
     addEvent() {
         this.bindEvent(this, NMConst.eventName.CHECK, this.onCheck);
+        this.bindEvent(this, NMConst.eventName.REMOVE, this.onRemove);
+    }
+
+    onRemove(e) {
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, nmrow),
+                callback: (row) => {
+                    const { list } = this.$data;
+                    const idx = list.findIndex((d) => d === row.$data);
+                    console.log(idx);
+                }
+            }
+        ]);
     }
 
     onCheck(e) {

@@ -32,6 +32,11 @@ class Tooltip {
 		if (!this.#tooltip) {
 			const html = `
 				<div class="${this.clsName} hidden">
+					<style>
+						.${this.clsName} {
+							display: var(--display);
+						}
+					</style>	
 					<div class="tooltip">
 						<div class="content"></div>
 					</div>
