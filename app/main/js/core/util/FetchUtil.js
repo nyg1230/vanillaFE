@@ -34,7 +34,8 @@ class FetchUtil {
             const { contentType } = option;
 
             let data;
-            if (contentType === "text") {
+            if (util.CommonUtil.isEmpty(contentType)) {
+            } else if (contentType === "text") {
                 data = await response.text();
             } else {
                 data = await response.json();

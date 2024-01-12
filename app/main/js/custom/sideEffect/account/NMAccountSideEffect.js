@@ -4,7 +4,7 @@ import NMSideEffect from "js/core/sideEffect/NMSideEffect";
 import * as util from "js/core/util/utils.js";
 /* component */
 /* model */
-import NMChartModel from "js/custom/model/chart/NMChartModel.js";
+import NMAccountModel from "js/custom/model/account/NMAccountModel.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
@@ -16,9 +16,8 @@ class NMAccountSideEffect extends NMSideEffect {
     }
     
     async addList(list) {
-        console.log(list);
-        const result = await this.api(NMAccountSideEffect.url.ADD_LIST, NMConst.method.POST, { list });
-        console.log(result);
+        const result = await this.api(NMAccountSideEffect.url.ADD_LIST, NMConst.method.POST, { list }, { contentType: null });
+        NMAccountModel.setState("addList", result);
     }
 }
 

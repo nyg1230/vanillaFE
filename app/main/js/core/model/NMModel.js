@@ -65,6 +65,14 @@ class NMModel {
         }
     }
 
+    static setState(props, state) {
+        if (this.model) {
+            this.model.setState(props, state);
+        } else {
+            console.log(`model is not exist...`);
+        }
+    }
+
     static clear() {
         if (this.model) {
             this.model.clear();
@@ -122,6 +130,19 @@ class NMModel {
         this.#viewList.forEach((v) => {
             const { view } = { ...v };
             util.EventUtil.dispatchEvent(view, NMConst.eventName.MODEL_CHANGE, param);
+        });
+    }
+
+    setState(prop, state) {
+        const param = {
+            name: this.clsName,
+            property: prop,
+            ...state
+        };
+
+        this.#viewList.forEach((v) => {
+            const { view } = { ...v };
+            util.EventUtil.dispatchEvent(view, NMConst.eventName.STATE_CHANGE, param);
         });
     }
 

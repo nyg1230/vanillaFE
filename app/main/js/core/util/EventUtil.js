@@ -36,7 +36,7 @@ const EventUtil = {
             const dom = path[idx];
 
             if (attr === "tag") {
-                const reg = new RegExp(value, "i");
+                const reg = new RegExp(`^${value}$`, "i");
                 const { tagName } = dom;
                 if (reg.test(tagName)) result = dom;
             } else if (attr === "class") {

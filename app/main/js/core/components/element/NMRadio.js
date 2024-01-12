@@ -143,9 +143,8 @@ class NMRadioUnit extends NMComponent {
         .${this.clsName} {
             cursor: pointer;
             border-radius: 4px;
-            --bg-color: white;
             --color: black;
-            background-color: var(--bg-color);
+            background-color: var(--bg-color, #EFEFEF);
             color: var(--color);
             padding: 0px 4px;
 

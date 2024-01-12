@@ -32,7 +32,8 @@ class UserContext {
             const { iat, exp } = { ...user };
             const gap = now.getTimezoneOffset();
             const nowTime = now.getTime();
-            const expTime = exp * 1000 - gap * 60000;
+            // const expTime = exp * 1000 - gap * 60000;
+            const expTime = exp * 1000;
 
             result = nowTime <= expTime;
         }

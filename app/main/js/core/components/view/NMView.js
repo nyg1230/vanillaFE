@@ -41,6 +41,7 @@ class NMView extends NMComponent {
     initBind() {
         super.initBind();
         this.bindEvent(this, NMConst.eventName.MODEL_CHANGE, this.onModelChange);
+        this.bindEvent(this, NMConst.eventName.STATE_CHANGE, this.onStateChange);
     }
 
     afterRender() {
@@ -49,6 +50,8 @@ class NMView extends NMComponent {
     }
 
     onModelChange() {}
+
+    onStateChange() {}
 
     destroy() {
         this.#disconnectModel();

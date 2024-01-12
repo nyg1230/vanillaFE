@@ -23,7 +23,11 @@ const korean = {
         "my.profile": "내 정보",
         setting: "설정",
         logout: "로그아웃",
-        menu: "메뉴"
+        menu: "메뉴",
+        "add.row": "행 추가하기",
+        clear: "초기화",
+        registration: "등록하기",
+        tag: "태그"
     },
     account: {
         "account.book": "가계부",
@@ -34,10 +38,11 @@ const korean = {
         expenditure: "지출",
         history: "내역",
         division: "구분",
-        price: "금액",
+        amount: "금액",
         memo: "메모",
-        date: "날자",
-        remove: "삭제"
+        "target.date": "대상 일자",
+        remove: "삭제",
+        type: "유형"
     },
     board: {
         "recent.list": "최근 목록"

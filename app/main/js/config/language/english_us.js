@@ -23,7 +23,11 @@ const english_us = {
         "my.profile": "My Profile",
         setting: "Setting",
         logout: "Logout",
-        menu: "Menu"
+        menu: "Menu",
+        "add.row": "Add Row",
+        clear: "Clear",
+        registration: "Registration",
+        tag: "Tag"
     },
     account: {
         "account.book": "Account Book",
@@ -34,10 +38,11 @@ const english_us = {
         expenditure: "Expenditure",
         history: "History",
         division: "Division",
-        price: "Price",
+        amount: "Amount",
         memo: "Memo",
-        date: "Date",
-        remove: "Remove"
+        "target.date": "Target Date",
+        remove: "Remove",
+        type: "Type"
     },
     board: {
         "recent.list": "Recent List"

@@ -87,3 +87,25 @@
 .test-border {
     border: 1px solid var(--blueberry);
 }
+
+.title {
+    &.large {}
+
+    &.medium {}
+
+    &.small {}
+}
+
+.subtitle {
+    font-size: var(--fsize);
+    font-weight: var(--fweight);
+
+    &.large {}
+
+    &.medium {
+        --fsize: 12px;
+        --fweight: 500;
+    }
+
+    &.small {}
+}
