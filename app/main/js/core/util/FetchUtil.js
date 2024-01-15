@@ -45,12 +45,14 @@ class FetchUtil {
                 data,
                 state: response.ok
             }
-
-            const token = response.headers.get(NMConst.header.token);
-            token && util.store.setLocalStorage(NMConst.header.token, token);
 		} catch (e) {
             result = { state: "error", msg: e };
-		}
+		} finally {
+            try {
+                const token = response.headers.get(NMConst.header.token);
+                token && util.store.setLocalStorage(NMConst.header.token, token);
+            } catch {}
+        }
 
         return result;
     }

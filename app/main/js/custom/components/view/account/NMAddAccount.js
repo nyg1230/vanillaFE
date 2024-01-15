@@ -52,6 +52,11 @@ export default class NMAddAccount extends NMView {
                 display: block;
                 width: 100%;
 
+                &::part(nm-list) {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
             }
 
             .button-area {
@@ -68,7 +73,8 @@ export default class NMAddAccount extends NMView {
             .row {
                 display: flex;
                 flex-direction: column;
-                border: 1px solid black;
+                background-color: var(--pantone-bright-white);
+                // border: 1px solid black;
                 padding: 12px 20px;
 
                 & .header {
@@ -85,6 +91,10 @@ export default class NMAddAccount extends NMView {
                     display: flex;
                     flex-direction: column;
                     gap: 8px;
+                    
+                    & .check-area {
+                        gap: 8px;
+                    }
 
                     & nm-input::part(nm-input) {
                         display: inline;
@@ -118,9 +128,15 @@ export default class NMAddAccount extends NMView {
                                     <nm-label class="subtitle medium" value="history" range="account"></nm-label>
                                     <nm-input class="history" nm-prop="history"></nm-input>
                                 </div>
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="type" range="account"></nm-label>
-                                    <nm-radio class="type" nm-prop="type"></nm-radio>
+                                <div class="flex check-area">
+                                    <div class="input-area">
+                                        <nm-label class="subtitle medium" value="category"></nm-label>
+                                        <nm-select class="category" nm-prop="category"></nm-select>
+                                    </div>
+                                    <div class="input-area">
+                                        <nm-label class="subtitle medium" value="type" range="account"></nm-label>
+                                        <nm-radio class="type" nm-prop="type"></nm-radio>
+                                    </div>
                                 </div>
                                 <div class="input-area">
                                     <nm-label class="subtitle medium" value="amount" range="account"></nm-label>
@@ -242,9 +258,20 @@ export default class NMAddAccount extends NMView {
             tagBox.$data = [];
             target.$data.tags = tagBox.$data;
         }
+        
+        const select = util.DomUtil.querySelector(target, "nm-select.category", false);
+        if (select) {
+            select.$data = [
+                { title: "income", range: "account", value: "income" },
+                { title: "housing.cost", range: "account", value: "house" },
+                { title: "communication.cost", range: "account", value: "communication" },
+                { title: "food.cost", range: "account", value: "food" }
+            ];
+        }
 
         const input = util.DomUtil.querySelector(target, "nm-input", false);
         input && input.focus();
+
     }
 
     onValueChange(e) {

@@ -26,7 +26,8 @@ class NMTagBox extends NMComponent {
             .${this.clsName} {
                 border: 1px solid black;
                 padding: 4px 12px;
-
+                cursor: pointer;
+                height: 30px;
             }
 
             .tag-area {

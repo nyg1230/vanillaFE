@@ -42,7 +42,16 @@ const english_us = {
         memo: "Memo",
         "target.date": "Target Date",
         remove: "Remove",
-        type: "Type"
+        type: "Type",
+        "apparel.cost": "Apparel Cost",
+        "entertainment.cost": "Entertainment Cost",
+        "health.care.cost": "Health Care Cost",
+        "food.cost": "Food Cost",
+        "cost.of.living": "Cost of Living",
+        "housing.cost": "Housing Cost",
+        "communication.cost": "Communication Cost",
+        "education.cost": "Education Cost",
+        "etc": "etc"
     },
     board: {
         "recent.list": "Recent List"

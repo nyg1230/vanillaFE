@@ -29,7 +29,7 @@ class NMRadio extends NMComponent {
         return `
         .${this.clsName} {
             display: flex;
-            gap: 0px;
+            gap: 2px;
         }
         `;
     }
@@ -56,7 +56,6 @@ class NMRadio extends NMComponent {
                 callback: (row) => {
                     const { list } = this.$data;
                     const idx = list.findIndex((d) => d === row.$data);
-                    console.log(idx);
                 }
             }
         ]);

@@ -27,7 +27,9 @@ const korean = {
         "add.row": "행 추가하기",
         clear: "초기화",
         registration: "등록하기",
-        tag: "태그"
+        tag: "태그",
+        modify: "수정하기",
+        delete: "삭제하기"
     },
     account: {
         "account.book": "가계부",
@@ -42,7 +44,16 @@ const korean = {
         memo: "메모",
         "target.date": "대상 일자",
         remove: "삭제",
-        type: "유형"
+        type: "유형",
+        "apparel.cost": "의류비",
+        "entertainment.cost": "문화비",
+        "health.care.cost": "의료비",
+        "food.cost": "식비",
+        "cost.of.living": "생활비",
+        "housing.cost": "주거비",
+        "communication.cost": "통신비",
+        "education.cost": "교육비",
+        "etc": "기타"
     },
     board: {
         "recent.list": "최근 목록"

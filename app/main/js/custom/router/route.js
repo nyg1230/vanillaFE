@@ -6,6 +6,7 @@ import NMBody from "js/custom/components/view/common/NMBody.js";
 import NMHome from "js/custom/components/view/home/NMHome.js";
 import NMAccount from "js/custom/components/view/account/NMAccount.js";
 import NMAddAccount from "js/custom/components/view/account/NMAddAccount.js";
+import NMAccountList from "js/custom/components/view/account/NMAccountList.js";
 
 const route = {
     "main": NMMain,
@@ -15,7 +16,8 @@ const route = {
     "main/body": NMBody,
     "main/body/home": NMHome,
     "main/body/account": NMAccount,
-    "main/body/account/add": NMAddAccount
+    "main/body/account/add": NMAddAccount,
+    "main/body/account/list": NMAccountList
 };
 
 export default route;

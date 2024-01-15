@@ -20,6 +20,7 @@ const TranslateUtil = {
             text = target[key];
             
             if (util.CommonUtil.isNull(text)) {
+                text = key;
             } else if (util.CommonUtil.isArray(data)) {
                 data.forEach((d, idx) => {
                     const reg = new RegExp(`\\{${idx}\\}`);
