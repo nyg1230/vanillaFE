@@ -25,6 +25,7 @@ const NMConstant = {
         MOUSE_LEAVE: "mouseleave",
         MOUSE_UP: "mouseup",
         MOUSE_DOWN: "mousedown",
+        MOUSE_PRESS: "mousepress",
         TOUCH_END: "touchend",
         TOUCH_START: "touchstart",
         TOUCH_MOVE: "touchmove",
@@ -42,7 +43,8 @@ const NMConstant = {
         KEY_UP: "keyup",
         KEY_DOWN: "keydown",
         KEY_PRESS: "keypress",
-        REMOVE: "remove"
+        REMOVE: "remove",
+        ADD_CHILD_COMP: "addChildComponent"
     },
     mimeType: {
         TEXT__HTML: "text/html",

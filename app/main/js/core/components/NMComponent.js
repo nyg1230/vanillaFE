@@ -345,6 +345,18 @@ class NMComponent extends HTMLElement {
         this.#render();
     }
     /* component renderring function end */
+
+    /* componeent common function start */
+    setPropertyData(data = {}, root = true) {
+        Object.entries(data).forEach(([k, v]) => {
+            const nodes = util.DomUtil.querySelectorAll(this, `[nm-${k}]`, root);
+            nodes.forEach((node) => {
+                const attr = node.getAttribute(`nm-${k}`);
+                node[attr] = v;
+            });
+        });
+    }
+    /* componeent common function end */
     
     /* component remove function start */
     /**

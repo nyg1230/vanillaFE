@@ -24,10 +24,14 @@ class NMTagBox extends NMComponent {
     get styles() {
         return `
             .${this.clsName} {
+                border-radius: 2px;
+                background-color: #FFF;
                 border: 1px solid black;
                 padding: 4px 12px;
                 cursor: pointer;
-                height: 30px;
+                min-height: 30px;
+                overflow: hidden;
+                overflow-y: scroll;
             }
 
             .tag-area {

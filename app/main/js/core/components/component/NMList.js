@@ -137,13 +137,7 @@ class NMRow extends NMComponent {
     }
 
     setData(data) {
-        Object.entries(data).forEach(([k, v]) => {
-            const nodes = util.DomUtil.querySelectorAll(this, `[nm-${k}]`, false);
-            nodes.forEach((node) => {
-                const attr = node.getAttribute(`nm-${k}`);
-                node[attr] = v;
-            });
-        });
+        this.setPropertyData(data, false);
     }
 }
 
