@@ -51,6 +51,8 @@ const english_us = {
         "housing.cost": "Housing Cost",
         "communication.cost": "Communication Cost",
         "education.cost": "Education Cost",
+        "entertament.cost": "Entertament Cost",
+        "transportation.cost": "Transportation Cost",
         "etc": "etc"
     },
     board: {

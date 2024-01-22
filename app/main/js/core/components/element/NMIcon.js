@@ -58,9 +58,13 @@ class NMIcon extends NMComponent {
         const icon = await this.getIcon();
 
         if (icon) {
-            this.wrapper.innerHTML = icon.outerHTML;
-            this.#icon = util.DomUtil.querySelector(this, "svg");
-            this.setSize();
+            if (icon === NMConst.param.WAIT) {
+                this.invoke(`${this.icon}`, false, { fn: "setIcon" }, true );
+            } else {
+                this.wrapper.innerHTML = icon.outerHTML;
+                this.#icon = util.DomUtil.querySelector(this, "svg");
+                this.setSize();
+            }
         }
     }
 

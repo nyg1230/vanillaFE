@@ -50,10 +50,16 @@ class NMInput extends NMComponent {
         return this.#input;
     }
 
+    set $value(value) {
+        this.invoke("value", "isRender", {
+            fn: () => this.input && (this.input.value = value)
+        });
+    }
+
     addEvent() {}
 
     afterRender() {
-        this.input && (this.#input.value = this.value);
+        this.$value = this.value;
         this.bindEvent(this.input, NMConst.eventName.INPUT, this.onInput);
     }
 
@@ -65,7 +71,7 @@ class NMInput extends NMComponent {
     onChangeAttr(name, old, value) {
         if (old !== value) {
             if (name === "value") {
-                this.input && (this.input.value = value);
+                this.$value = value;
                 let type;
 
                 if (util.CommonUtil.isNull(old)) {

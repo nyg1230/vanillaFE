@@ -11,16 +11,14 @@ import { NMCarousel } from "js/core/components/component/NMCarousel.js";
 import NMAccountModel from "js/custom/model/account/NMAccountModel.js";
 /* intent */
 import chartIntent from "js/custom/intent/chart/NMChartIntent.js";
+import accountIntent from "js/custom/intent/account/NMAccountIntent";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
-import accountIntent from "js/custom/intent/account/NMAccountIntent";
+import { collection } from "js/config/data/collection";
 
 export default class NMAccountList extends NMView {
     modelList = [NMAccountModel];
-    #page = {
-        page: 0,
-        order: [{ target_date: "desc" }]
-    }
+    #page;
 
     static get name() {
         return "nm-account-list";
@@ -43,6 +41,9 @@ export default class NMAccountList extends NMView {
                 }
 
                 & .card {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
                     border-radius: 4px;
                     width: 250px;
                     background-color: var(--pristine);
@@ -86,38 +87,34 @@ export default class NMAccountList extends NMView {
                                         <div class="card">
                                             <div class="input-area">
                                                 <nm-label class="subtitle medium" value="history" range="account"></nm-label>
-                                                <nm-input class="history" nm-history="value" nm-prop="history"></nm-input>
+                                                <nm-input class="history" nm-history="$value" nm-prop="history"></nm-input>
                                             </div>
-                                            <div class="flex check-area">
-                                                <div class="input-area">
-                                                    <nm-label class="subtitle medium" value="category"></nm-label>
-                                                    <nm-select class="category" nm-category="value" nm-prop="category"></nm-select>
-                                                </div>
-                                                <div class="input-area">
-                                                    <nm-label class="subtitle medium" value="type" range="account"></nm-label>
-                                                    <nm-radio class="type" nm-prop="type"></nm-radio>
-                                                </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="category"></nm-label>
+                                                <nm-select class="category" nm-category="$value" nm-prop="category"></nm-select>
                                             </div>
                                             <div class="input-area">
                                                 <nm-label class="subtitle medium" value="amount" range="account"></nm-label>
-                                                <nm-input type="number" class="amount" nm-amount="value" nm-prop="amount"></nm-input>
+                                                <nm-input type="number" class="amount" nm-amount="$value" nm-prop="amount"></nm-input>
                                             </div>
                                             <div class="input-area">
                                                 <nm-label class="subtitle medium" value="memo" range="account"></nm-label>
-                                                <nm-input class="memo" nm-memo="value" nm-prop="memo"></nm-input>
+                                                <nm-input class="memo" nm-memo="$value" nm-prop="memo"></nm-input>
                                             </div>
                                             <div class="input-area">
                                                 <nm-label class="subtitle medium" value="target.date" range="account"></nm-label>
-                                                <nm-input type="date" class="target-date" nm-target_date="value" nm-prop="target_date"></nm-input>
+                                                <nm-input type="date" class="target-date" nm-target_date="$value" nm-prop="target_date"></nm-input>
                                             </div>
                                             <div class="input-area">
                                                 <nm-label class="subtitle medium" value="tag"></nm-label>
                                                 <nm-tag-box class="tags" nm-prop="tags" nm-tags="$data" editable="true"></nm-tag-box>
                                             </div>
+                                            <!--
                                             <div class="button-area">
-                                                <nm-button class="modify" value="modify"></nm-button>
-                                                <nm-button class="delete" value="delete"></nm-button>
+                                                <nm-button class="modify" value="modify" icon="edit" size="14"></nm-button>
+                                                <nm-button class="delete" value="delete" icon="trash" size="14"></nm-button>
                                             </div>
+                                            -->
                                         </div>
                                     </template>
                                 </nm-carousel>
@@ -128,6 +125,14 @@ export default class NMAccountList extends NMView {
             </div>
         </div>`;
     }
+
+    initPage() {
+        this.#page = {
+            page: 0,
+            count: 100,
+            order: [{ target_date: "desc" }]
+        };
+    }
     
     get #getAccountList() {
         return util.DomUtil.querySelector(this, ".account-list");
@@ -135,12 +140,65 @@ export default class NMAccountList extends NMView {
 
     afterRender() {
         super.afterRender();
-        this.#getAccountList.$data = { list: this.getAccountList() };
+        this.initPage();
+        this.getAccountList();
     }
 
     addEvent() {
         this.bindEvent(this, NMConst.eventName.ADD_CHILD_COMP, this.onAddChildComp);
         this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
+        this.bindEvent(this, NMConst.eventName.ADD_TAG, this.onAddTag);
+        this.bindEvent(this, NMConst.eventName.REMOVE_TAG, this.onRemoveTag);
+    }
+
+    onClick(e) {
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "nm-button"),
+                callback: (btn) => {
+                    console.log(btn);
+
+                    const comp = util.EventUtil.getDomFromEvent(e, "nm-horse", undefined, 15);
+                    if (comp) {
+                        const { oid } = { ...comp.$data };
+                        accountIntent.update(oid);
+                    }
+                }
+            }
+        ]);
+    }
+
+    onAddTag(e) {
+        const { detail } = e;
+        const { target } = detail;
+
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "nm-horse"),
+                callback: (comp) => {
+                    const { oid } = comp.$data;
+                    const { tag } = target.$data;
+
+                    if (oid && tag) {
+                        const p = { target_oid: oid, tag };
+                        accountIntent.addTag(p);
+                    }
+                }
+            }
+        ]);
+
+        console.log(target);
+        console.log(target.$data);
+    }
+
+    onRemoveTag(e) {
+        console.log(e);
+        const { detail } = e;
+        const { target } = detail;
+
+        const { oid } = { ...target.$data };
+        
+        oid && accountIntent.removeTag(oid);
     }
 
     onAddChildComp(e) {
@@ -155,74 +213,75 @@ export default class NMAccountList extends NMView {
 
         const select = util.DomUtil.querySelector(target, "nm-select.category", false);
         if (select) {
-            select.$data = [
-                { title: "income", range: "account", value: "income" },
-                { title: "housing.cost", range: "account", value: "house" },
-                { title: "communication.cost", range: "account", value: "communication" },
-                { title: "food.cost", range: "account", value: "food" }
-            ];
+            select.$data = collection.category;
         }
     }
 
-    onChangeModel(e) {
-        console.log(e);
+    onModelChange(e) {
+        const { detail } = e;
+        const { data: _data, name, property } = detail;
+        const { data, page } = { ..._data.data };
+        
+        if (name === NMAccountModel.name) {
+            if (property === "list") {
+                const parsed = this.parseData(data);
+                this.#getAccountList.$data = { list: parsed };
+            }
+        }
+    }
+
+    onValueChange(e) {
+        const { detail } = e;
+        const { property, value } = detail;
+
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "nm-horse"),
+                callback: (comp) => {
+                    const { oid } = comp.$data;
+
+                    if (property) {
+                        // console.log(property);
+                        // accountIntent.update(oid, { [property]: value } );
+                        util.CommonUtil.debounce(accountIntent, "update", [oid, { [property]: value }]);
+                    }
+                }
+            }
+        ]);
     }
 
     getAccountList() {
-        return [
-            {
-                date: "2024-01-02",
-                list: [
-                    {
-                        history: "월급",
-                        type: "i",
-                        memo: "키키",
-                        amount: 3000000,
-                        category: "income",
-                        target_date: "2024-01-02",
-                        tags: []
-                    },
-                    {
-                        history: "점심",
-                        type: "o",
-                        memo: "순대국",
-                        amount: 10000,
-                        category: "food",
-                        target_date: "2024-01-02",
-                        tags: [{ tag: "test" }, { tag: "123" }]
-                    },
-                    {},
-                    {},
-                    {},
-                    {},
-                    {},
-                    {},
-                ]
-            },
-            {
-                date: "2023-12-25",
-                list: [
-                    {
-                        history: "테스트",
-                        type: "o",
-                        memo: "키키",
-                        amount: 25000,
-                        category: "수입",
-                        target_date: "2024-12-25",
-                        tags: []
-                    },
-                    {
-                        history: "점심",
-                        type: "o",
-                        memo: "쌀국수",
-                        amount: 10000,
-                        category: "food",
-                        target_date: "2024-12-25",
-                        tags: [{ tag: "test" }, { tag: "123" }]
-                    }
-                ]
+        accountIntent.getList({ with_tag: true, sort: { target_date: "desc" } }, this.#page);
+    }
+
+    parseData(data) {
+        const parsed = {};
+
+        data.forEach((d) => {
+            const { target_date: targetDate } = d;
+            const date = new Date(targetDate);
+            const dateStr = util.DateUtil.dateToFormatString(date, "$Y-$M-$d");
+            d.target_date = dateStr;
+            // const parsedIdx = parsed.findIndex(p.date > targetDate);
+
+            // !parsed[targetDate] && (parsed[targetDate] = []);
+            // parsed[targetDate].push(d);
+
+            if (!parsed[dateStr]) {
+                parsed[dateStr] = [d];
+            } else {
+                parsed[dateStr].push(d);
             }
-        ]
+        });
+
+        const result = Object.keys(parsed).sort().map((k) => {
+            return {
+                date: k,
+                list: parsed[k]
+            }
+        });
+
+        return result;
     }
 }
 

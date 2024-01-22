@@ -149,6 +149,7 @@ class NMTagBox extends NMComponent {
             this.$data.push(data);
             const tag = this.getTag(data);
             this.appendChild(tag);
+            util.EventUtil.dispatchEvent(this, NMConst.eventName.ADD_TAG, { target: tag });
         }
     }
 
@@ -158,6 +159,7 @@ class NMTagBox extends NMComponent {
         if (idx > -1) {
             this.$data.splice(idx, 1);
             tag.remove();
+            util.EventUtil.dispatchEvent(this, NMConst.eventName.REMOVE_TAG, { target: tag });
         }
     }
 

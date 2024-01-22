@@ -8,6 +8,7 @@ import NMConst from "js/core/constant/NMConstant.js";
 
 class NMSelect extends NMComponent {
     #elem;
+    #value;
 
     static get staticAttrs() {
         return ["nm-prop"];
@@ -37,6 +38,13 @@ class NMSelect extends NMComponent {
         <div class="${this.clsName}" part="${this.clsName}">
             <select></select>
         </div>`;
+    }
+
+    set $value(value) {
+        // this.invoke("value", "isRender", {
+        //     fn: () => this.elem && (this.elem.value = value)
+        // });
+        this.#value = value;
     }
 
     get elem() {
@@ -76,8 +84,9 @@ class NMSelect extends NMComponent {
         });
 
         this.elem.innerHTML = html;
-        const { value } = { ...data[0] };
-        this.value = value;
+        // const { value } = { ...data[0] };
+        // this.value = value;
+        this.elem.value = this.#value;
     }
 
     destroy() {

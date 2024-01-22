@@ -44,7 +44,9 @@ const NMConstant = {
         KEY_DOWN: "keydown",
         KEY_PRESS: "keypress",
         REMOVE: "remove",
-        ADD_CHILD_COMP: "addChildComponent"
+        ADD_CHILD_COMP: "addChildComponent",
+        ADD_TAG: "addTag",
+        REMOVE_TAG: "removeTag"
     },
     mimeType: {
         TEXT__HTML: "text/html",
@@ -52,7 +54,10 @@ const NMConstant = {
         APP__XML: "application/xml",
         APP__XHTML_XML: "application/xhtml+xml",
         IMG__SVG_XML: "image/svg+xml"
-
+    },
+    param: {
+        WAIT: "wait",
+        NONE: "none"
     },
     method: {
         GET: "GET",

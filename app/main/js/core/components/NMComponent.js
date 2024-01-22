@@ -100,7 +100,11 @@ class NMComponent extends HTMLElement {
         });
     }
 
-    invoke(type, condition, params) {
+    isRender() {
+        return this.#isRender;
+    }
+
+    invoke(type, condition, params, stroe = false) {
         !this.#invoke[type] && (this.#invoke[type] = []);
 
         if (util.CommonUtil.isFunction(condition)) {
@@ -112,25 +116,40 @@ class NMComponent extends HTMLElement {
         const target = this.#invoke[type];
 
         if (condition) {
-            this.executeInvoke(params);
+            this.#executeInvoke(params);
         } else {
             target.push(params);
+            if (stroe) {
+                let invoke = util.store.get("invoke", type);
+                if (!util.CommonUtil.isArray(invoke)) {
+                    util.store.set("invoke", type, []);
+                    invoke = util.store.get("invoke", type);
+                }
+
+                invoke.push(this);
+            }
         }
     }
 
-    executeInvoke(params) {
+    #executeInvoke(params) {
         const { scope = this, arg, fn } = { ...params };
-        fn.apply(scope, arg);
+
+        let func = util.CommonUtil.isString(fn) ? scope[fn] : fn;
+        func.apply(scope, arg);
+    }
+
+    executeInvoke(type) {
+        const params = this.#invoke[type];
+        delete this.#invoke[type];
+
+        params.forEach((d) => {
+            this.#executeInvoke(d);
+        });
     }
     
     flushInvoke() {
-        Object.entries(this.#invoke).forEach(([key, invokeList = []]) => {
-            while (util.CommonUtil.isNotEmpty(invokeList)) {
-                const param = invokeList.shift();
-                this.executeInvoke(param);
-            }
-
-            delete this.#invoke[key];
+        Object.keys(this.#invoke).forEach((type) => {
+            this.executeInvoke(type);
         });
     }
 

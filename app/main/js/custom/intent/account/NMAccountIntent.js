@@ -17,6 +17,22 @@ class NMAccountIntent extends NMIntent {
         const list = NMAccountModel.get(["list"]);
         accountSideEffect.addList(list);
     }
+
+    getList(param, page) {
+        accountSideEffect.getList(param, page);
+    }
+
+    update(oid, param) {
+        accountSideEffect.update(oid, param);
+    }
+
+    addTag(param) {
+        accountSideEffect.addTag(param);
+    }
+
+    removeTag(oid) {
+        accountSideEffect.removeTag(oid);
+    }
 }
 
 const accountIntent = new NMAccountIntent();

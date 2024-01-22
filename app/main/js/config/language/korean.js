@@ -53,6 +53,8 @@ const korean = {
         "housing.cost": "주거비",
         "communication.cost": "통신비",
         "education.cost": "교육비",
+        "entertament.cost": "문화비",
+        "transportation.cost": "교통비",
         "etc": "기타"
     },
     board: {

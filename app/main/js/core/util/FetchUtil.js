@@ -34,7 +34,7 @@ class FetchUtil {
             const { contentType } = option;
 
             let data;
-            if (util.CommonUtil.isEmpty(contentType)) {
+            if (contentType === NMConst.param.NONE) {
             } else if (contentType === "text") {
                 data = await response.text();
             } else {
@@ -103,12 +103,20 @@ class FetchUtil {
         let icon = util.store.get("icon", path);
         
         if (!icon) {
+            util.store.set("icon", path, NMConst.param.WAIT);
             const result = await this.#fetch(url, NMConst.method.GET, option);
             const { data: html } = result;
             const div = util.DomUtil.createElement("div");
             div.innerHTML = html;
             const svg = util.DomUtil.querySelector(div, "svg");
             util.store.set("icon", path, svg);
+            const invoke = util.store.get("invoke", path);
+            if (util.CommonUtil.isArray(invoke)) {
+                while (!util.CommonUtil.isEmpty(invoke)) {
+                    const comp = invoke.pop();
+                    comp.flushInvoke();
+                }
+            }
             div.remove();
             icon = svg;
         }
