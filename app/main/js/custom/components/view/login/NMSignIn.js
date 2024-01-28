@@ -75,7 +75,7 @@ export default class NMSignIn extends NMView {
                             <nm-label class="" value="account"></nm-label>
                         </div>
                         <div class="input">
-                            <nm-input nm-prop="account" class=""></nm-input>
+                            <nm-input nm-prop="account" class="account"></nm-input>
                         </div>
                         <div class="title">
                             <nm-label class="" value="password"></nm-label>
@@ -97,6 +97,12 @@ export default class NMSignIn extends NMView {
     addEvent() {
         this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
         this.bindEvent(this, NMConst.eventName.KEY_UP, this.onKeyUp)
+    }
+
+    afterRender() {
+        super.afterRender();
+        const input = util.DomUtil.querySelector(this, ".account");
+        input && input.focus();
     }
 
     onClick(e) {

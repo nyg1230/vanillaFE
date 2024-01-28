@@ -24,8 +24,8 @@ class NMAccountSideEffect extends NMSideEffect {
         NMAccountModel.setState("addList", result);
     }
 
-    async getList(param, page) {
-        const result = await this.api(NMAccountSideEffect.url.GET, NMConst.method.POST, { param, page }, {});
+    async getList(param) {
+        const result = await this.api(NMAccountSideEffect.url.GET, NMConst.method.POST, { ...param }, {});
         NMAccountModel.set("list", result);
     }
 
@@ -37,7 +37,13 @@ class NMAccountSideEffect extends NMSideEffect {
 
     async addTag(param) {
         const result = await this.api(NMAccountSideEffect.url.ADD_TAG, NMConst.method.POST, { ...param });
-        console.log(result);
+        const { data, state } = { ...result };
+
+        if (state) {
+            util.CommonUtil.deepMerge(param, data);
+        }
+
+        NMAccountModel.setState("addTag", result);
     }
 
     async removeTag(oid) {

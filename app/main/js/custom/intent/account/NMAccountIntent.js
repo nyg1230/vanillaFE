@@ -18,8 +18,8 @@ class NMAccountIntent extends NMIntent {
         accountSideEffect.addList(list);
     }
 
-    getList(param, page) {
-        accountSideEffect.getList(param, page);
+    getList(param) {
+        accountSideEffect.getList(param);
     }
 
     update(oid, param) {

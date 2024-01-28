@@ -69,7 +69,7 @@ export default class NMSideBar extends NMComponent {
     afterRender() {
         const cmnMenu = util.DomUtil.querySelector(this, ".common");
         cmnMenu && (cmnMenu.$data = [
-            { icon: "home", title: "home", range: "", value: "home" },
+            { icon: "home", title: "home", range: "", value: "main/body/home" },
         ]);
 
         const accountMenu = util.DomUtil.querySelector(this, "nm-menu.account");
@@ -77,8 +77,8 @@ export default class NMSideBar extends NMComponent {
             { icon: "home", title: "view.calendar", range: "account", value: "main/body/account/calendar" },
             { icon: "home", title: "view.list", range: "account", value: "main/body/account/list" },
             { icon: "home", title: "add.account", range: "account", value: "main/body/account/add" },
-            { icon: "home", title: "home", range: "", value: "home" },
-            { icon: "home", title: "home", range: "", value: "home" },
+            // { icon: "home", title: "home", range: "", value: "home" },
+            // { icon: "home", title: "home", range: "", value: "home" },
         ]);
     }
 
@@ -102,7 +102,7 @@ export default class NMSideBar extends NMComponent {
         const { detail } = e;
         const { property, value } = detail;
 
-        if (property === "account") {
+        if (util.CommonUtil.isNotEmpty(value)) {
             router.pushState(value);
         }
         console.log(property, value);

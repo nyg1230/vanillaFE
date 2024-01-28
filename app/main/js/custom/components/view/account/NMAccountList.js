@@ -18,7 +18,7 @@ import { collection } from "js/config/data/collection";
 
 export default class NMAccountList extends NMView {
     modelList = [NMAccountModel];
-    #page;
+    #param;
 
     static get name() {
         return "nm-account-list";
@@ -126,11 +126,16 @@ export default class NMAccountList extends NMView {
         </div>`;
     }
 
-    initPage() {
-        this.#page = {
-            page: 0,
-            count: 100,
-            order: [{ target_date: "desc" }]
+    #initParam() {
+        this.#param = {
+            page: {
+                page: 0,
+                count: 100
+            },
+            sort: [
+                ["target_date", "desc"]
+            ],
+            with_tag: true
         };
     }
     
@@ -140,7 +145,7 @@ export default class NMAccountList extends NMView {
 
     afterRender() {
         super.afterRender();
-        this.initPage();
+        this.#initParam();
         this.getAccountList();
     }
 
@@ -180,19 +185,15 @@ export default class NMAccountList extends NMView {
                     const { tag } = target.$data;
 
                     if (oid && tag) {
-                        const p = { target_oid: oid, tag };
-                        accountIntent.addTag(p);
+                        util.CommonUtil.deepMerge(target.$data, { target_oid: oid, target_type: "account" })
+                        accountIntent.addTag(target.$data);
                     }
                 }
             }
         ]);
-
-        console.log(target);
-        console.log(target.$data);
     }
 
     onRemoveTag(e) {
-        console.log(e);
         const { detail } = e;
         const { target } = detail;
 
@@ -251,7 +252,7 @@ export default class NMAccountList extends NMView {
     }
 
     getAccountList() {
-        accountIntent.getList({ with_tag: true, sort: { target_date: "desc" } }, this.#page);
+        accountIntent.getList(this.#param);
     }
 
     parseData(data) {
@@ -274,12 +275,14 @@ export default class NMAccountList extends NMView {
             }
         });
 
-        const result = Object.keys(parsed).sort().map((k) => {
-            return {
-                date: k,
-                list: parsed[k]
-            }
-        });
+        const result = Object.keys(parsed)
+            .sort((a, b) => a < b ? 1 : -1)
+            .map((k) => {
+                return {
+                    date: k,
+                    list: parsed[k]
+                }
+            });
 
         return result;
     }
