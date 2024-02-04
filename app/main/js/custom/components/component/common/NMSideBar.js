@@ -76,7 +76,7 @@ export default class NMSideBar extends NMComponent {
         accountMenu && (accountMenu.$data = [
             { icon: "home", title: "view.calendar", range: "account", value: "main/body/account/calendar" },
             { icon: "home", title: "view.list", range: "account", value: "main/body/account/list" },
-            { icon: "home", title: "add.account", range: "account", value: "main/body/account/add" },
+            { icon: "home", title: "add", value: "main/body/account/add" },
             // { icon: "home", title: "home", range: "", value: "home" },
             // { icon: "home", title: "home", range: "", value: "home" },
         ]);

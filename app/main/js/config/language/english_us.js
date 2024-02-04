@@ -27,11 +27,17 @@ const english_us = {
         "add.row": "Add Row",
         clear: "Clear",
         registration: "Registration",
-        tag: "Tag"
+        tag: "Tag",
+        modify: "Modify",
+        delete: "Delete",
+        add: "Add",
+        "add.item": "Add Item",
+        remove: "Remove",
+        "remove.row": "Remove Row"
     },
     account: {
         "account.book": "Account Book",
-        "add.account": "Add",
+        "regist.account": "Regist",
         "view.calendar": "View On Calendar",
         "view.list": "View On List",
         income: "Income",

@@ -13,6 +13,7 @@ import chartIntent from "js/custom/intent/chart/NMChartIntent.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 import accountIntent from "js/custom/intent/account/NMAccountIntent";
+import { collection } from "js/config/data/collection";
 
 const weeklyLimit = 10;
 
@@ -68,43 +69,58 @@ export default class NMAddAccount extends NMView {
             .bottom-area {
                 display: flex;
                 justify-content: center;
+                gap: 4px;
             }
 
             .row {
                 display: flex;
                 flex-direction: column;
-                background-color: var(--pantone-bright-white);
-                // border: 1px solid black;
-                padding: 12px 20px;
+                // background-color: var(--pantone-bright-white);
+                gap: 4px;
+                padding: 4px 20px;
 
-                & .header {
-                    width: 100%;
+                & nm-input::part(nm-input) {
+                    display: inline;
+                    --width: 100%;
+                }
+
+                & .haeder {
                     display: flex;
-                    justify-content: end;
 
-                    & .close {
-                        cursor: pointer;
+                    & .button-area {
+                        align-items: center;
+                        display: flex;
                     }
                 }
 
-                & .content {
+                & .card {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
-                    
-                    & .check-area {
-                        gap: 8px;
-                    }
+                    gap: 2px;
+                    border-radius: 4px;
+                    width: 250px;
+                    background-color: var(--pristine);
+                    padding: 4px 8px;
 
-                    & nm-input::part(nm-input) {
-                        display: inline;
-                        --width: 100%;
-                    }
-
-                    & .input-area {
+                    & .icon-area {
                         display: flex;
-                        flex-direction: column;
+                        justify-content: flex-end;
+
+                        & nm-icon {
+                            cursor: pointer;
+                        }
                     }
+                }
+            }
+
+            .bottom-area {
+                display: flex;
+                flex-direction: column;
+
+                & > div {
+                    display: flex;
+                    gap: 4px;
+                    justify-content: center;
                 }
             }
         `;
@@ -116,55 +132,62 @@ export default class NMAddAccount extends NMView {
             <div class="title-area">
                 <nm-label class="" value="add.account" range="account"></nm-label>
             </div>
-            <div class="list-area">
+            <div clas="list-area">
                 <nm-list class="account-list">
                     <template>
                         <div class="row">
-                            <div class="header">
-                                <nm-icon class="close" icon="close" size=""></nm-icon>
+                            <div class="haeder">
+                                <div class="date-area">
+                                    <nm-input type="date" nm-target_date="value" nm-prop="target_date"></nm-input>
+                                </div>
+                                <div class="button-area">
+                                    <nm-button value="add.item" class="add-card"></nm-button>
+                                    <nm-button value="remove.row" class="remove-row"></nm-button>
+                                </div>
                             </div>
                             <div class="content">
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="history" range="account"></nm-label>
-                                    <nm-input class="history" nm-prop="history"></nm-input>
-                                </div>
-                                <div class="flex check-area">
-                                    <div class="input-area">
-                                        <nm-label class="subtitle medium" value="category"></nm-label>
-                                        <nm-select class="category" nm-prop="category"></nm-select>
-                                    </div>
-                                    <div class="input-area">
-                                        <nm-label class="subtitle medium" value="type" range="account"></nm-label>
-                                        <nm-radio class="type" nm-prop="type"></nm-radio>
-                                    </div>
-                                </div>
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="amount" range="account"></nm-label>
-                                    <nm-input type="number" class="amount" nm-prop="amount"></nm-input>
-                                </div>
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="memo" range="account"></nm-label>
-                                    <nm-input class="memo" nm-prop="memo"></nm-input>
-                                </div>
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="target.date" range="account"></nm-label>
-                                    <nm-input type="date" class="target-date" nm-prop="target_date"></nm-input>
-                                </div>
-                                <div class="input-area">
-                                    <nm-label class="subtitle medium" value="tag"></nm-label>
-                                    <nm-tag-box class="tags" nm-prop="tags" editable="true"></nm-tag-box>
-                                </div>
+                                <nm-carousel>
+                                    <template>
+                                        <div class="card">
+                                            <div class="icon-area">
+                                                <nm-icon icon="close" size="14" class="remove-card"></nm-icon>
+                                            </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="history" range="account"></nm-label>
+                                                <nm-input class="history" nm-history="$value" nm-prop="history"></nm-input>
+                                            </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="category"></nm-label>
+                                                <nm-select class="category" nm-category="$value" nm-prop="category"></nm-select>
+                                            </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="amount" range="account"></nm-label>
+                                                <nm-input type="number" class="amount" nm-amount="$value" nm-prop="amount"></nm-input>
+                                            </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="memo" range="account"></nm-label>
+                                                <nm-input class="memo" nm-memo="$value" nm-prop="memo"></nm-input>
+                                            </div>
+                                            <div class="input-area">
+                                                <nm-label class="subtitle medium" value="tag"></nm-label>
+                                                <nm-tag-box class="tags" nm-prop="tags" nm-tags="$data" editable="true"></nm-tag-box>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </nm-carousel>
                             </div>
-                        <div>
+                        </div>
                     </template>
                 </nm-list>
             </div>
-            <div class="button-area">
-                <nm-button class="add-list" value="add.row"></nm-button>
-                <nm-button class="clear-list" value="clear"></nm-button>
-            </div>
             <div class="bottom-area">
-                <nm-button class="regist" value="registration"></nm-button>
+                <div class="">
+                    <nm-button value="add" class="add-row"></nm-button>
+                    <nm-button value="clear" class="clear-list"></nm-button>
+                </div>
+                <div class="">
+                    <nm-button value="regist.account" range="account" class="regist"></nm-button>
+                </div>
             </div>
         </div>`;
     }
@@ -174,11 +197,17 @@ export default class NMAddAccount extends NMView {
     }
 
     get #defaultData() {
-        return [ {} ];
+        return [
+            {
+                target_date: "2024-01-24",
+                list: [{}]
+            }
+        ];
     }
 
     addEvent() {
         this.bindEvent(this, "add-row", this.onAddRow);
+        this.bindEvent(this, NMConst.eventName.ADD_CHILD_COMP, this.onAddChildComp);
         this.bindEvent(this, NMConst.eventName.CLICK, this.onClick);
     }
 
@@ -216,9 +245,16 @@ export default class NMAddAccount extends NMView {
     onClick(e) {
         util.EventUtil.eventFilters([
             {
-                condition: () => util.EventUtil.getDomFromEvent(e, "add-list", "class"),
+                condition: () => util.EventUtil.getDomFromEvent(e, "add-row", "class"),
                 callback: () => {
                     this.#accountList.$add = this.#defaultData;
+                }
+            },
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "remove-row", "class"),
+                callback: (btn) => {
+                    const row = btn.closest("nm-row");
+                    util.EventUtil.dispatchEvent(row, NMConst.eventName.REMOVE);
                 }
             },
             {
@@ -230,14 +266,25 @@ export default class NMAddAccount extends NMView {
             {
                 condition: () => util.EventUtil.getDomFromEvent(e, "regist", "class"),
                 callback: () => {
-                    this.vaildCheck() && accountIntent.addList();
+                    this.registList();
                 }
             },
             {
-                condition: () => util.EventUtil.getDomFromEvent(e, "close", "class"),
+                condition: () => util.EventUtil.getDomFromEvent(e, "remove-card", "class"),
                 callback: (icon) => {
-                    const row = icon.closest("nm-row");
-                    util.EventUtil.dispatchEvent(row, NMConst.eventName.REMOVE);
+                    const horse = icon.closest("nm-horse");
+                    util.EventUtil.dispatchEvent(horse, NMConst.eventName.REMOVE);
+                }
+            },
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "add-card", "class", 15),
+                callback: (btn) => {
+                    const row = btn.closest("nm-row");
+
+                    if (row) {
+                        const carousel = util.DomUtil.querySelector(row, "nm-carousel", false);
+                        carousel && (carousel.$add = {})
+                    }
                 }
             }
         ]);
@@ -246,12 +293,12 @@ export default class NMAddAccount extends NMView {
     onAddRow(e) {
         const { detail } = e;
         const { target } = detail;
-        
-        const radio = util.DomUtil.querySelector(target, "nm-radio.type", false);
-        radio && (radio.$data = [
-            { title: "income", range: "account", value: "i" },
-            { title: "expenditure", range: "account", value: "o" }
-        ]);
+
+        const carousel = util.DomUtil.querySelector(target, "nm-carousel", false);
+        if (carousel) {
+            const { list } = target.$data;
+            carousel.$data = list;
+        }
 
         const tagBox = util.DomUtil.querySelector(target, "nm-tag-box.tags", false);
         if (tagBox) {
@@ -274,11 +321,34 @@ export default class NMAddAccount extends NMView {
 
     }
 
+    onAddChildComp(e) {
+        const { detail } = e;
+        const { target } = detail;
+
+        const select = util.DomUtil.querySelector(target, "nm-select.category", false);
+        if (select) {
+            select.$data = collection.category;
+        }
+
+        const tagBox = util.DomUtil.querySelector(target, "nm-tag-box.tags", false);
+        if (tagBox) {
+            tagBox.$data = [];
+            const row = tagBox.closest("nm-row");
+            row && (row.$data.tags = tagBox.$data);
+        }
+    }
+
     onValueChange(e) {
         const { detail } = e;
         const { property, value } = detail;
 
         util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, "nm-horse", undefined, 20),
+                callback: (horse) => {
+                    horse.$data[property] = value;
+                }
+            },
             {
                 condition: () => util.EventUtil.getDomFromEvent(e, "nm-row", undefined, 20),
                 callback: (row) => {
@@ -295,6 +365,28 @@ export default class NMAddAccount extends NMView {
 
     vaildCheck() {
         return true;
+    }
+
+    registList() {
+        if (!this.vaildCheck()) {
+            console.log("invalid");
+            return;
+        }
+
+        const list = NMAccountModel.get("list");
+        
+        const newList = [];
+
+        list.forEach((d) => {
+            const { target_date, list: accountList } = d;
+
+            accountList.forEach((l) => {
+                l.target_date = target_date;
+                newList.push(l);
+            });
+        });
+
+        accountIntent.addList(newList);
     }
 }
 

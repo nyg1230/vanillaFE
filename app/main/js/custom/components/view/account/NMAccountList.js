@@ -205,12 +205,6 @@ export default class NMAccountList extends NMView {
     onAddChildComp(e) {
         const { detail } = e;
         const { target } = detail;
-        
-        const radio = util.DomUtil.querySelector(target, "nm-radio.type", false);
-        radio && (radio.$data = [
-            { title: "income", range: "account", value: "i" },
-            { title: "expenditure", range: "account", value: "o" }
-        ]);
 
         const select = util.DomUtil.querySelector(target, "nm-select.category", false);
         if (select) {

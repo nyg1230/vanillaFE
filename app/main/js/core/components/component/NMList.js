@@ -56,6 +56,9 @@ class NMList extends NMComponent {
                         list.splice(idx, 1);
                         row.remove();
                     }
+
+                    e.preventDefault();
+                    e.stopPropagation();
                 }
             }
         ]);

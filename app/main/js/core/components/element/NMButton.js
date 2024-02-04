@@ -10,7 +10,7 @@ class NMButton extends NMComponent {
     #input;
 
     static get defineProperty() {
-        return { value: "", name: "", icon: "", size: "" };
+        return { value: "", range: "", name: "", icon: "", size: "" };
     }
 
     static get name() {
@@ -67,7 +67,7 @@ class NMButton extends NMComponent {
     }
 
     onChangeAttr(name, old, value) {
-        if (name === "value") {
+        if (name === "value" || name === "range") {
             this.setLabel(name, value);
         } else if (name === "icon") {
             this.setIcon(value);

@@ -29,11 +29,15 @@ const korean = {
         registration: "등록하기",
         tag: "태그",
         modify: "수정하기",
-        delete: "삭제하기"
+        delete: "삭제하기",
+        add: "추가하기",
+        "add.item": "항목 추가하기",
+        remove: "제거하기",
+        "remove.row": "행 삭제하기"
     },
     account: {
         "account.book": "가계부",
-        "add.account": "등록하기",
+        "regist.account": "등록하기",
         "view.calendar": "캘린더로 보기",
         "view.list": "목록으로 보기",
         income: "수입",

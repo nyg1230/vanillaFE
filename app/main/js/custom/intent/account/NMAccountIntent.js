@@ -13,9 +13,8 @@ import NMConst from "js/core/constant/NMConstant.js";
 class NMAccountIntent extends NMIntent {
     model = NMAccountModel;
 
-    addList() {
-        const list = NMAccountModel.get(["list"]);
-        accountSideEffect.addList(list);
+    addList(param) {
+        accountSideEffect.addList(param);
     }
 
     getList(param) {

@@ -76,6 +76,10 @@ class NMCarousel extends NMComponent {
         </div>`;
     }
 
+    set $add(data) {
+        this.#addData(data);
+    }
+
     get #wrapper() {
         return util.DomUtil.querySelector(this, ".wrapper");
     }
@@ -93,6 +97,7 @@ class NMCarousel extends NMComponent {
     addEvent() {
         this.bindEvent(this, NMConst.eventName.MOUSE_DOWN, this.onMouseDown);
         this.bindEvent(this, NMConst.eventName.MOUSE_UP, this.onMouseUp);
+        this.bindEvent(this, NMConst.eventName.REMOVE, this.onRemove);
     }
 
     onMouseDown(e) {
@@ -116,6 +121,25 @@ class NMCarousel extends NMComponent {
 
     onMouseUp(e) {
         this.#move = false;
+    }
+
+    onRemove(e)  {
+        util.EventUtil.eventFilters([
+            {
+                condition: () => util.EventUtil.getDomFromEvent(e, NMHorse.name),
+                callback: (horse) => {
+                    const idx = this.$data.findIndex((d) => d === horse.$data);
+
+                    if (idx > -1) {
+                        this.$data.splice(idx, 1);
+                        horse.remove();
+                    }
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        ]);
     }
 
     moveContainer(bool) {
@@ -153,6 +177,18 @@ class NMCarousel extends NMComponent {
             this.#container.style = `--x-move: ${this.#increase}px;`;
             util.CommonUtil.debounce(this, "moveContainer", [bool], 0);
         }
+    }
+
+    #addData(data) {
+        if (!util.CommonUtil.isArray(data)) {
+            data = [data];
+        }
+
+        data.forEach((d) => {
+            const horse = this.#getHorse(d);
+            this.$data.push(d);
+            this.appendChild(horse);
+        });
     }
 
     setData(data = []) {

@@ -8,7 +8,7 @@ import NMConst from "js/core/constant/NMConstant.js";
 const convertMapper = {
     $Y: d => d.getFullYear(),
     $M: d => d.getMonth() + 1,
-    $d: d => d.getDate() + 1,
+    $d: d => d.getDate(),
     $h: d => d.getHours(),
     $H: d => d.getHours() % 12,
     $m: d => d.getMinutes(),
