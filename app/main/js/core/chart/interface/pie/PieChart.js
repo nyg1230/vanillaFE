@@ -44,6 +44,7 @@ class PieChart extends Chart {
         list.forEach((d, idx) => {
             const { value, title } = { ...d };
             const ratio = value / total;
+            d.ratio = ratio;
 
             const radian = Math.PI * 2 * ratio;
             const endRadian = currentRadian + radian;
@@ -180,14 +181,16 @@ class PieChart extends Chart {
     }
 
     #getTooltipHtml(data, idx) {
-        const { title, value } = data;
+        const { title, value, ratio } = data;
         const { palette } = this.option;
         const color = util.ColorUtil.getPaletteColor(palette, idx);
+        const percentile = util.CommonUtil.round(ratio * 100, 2);
 
         return `<div class="info">
                     <div class="color" style="--bg-color: ${color};"></div>
                     <div class="title">${title}</div>
                     <div class="value">${value}</div>
+                    <div class="ratio">, ${percentile}%</div>
                 </div>`;
     }
 }

@@ -16,6 +16,8 @@ class NMAccountSideEffect extends NMSideEffect {
             UPDATE: "account/update",
             ADD_TAG: "tag/add",
             REMOVE_TAG: "tag/remove",
+            PERIOD_DATA: "account/period/data",
+            PERIOD_CATEGORY_DATA: "account/period/category/data"
         };
     }
     
@@ -49,6 +51,16 @@ class NMAccountSideEffect extends NMSideEffect {
     async removeTag(oid) {
         const result = await this.api(NMAccountSideEffect.url.REMOVE_TAG, NMConst.method.POST, { oid }, { contentType: NMConst.param.NONE });
         NMAccountModel.setState("removeTag", result);
+    }
+
+    async getPeriodData(param) {
+        const result = await this.api(NMAccountSideEffect.url.PERIOD_DATA, NMConst.method.POST, { ...param });
+        NMAccountModel.set("periodData", result);
+    }
+
+    async getPeriodCategoryData(param) {
+        const result = await this.api(NMAccountSideEffect.url.PERIOD_CATEGORY_DATA, NMConst.method.POST, { ...param });
+        NMAccountModel.set("periodCategoryData", result);
     }
 }
 

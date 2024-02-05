@@ -9,10 +9,9 @@ import { NMChart } from "js/core/components/chart/NMChart";
 /* model */
 import NMAccountModel from "js/custom/model/account/NMAccountModel.js";
 /* intent */
-import chartIntent from "js/custom/intent/chart/NMChartIntent.js";
+import accountIntent from "js/custom/intent/account/NMAccountIntent";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
-import accountIntent from "js/custom/intent/account/NMAccountIntent";
 import { collection } from "js/config/data/collection";
 
 const weeklyLimit = 10;

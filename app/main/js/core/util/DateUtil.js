@@ -15,7 +15,17 @@ const convertMapper = {
     $s: d => d.getSeconds(),
     $ms: d => d.getMilliseconds(),
     $n: d => d.getHours() / 12 < 1 ? "AM" : "PM"
-}
+};
+
+const timeUnit = {
+    Y: 1000 * 60 * 60 * 24 * 30 * 12,
+    M: 1000 * 60 * 60 * 24 * 30,
+    d: 1000 * 60 * 60 * 24,
+    h: 1000 * 60 * 60,
+    m: 1000 * 60,
+    s: 1000,
+    ms: 1
+};
 
 const DateUtil = {
     timestampToString(timestamp, fromat, utc) {},
@@ -25,6 +35,14 @@ const DateUtil = {
         });
 
         return format;
+    },
+    converTimeStamp(num, from, to) {
+        const fromUnit = timeUnit[from];
+        const toUnit = timeUnit[to];
+
+        const unit = fromUnit / toUnit;
+
+        return num * unit;
     }
 };
 

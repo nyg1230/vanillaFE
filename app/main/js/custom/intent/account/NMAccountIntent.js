@@ -32,6 +32,14 @@ class NMAccountIntent extends NMIntent {
     removeTag(oid) {
         accountSideEffect.removeTag(oid);
     }
+
+    getPeriodData(param) {
+        accountSideEffect.getPeriodData(param);
+    }
+
+    getPeriodCategoryData(param) {
+        accountSideEffect.getPeriodCategoryData(param)
+    }
 }
 
 const accountIntent = new NMAccountIntent();

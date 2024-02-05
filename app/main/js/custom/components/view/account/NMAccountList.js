@@ -10,7 +10,6 @@ import { NMCarousel } from "js/core/components/component/NMCarousel.js";
 /* model */
 import NMAccountModel from "js/custom/model/account/NMAccountModel.js";
 /* intent */
-import chartIntent from "js/custom/intent/chart/NMChartIntent.js";
 import accountIntent from "js/custom/intent/account/NMAccountIntent";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
@@ -130,7 +129,7 @@ export default class NMAccountList extends NMView {
         this.#param = {
             page: {
                 page: 0,
-                count: 100
+                count: 200
             },
             sort: [
                 ["target_date", "desc"]

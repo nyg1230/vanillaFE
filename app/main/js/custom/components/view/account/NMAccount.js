@@ -5,9 +5,7 @@ import * as util from "js/core/util/utils.js";
 /* component */
 import { NMChart } from "js/core/components/chart/NMChart";
 /* model */
-import NMChartModel from "js/custom/model/chart/NMChartModel.js";
 /* intent */
-import chartIntent from "js/custom/intent/chart/NMChartIntent.js";
 /* constant */
 import NMConst from "js/core/constant/NMConstant.js";
 
