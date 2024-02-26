@@ -1,0 +1,7 @@
+@import url("common.css");
+
+* {
+    border: 1px solid black;
+    color: red;
+    align-items: center;
+}
