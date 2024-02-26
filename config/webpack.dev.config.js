@@ -4,7 +4,7 @@ const common = require("./webpack.common.js");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const rootPath = path.resolve(__dirname, "../");
-const appPath = `${rootPath}/app`;
+const appPath = `${rootPath}/src`;
 const staticPath = `${appPath}/main`;
 
 module.exports = (env, options) => {

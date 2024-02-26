@@ -9,9 +9,8 @@ module.exports = {
     entry: {},
     resolve: {
         alias: {
-            js: `${rootPath}/app/main/js/`,
-            css: `${rootPath}/app/main/css/`,
-            image: `${rootPath}/app/main/image/`
+            core: `${rootPath}/src/main/core/`,
+            custom: `${rootPath}/src/main/custom/`,
         },
         fallback: {
             fs: false,
