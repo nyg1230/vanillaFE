@@ -1,12 +1,13 @@
 import * as util from "core/js/util/utils.js";
 
-const store = util.StoreUtil.get("component");
+const store = util.StoreUtil.set("component", {}, true);
 
 class Component extends HTMLElement {
-    #proto = this.__proto__;
+    #proto = this.__proto__.constructor;
     #isRender = false;
     #options = this.$$options;
     #tree = {};
+    #mapper = {};
     #proxy;
     #oid;
 
@@ -20,9 +21,9 @@ class Component extends HTMLElement {
 
     static get TAG_NAME() { return "custom-component"; }
 
-    static get $$attrs() { return []; }
-
-    get $name() { return (() => this.__proto__.name)(); }
+    get $name() {
+        return (() => this.#proto.TAG_NAME)();
+    }
 
     get $proxy() { return this.#proxy; }
 
@@ -38,22 +39,22 @@ class Component extends HTMLElement {
 
     get template() {
         return {
-            tag: "",
+            tag: "div",
             attr: {
-                className: "a b c",
-                value: "123"
+                className: this.className,
+                part: this.clsName
             },
-            prop: {},
+            prop: "",
             children: [
-                {}
+                { tag: "slot" }
             ]
         }
     }
 
     #init() {
         this.#oid = util.CommonUtil.generator("cid");
-        store.set(this.#oid, this);
-        console.log(store.get())
+        store.add(this, this.#oid, false);
+
         const { options } = { ...arguments[0] };
         this.#initOptions(options);
     }
@@ -73,11 +74,13 @@ class Component extends HTMLElement {
     addEvent() {}
 
     bindEvent(target, eventName, fn, options = {}) {
-        if (!target) return;
         util.EventUtil.bindEvent(target, eventName, fn, options);
     }
 
-    #render() {}
+    #render() {
+        const template = util.TemplateUtil.getTemplate(this);
+        console.log(template);
+    }
 
     #destroy() {
         this.destroy();

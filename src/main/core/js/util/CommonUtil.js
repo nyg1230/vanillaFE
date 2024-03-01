@@ -1,9 +1,10 @@
 const generator = {};
 
 const CommonUtil = {
-    generator(key) {
+    generator(key, justNumber = false) {
         this.isNull(generator[key]) && (generator[key] = 0);
-        return `${key}-${generator[key]++}`
+        const num = generator[key]++;
+        return justNumber === true ? num : `${key}-${num}`
     },
     isArray(obj) {
         return Array.isArray(obj);
