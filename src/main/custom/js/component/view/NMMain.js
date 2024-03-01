@@ -15,9 +15,24 @@ export default class NMMain extends Component {
     get template() {
         return {
             tag: "div",
+            attr: {
+                class: (v = "") => `${this.$name} ${v}`,
+                part: this.$name
+            },
             children: [
                 { tag: "nm-label" },
-                { tag: "nm-label" }
+                { tag: "nm-input" },
+                {
+                    tag: "div",
+                    children: [
+                        {
+                            tag: "nm-input",
+                            attr: {
+                                class: (v = "") => v
+                            }
+                        }
+                    ]
+                }
             ]
         }
     }

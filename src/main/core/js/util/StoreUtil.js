@@ -2,45 +2,62 @@ import * as util from "core/js/util/utils";
 
 class Store {
     #data;
+    #toStore = true;
 
     get data() {
         return this.#data;
     }
 
+    get toStore() {
+        return this.#toStore;
+    }
+
     constructor() {
         const [data, toStore = true] = [...arguments];
+        this.#toStore = toStore;
 
-        if (util.CommonUtil.isNull(data) || !util.CommonUtil.isObject(data) || toStore === false) {
+        // if (util.CommonUtil.isNull(data) || !util.CommonUtil.isObject(data) || this.#toStore === false) {
+        //     this.#data = data;
+        // } else {
+        //     const obj = util.CommonUtil.isArray(data) ? [] : {};
+
+        //     Object.entries(data).forEach(([k, v]) => {
+        //         obj[k] = new Store(v);
+        //     });
+
+        //     this.#data = obj;
+        // }
+
+        if (!util.CommonUtil.isObject(data) || !util.CommonUtil.isArray(data)) {
             this.#data = data;
         } else {
-            const obj = util.CommonUtil.isArray(data) ? [] : {};
+            const obj = new data.__proto__.constructor();
 
             Object.entries(data).forEach(([k, v]) => {
                 obj[k] = new Store(v);
             });
-
-            this.#data = obj;
         }
     }
 
     get(key) {
         let result;
-        const data = util.CommonUtil.isEmpty(key) ? this.#data : this.#data[key];
-        const _data = data && !!key && data.data ? data.data : data;
+        const store = util.CommonUtil.isEmpty(key) ? this : this.#data[key];
+        const data = store && store.data;
 
-        if (util.CommonUtil.isNull(_data) || !util.CommonUtil.isObject(_data) || (_data instanceof HTMLElement)) {
+        if (!util.CommonUtil.isObject(data) || !util.CommonUtil.isArray(data)) {
             result = data;
         } else {
-            result = util.CommonUtil.isArray(data) ? [] : {};
+            const obj = new data.__proto__.constructor();
 
-            Object.entries(data).forEach(([k, v]) => (result[k] = v.get()))
+            Object.entries(data).forEach(([k, v]) => (result[k] = v.get()));
         }
+        
 
         return result;
     }
 
-    set(key, data, returnValue = false, toObject = true) {
-        this.#data[key] = new Store(data, toObject);
+    set(key, data, returnValue = false, toStore = true) {
+        this.#data[key] = new Store(data, toStore);
         if (returnValue === true) return this.#data[key];
     }
 

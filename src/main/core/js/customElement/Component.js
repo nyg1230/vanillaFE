@@ -7,9 +7,10 @@ class Component extends HTMLElement {
     #isRender = false;
     #options = this.$$options;
     #tree = {};
-    #mapper = {};
     #proxy;
     #oid;
+    #root;
+    #template;
 
     constructor() {
         super();
@@ -78,8 +79,11 @@ class Component extends HTMLElement {
     }
 
     #render() {
-        const template = util.TemplateUtil.getTemplate(this);
-        console.log(template);
+        this.#root = this.attachShadow({ mode: "open" });
+        this.#template = util.TemplateUtil.getTemplate(this);
+        
+        const { frag } = { ...this.#template };
+        this.#root.appendChild(frag);
     }
 
     #destroy() {
@@ -100,7 +104,27 @@ class Component extends HTMLElement {
         this.#destroy();
     }
 
-    attributeChangedCallback() {}
+    attributeChangedCallback() {
+        this.#changeMapperAttr(...arguments);
+    }
+
+    #changeMapperAttr() {
+        const [name, oldValue, newValue] = [...arguments];
+        const { mapper } = { ...this.#template };
+        const { attr = {} } = { ...mapper };
+
+        try {
+            const target = attr[name];
+            target.forEach(([element, fn]) => {
+                console.log(element, fn)
+                element.setAttribute(name, fn(newValue));
+            });
+        } catch {}
+    }
+
+    ttt() {
+        return this.#template;
+    }
 }
 
 const define = (cls) => {

@@ -13,7 +13,13 @@ const CommonUtil = {
         return typeof obj === "function";
     },
     isObject(obj) {
-        return typeof obj === "object";
+        let result = false;
+
+        try {
+            result = obj.constructor === Object;
+        } catch {}
+
+        return result;
     },
     isString(obj) {
         return typeof obj === "string";
@@ -61,7 +67,22 @@ const CommonUtil = {
             });
         });
     },
-    shallowMerge() {}
+    shallowMerge() {},
+    deepCopy(obj) {
+        let root;
+
+        if (this.isObject(obj) || this.isArray(obj)) {
+            root = new obj.__proto__.constructor();
+
+            Object.entries(obj).forEach(([k, v]) => {
+                root[k] = this.deepCopy(v); 
+            });
+        } else {
+            root = obj;
+        }
+
+        return root;
+    }
 };
 
 export default CommonUtil;
