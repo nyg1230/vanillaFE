@@ -10,14 +10,17 @@ class Component extends HTMLElement {
         proxy: null,
         oid: null,
         root: null,
-        template: null,
         swap: false,
-        mapper: null
+        mapper: null,
+        event: {}
     };
+
+    get ttt() {
+        return this.#o.mapper;
+    }
 
     constructor() {
         super();
-
         this.#init(...arguments);
     }
 
@@ -59,7 +62,7 @@ class Component extends HTMLElement {
         this.#o.oid = util.CommonUtil.generator("cid");
         store.add(this, this.#o.oid, false);
 
-        const { options } = { ...arguments[0] };
+        const { options, parent } = { ...arguments[0] };
         this.#initOptions(options);
     }
 
@@ -68,7 +71,7 @@ class Component extends HTMLElement {
     }
 
     #initBind() {
-        this.bindEvent(this);
+        // this.bindEvent(this);
     }
 
     #addEvent() {
@@ -77,8 +80,32 @@ class Component extends HTMLElement {
 
     addEvent() {}
 
-    bindEvent(target, eventName, fn, options = {}) {
-        util.EventUtil.bindEvent(target, eventName, fn, options);
+    bindEvent(target, eventName, fn, options = {}, duplication) {
+        let oldEid = util.CommonUtil.find(this.#o, ["event", eventName]);
+        
+        if (util.CommonUtil.isNotEmpty(oldEid)) {
+            util.EventUtil.unbindAllEventById(oldEid);
+            delete this.#o.event[eventName];
+        }
+        
+        const eid = util.EventUtil.bindEvent(target, eventName, fn, options);
+        this.#o.event[eventName] = eid;
+    }
+
+    unbindEvent(eventName) {
+        const list = util.CommonUtil.find(this.#o, ["event", eventName]);
+
+        if (util.CommonUtil.isArray(list)) {
+            util.EventUtil.unbindEventByIds(list.splice(0));
+        }
+    }
+
+    unbindAllEvent() {
+        const { event } = { ...this.#o };
+
+        Object.keys(event).forEach((eventName) => {
+            this.unbindEvent(eventName);
+        });
     }
 
     #render() {
@@ -90,6 +117,7 @@ class Component extends HTMLElement {
     }
 
     #destroy() {
+        this.unbindAllEvent();
         store.delete(this.#o.oid);
         this.#o = null;
     }
@@ -143,7 +171,7 @@ class Component extends HTMLElement {
 
     #changeMapperAttr() {
         const [name, oldValue, newValue] = [...arguments];
-        const { mapper } = { ...this.#o.template };
+        const { mapper } = { ...this.#o.mapper };
         const { subscribe = {} } = { ...mapper };
 
         try {
