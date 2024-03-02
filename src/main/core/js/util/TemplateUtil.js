@@ -14,6 +14,31 @@ const TemplateUtil = {
         const template = renderer.create(component);
 
         return template;
+    },
+    getMapper(component) {
+        const renderer = this.getRenderer();
+        const { $name: name, template } = component;
+        let mapper = store.get(name);
+
+        if (!mapper) {
+            mapper = this.createMapper(template);
+            store.set(name, mapper);
+        }
+
+        return renderer.setElement(util.CommonUtil.deepCopy(mapper));
+    },
+    createMapper(template, createElement = false) {
+        const renderer = this.getRenderer();
+        const mapper = renderer.createMapper(template);
+        let result;
+
+        if (createElement === true) {
+            result = renderer.createElement(mapper);
+        } else {
+            result = mapper;
+        }
+
+        return result
     }
 };
 
@@ -33,7 +58,7 @@ const renderer = {
             return result;
         },
         createMapper(template, path = "0", subscribe) {
-            const { tag, attrs = {}, children = [], proxy } = template;
+            const { tag, attrs = {}, children = [], proxy, template: _template } = template;
 
             const mapper = {
                 subscribe: {
@@ -45,7 +70,8 @@ const renderer = {
                     [path]: {
                         element: tag
                     }
-                }
+                },
+                tmeplate: _template
             };
 
             if (util.CommonUtil.isNotEmpty(children)) {
@@ -78,6 +104,8 @@ const renderer = {
 
             if (util.CommonUtil.isString(element)) {
                 elem = document.createElement(element);
+            } else {
+                elem = new element();
             }
 
             root.element = elem;

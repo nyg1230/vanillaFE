@@ -3,18 +3,17 @@ import * as util from "core/js/util/utils.js";
 const store = util.StoreUtil.set("component", {}, true);
 
 class Component extends HTMLElement {
-    #proto = this.__proto__.constructor;
-    #isRender = false;
-    #options = this.$$options;
-    #tree = {};
-    #proxy;
-    #oid;
-    #root;
-    #template;
-
-    get ttt() {
-        return this.#template;
-    }
+    #o = {
+        proto: this.__proto__.constructor,
+        render: false,
+        options: {},
+        proxy: null,
+        oid: null,
+        root: null,
+        template: null,
+        swap: false,
+        mapper: null
+    };
 
     constructor() {
         super();
@@ -27,20 +26,20 @@ class Component extends HTMLElement {
     static get TAG_NAME() { return "custom-component"; }
 
     get $name() {
-        return (() => this.#proto.TAG_NAME)();
+        return (() => this.#o.proto.TAG_NAME)();
     }
 
-    get $proxy() { return this.#proxy; }
+    get $proxy() { return this.#o.proxy; }
 
-    get $options() { return this.#options; }
+    get $options() { return this.#o.options; }
 
     get $$options() { return {}; }
 
-    get $render() { return this.#isRender; }
+    get $render() { return this.#o.render; }
 
-    get $tree() { return this.#tree; }
+    get $tree() { return this.#o.tree; }
 
-    get $oid() { return this.#oid }
+    get $oid() { return this.#o.oid }
 
     get template() {
         return {
@@ -57,15 +56,15 @@ class Component extends HTMLElement {
     }
 
     #init() {
-        this.#oid = util.CommonUtil.generator("cid");
-        store.add(this, this.#oid, false);
+        this.#o.oid = util.CommonUtil.generator("cid");
+        store.add(this, this.#o.oid, false);
 
         const { options } = { ...arguments[0] };
         this.#initOptions(options);
     }
 
     #initOptions(options) {
-        util.CommonUtil.deepMerge(this.#options, options);
+        util.CommonUtil.deepMerge(this.#o.options, options);
     }
 
     #initBind() {
@@ -83,38 +82,68 @@ class Component extends HTMLElement {
     }
 
     #render() {
-        this.#root = this.attachShadow({ mode: "open" });
-        this.#template = util.TemplateUtil.getTemplate(this);
+        this.#o.root = this.attachShadow({ mode: "open" });
+        this.#o.mapper = util.TemplateUtil.getMapper(this);
         
-        const { frag } = { ...this.#template };
-        this.#root.appendChild(frag);
+        const { frag } = { ...this.#o.mapper };
+        this.#o.root.appendChild(frag);
     }
 
     #destroy() {
-        this.destroy();
+        store.delete(this.#o.oid);
+        this.#o = null;
     }
 
-    destroy() {
-        store.delete(this.#oid);
-    }
+    destroy() {}
 
     connectedCallback() {
         this.#initBind();
         this.#addEvent();
         this.#render();
+
+        this.#o.render = true;
     }
 
     disconnectedCallback() {
-        this.#destroy();
+        if (this.#o.swap === false) {
+            this.destroy();
+            this.#destroy();
+        }
     }
 
     attributeChangedCallback() {
         this.#changeMapperAttr(...arguments);
+
+        const [name, oldValue, newValue] = [...arguments];
+
+        let type;
+
+        if (util.CommonUtil.isNull(oldValue)) {
+            type = "insert";
+        } else if (util.CommonUtil.CommonUtil.isNull(newValue)) {
+            type = "delete";
+        } else if (oldValue === newValue) {
+            type = "equal";
+        } else {
+            type = "update";
+        }
+
+        const param = {
+            detail: {
+                oldValue: oldValue,
+                value: newValue,
+                name: name,
+                type: type
+            }
+        };
+        this.onChangeAttr(param)
     }
+
+    onChangeAttr() {}
 
     #changeMapperAttr() {
         const [name, oldValue, newValue] = [...arguments];
-        const { mapper } = { ...this.#template };
+        const { mapper } = { ...this.#o.template };
         const { subscribe = {} } = { ...mapper };
 
         try {

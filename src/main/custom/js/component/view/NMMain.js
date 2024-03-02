@@ -7,15 +7,7 @@ export default class NMMain extends Component {
         return "nm-main";
     }
 
-    get $$options() {
-        return {
-            test: true,
-            qqq: { q: 1, w: [1,2,3,] }
-        }
-    }
-
     get template() {
-        !window.eee && (window.eee = this);
         return {
             tag: "div",
             attrs: {
