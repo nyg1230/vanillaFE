@@ -1,6 +1,8 @@
 import { Component, define } from "core/js/customElement/Component";
 
 export default class NMMain extends Component {
+    static get observedAttributes() { return ["value", "class"]; }
+
     static get TAG_NAME() {
         return "nm-main";
     }
@@ -13,22 +15,29 @@ export default class NMMain extends Component {
     }
 
     get template() {
+        !window.eee && (window.eee = this);
         return {
             tag: "div",
-            attr: {
+            attrs: {
                 class: (v = "") => `${this.$name} ${v}`,
-                part: this.$name
+                part: this.$name,
+                value: v => v
             },
             children: [
                 { tag: "nm-label" },
                 { tag: "nm-input" },
                 {
                     tag: "div",
+                    attrs: {
+                        class: v => v,
+                        value: v => v
+                    },
                     children: [
                         {
                             tag: "nm-input",
-                            attr: {
-                                class: (v = "") => v
+                            attrs: {
+                                class: (v = "") => v,
+                                value: v => v
                             }
                         }
                     ]

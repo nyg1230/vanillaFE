@@ -48,6 +48,27 @@ const CommonUtil = {
 
         return len;
     },
+    find(obj, path = [], defaultValue = null) {
+        let o;
+
+        if (!this.isObject(obj) && !this.isArray(obj)) {
+            o = obj;
+        } else {
+            o = obj;
+            const len = path.length;
+
+            for (let idx = 0; idx < len; idx++) {
+                o = o[path[idx]];
+
+                if (this.isNull(o)) {
+                    o = defaultValue;
+                    break;
+                }
+            }
+        }
+
+        return o;
+    },
     merge(isDeep = true, ...objects) {
         return isDeep === true ? this.deepMerge(objects) : this.shallowMerge(objects);
     },
@@ -58,11 +79,11 @@ const CommonUtil = {
             if (this.isNull(o)) return;
 
             Object.entries(o).forEach(([k, v]) => {
-                if (!this.isObject(v)) {
-                    obj[k] = v;
-                } else {
+                if (this.isObject(v) || this.isArray(v)) {
                     !obj[k] && (obj[k] = this.isArray(v) ? [] : {});
-                    this.deepMerge(obj, v);
+                    this.deepMerge(obj[k], v);
+                } else {
+                    obj[k] = v;
                 }
             });
         });

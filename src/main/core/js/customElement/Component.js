@@ -12,6 +12,10 @@ class Component extends HTMLElement {
     #root;
     #template;
 
+    get ttt() {
+        return this.#template;
+    }
+
     constructor() {
         super();
 
@@ -111,19 +115,14 @@ class Component extends HTMLElement {
     #changeMapperAttr() {
         const [name, oldValue, newValue] = [...arguments];
         const { mapper } = { ...this.#template };
-        const { attr = {} } = { ...mapper };
+        const { subscribe = {} } = { ...mapper };
 
         try {
-            const target = attr[name];
+            const target = util.CommonUtil.find(subscribe, ["attrs", name]);
             target.forEach(([element, fn]) => {
-                console.log(element, fn)
                 element.setAttribute(name, fn(newValue));
             });
         } catch {}
-    }
-
-    ttt() {
-        return this.#template;
     }
 }
 

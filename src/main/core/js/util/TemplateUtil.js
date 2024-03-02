@@ -10,19 +10,8 @@ const TemplateUtil = {
         return _renderer;
     },
     getTemplate(component) {
-        // const name = component.$name;
-        // let template = store.get(name);
-        
-        // if (!template) {
-        //     const renderer = this.getRenderer();
-        //     template = renderer.getTemplate(component);
-        //     store.set(name, template, false, false);
-        // } else {
-        //     console.log(template)
-        // }
-        window.qqq = store;
         const renderer = this.getRenderer();
-        const template = renderer._create(component);
+        const template = renderer.create(component);
 
         return template;
     }
@@ -30,7 +19,7 @@ const TemplateUtil = {
 
 const renderer = {
     obj: {
-        _create(component) {
+        create(component) {
             const { $name: name, template } = component;
             let mapper = store.get(name);
 
@@ -39,15 +28,19 @@ const renderer = {
                 store.set(name, mapper);
             }
 
-            const result = this.setElement(mapper);
+            const result = this.setElement(util.CommonUtil.deepCopy(mapper));
 
             return result;
         },
-        createMapper(template, path = "0") {
-            const { tag, attr = {}, children = [] } = template;
+        createMapper(template, path = "0", subscribe) {
+            const { tag, attrs = {}, children = [], proxy } = template;
 
             const mapper = {
-                subscribe: {},
+                subscribe: {
+                    attrs: {},
+                    proxy: {}
+                },
+                attrs: attrs,
                 tree: {
                     [path]: {
                         element: tag
@@ -59,97 +52,88 @@ const renderer = {
                 const target = [];
                 mapper.tree[path].children = target;
 
+                const rootSubscribe = subscribe || mapper.subscribe;
+
                 children.forEach((childTemplate, cPath) => {
-                    const childMapper = this.createMapper(childTemplate, `${path}|${cPath}`);
+                    const childPath = `${path}|${cPath}`;
+                    if (util.CommonUtil.isNotEmpty(proxy)) {
+                        rootSubscribe.proxy[childPath] = proxy;
+                    }
+                    const childMapper = this.createMapper(childTemplate, childPath, rootSubscribe);
                     target.push(childMapper);
                 });
             }
 
             return mapper;
         },
-        setElement(mapper) {
-            const newMapper = util.CommonUtil.deepCopy(mapper);
-
+        setElement(mapper, rootSubscribe) {
             const frag = document.createDocumentFragment();
 
-            const { subscribe, tree } = newMapper;
-            const [root] = [...Object.values(tree)];
+            const { subscribe, attrs, tree } = mapper;
+            const [treeRoot] = Object.entries(tree);
+            const [path, root] = treeRoot;
             const { element, children } = root;
+            delete mapper.attrs;
+            let elem;
 
             if (util.CommonUtil.isString(element)) {
-                root.element = document.createElement(element);
+                elem = document.createElement(element);
             }
 
-            frag.appendChild(root.element);
+            root.element = elem;
+
+            const targetSubscribe = rootSubscribe || subscribe;
+            const proxyKey = util.CommonUtil.find(targetSubscribe, ["proxy", path]);
+
+            if (proxyKey) {
+                delete targetSubscribe.proxy[path];
+                
+                const targetList = util.CommonUtil.find(targetSubscribe, ["proxy", proxyKey]);
+                if (targetList) {
+                    targetList.push(elem);
+                } else {
+                    targetSubscribe.proxy[proxyKey] = [elem];
+                }
+            }
+
+            const isComponenet = elem instanceof Component;
+
+            if (util.CommonUtil.isNotEmpty(attrs) && !isComponenet) {
+
+                Object.entries(attrs).forEach(([k, v]) => {
+                    let attr;
+                    if (util.CommonUtil.isFunction(v)) {
+                        attr = v();
+
+                        let list;
+                        if (!util.CommonUtil.find(targetSubscribe, ["attrs", k])) {
+                            util.CommonUtil.deepMerge(targetSubscribe, { attrs: { [`${k}`]: [] } });
+                        }
+                        list = util.CommonUtil.find(targetSubscribe, ["attrs", k]);
+
+                        list.push([elem, v]);
+                    } else {
+                        attr = v;
+                    }
+                    elem.setAttribute(k, attr);
+                });
+            }
+
+            root.element = elem;
+            frag.appendChild(elem);
 
             if (util.CommonUtil.isNotEmpty(children)) {
                 children.forEach((childMapper) => {
-                    const { frag } = this.setElement(childMapper);
-                    root.element.appendChild(frag);
+                    const { frag } = this.setElement(childMapper, isComponenet ? null : rootSubscribe || subscribe);
+                    elem.appendChild(frag);
                 });
             }
 
             return {
                 frag,
-                mapper: newMapper
+                mapper: mapper
             }
-        },
-        getTemplate(component) {
-            const { template, $oid } = component;
-            const reuslt = this.create(template);
-
-            return reuslt;
-        },
-        create(template, path = 0, rootMapper) {
-            window.qqq = store;
-            const { tag, attr = {}, children = [] } = { ...template };
-
-            const frag = document.createDocumentFragment();
-            let element;
-
-            if (util.CommonUtil.isString(tag)) {
-                element = document.createElement(tag);
-            }
-            frag.appendChild(element);
-
-            const mapper = {
-                attr: {},
-                [path]: {
-                    element: tag,
-                    children: []
-                }
-            };
-            const _mapper = rootMapper || mapper;
-
-            if (util.CommonUtil.isNotEmpty(attr)) {
-                Object.entries(attr).forEach(([k, v]) => {
-                    let value;
-                    if (util.CommonUtil.isFunction(v)) {
-                        value = v();
-
-                        !_mapper.attr[k] && (_mapper.attr[k] = []);
-                        _mapper.attr[k].push([path, v]);
-                    } else {
-                        value = v
-                    }
-
-                    element.setAttribute(k, value)
-                });
-            }
-
-            const isComponent = element instanceof Component;
-
-            children.forEach((childTemplate, cIdx) => {
-                const child = this.create(childTemplate, `${path}|${cIdx}`, isComponent ? mapper : rootMapper);
-                const { frag: cFrag, mapper: cMapper } = { ...child };
-                element.appendChild(cFrag);
-            
-                mapper[path].children[cIdx] = cMapper;
-            });
-
-            return { frag, mapper };
-        },
-        getFragment() {}
+        }
     }
 };
 

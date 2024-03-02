@@ -9,12 +9,23 @@ class NMLabel extends Component {
         !window.www && (window.www = this);
         return {
             tag: "div",
-            attr: {
+            attrs: {
                 class: (v = "") => `${this.$name} ${v}`,
                 value: (v = "") => v,
                 part: this.$name
             },
             children: [
+                {
+                    tag: "div",
+                    children: [
+                        {
+                            tag: "div",
+                            attrs: {
+                                value: (v = "") => v
+                            }
+                        }
+                    ]
+                },
                 { tag: "slot" }
             ]
         }

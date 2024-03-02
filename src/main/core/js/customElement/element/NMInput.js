@@ -6,7 +6,7 @@ class NMInput extends Component {
     get template() {
         return {
             tag: "div",
-            attr: {
+            attrs: {
                 class: this.$name,
                 part: this.$name
             },
