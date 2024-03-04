@@ -1,6 +1,7 @@
 import * as util from "core/js/util/utils.js";
 
 const store = util.StoreUtil.set("component", {}, true);
+const styleStore = util.StoreUtil.set("style", {}, true);
 
 class Component extends HTMLElement {
     #o = {
@@ -34,6 +35,10 @@ class Component extends HTMLElement {
 
     get $proxy() { return this.#o.proxy; }
 
+    set $proxy(obj) {
+        this.#setProxy(obj);
+    }
+
     get $options() { return this.#o.options; }
 
     get $$options() { return {}; }
@@ -58,17 +63,27 @@ class Component extends HTMLElement {
         }
     }
 
+    get styles() { return ""; }
+
     #init() {
         this.#o.oid = util.CommonUtil.generator("cid");
         store.add(this, this.#o.oid, false);
 
         const { options, parent } = { ...arguments[0] };
         this.#initOptions(options);
+        this.#initProxy();
     }
 
     #initOptions(options) {
         util.CommonUtil.deepMerge(this.#o.options, options);
     }
+
+    #initProxy() {
+        const proxy = this.initProxy() || {};
+        this.#o.proxy = proxy;
+    }
+
+    initProxy() {}
 
     #initBind() {
         // this.bindEvent(this);
@@ -109,12 +124,36 @@ class Component extends HTMLElement {
     }
 
     #render() {
+        this.beforeRender()
         this.#o.root = this.attachShadow({ mode: "open" });
         this.#o.mapper = util.TemplateUtil.getMapper(this);
         
+        this.#initStyle();
         const { frag } = { ...this.#o.mapper };
         this.#o.root.appendChild(frag);
+        this.#o.render = true;
+        this.afterRender();
     }
+
+    #initStyle() {
+        util.StyleUtil.setGlobalStyle(this.#o.root);
+
+        this.#setComponentStyle();
+    }
+
+    #setComponentStyle() {
+        let sheet = styleStore.get(this.$name);
+
+        if (!sheet) {
+            sheet = util.StyleUtil.toStyleSheet(this.styles);
+            styleStore.set(this.$name, sheet);
+        }
+
+        this.#o.root.adoptedStyleSheets.push(sheet);
+    }
+
+    beforeRender() {}
+    afterRender() {}
 
     #destroy() {
         this.unbindAllEvent();
@@ -128,8 +167,6 @@ class Component extends HTMLElement {
         this.#initBind();
         this.#addEvent();
         this.#render();
-
-        this.#o.render = true;
     }
 
     disconnectedCallback() {
@@ -180,6 +217,14 @@ class Component extends HTMLElement {
                 element.setAttribute(name, fn(newValue));
             });
         } catch {}
+    }
+
+    #setProxy(obj) {
+        this.#setSubscribeProxy();
+    }
+
+    #setSubscribeProxy() {
+
     }
 }
 

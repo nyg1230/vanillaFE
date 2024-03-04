@@ -9,12 +9,6 @@ const TemplateUtil = {
         !_renderer && (_renderer = renderer.obj);
         return _renderer;
     },
-    getTemplate(component) {
-        const renderer = this.getRenderer();
-        const template = renderer.create(component);
-
-        return template;
-    },
     getMapper(component) {
         const renderer = this.getRenderer();
         const { $name: name, template } = component;
@@ -25,7 +19,9 @@ const TemplateUtil = {
             store.set(name, mapper);
         }
 
-        return renderer.setElement(util.CommonUtil.deepCopy(mapper));
+        const _mapper = util.CommonUtil.deepCopy(mapper);
+        _mapper.template = template.template;
+        return renderer.setElement(_mapper);
     },
     createMapper(template, createElement = false) {
         const renderer = this.getRenderer();
@@ -70,8 +66,7 @@ const renderer = {
                     [path]: {
                         element: tag
                     }
-                },
-                tmeplate: _template
+                }
             };
 
             if (util.CommonUtil.isNotEmpty(children)) {

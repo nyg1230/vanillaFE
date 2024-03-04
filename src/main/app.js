@@ -1,10 +1,8 @@
-import NMMain from "./custom/js/component/view/NMMain";
-import elements from "core/js/customElement/element/elements"
+import elements from "core/js/customElement/element/elements";
+import router from "core/js/route/Router";
+
 
 window.onload = (e) => {
     const body = document.querySelector("body");
-
-    const main = new NMMain();
-
-    body.appendChild(main);
+    router.route(router.getPath());
 }

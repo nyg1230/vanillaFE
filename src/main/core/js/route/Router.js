@@ -2,11 +2,14 @@ import * as util from "core/js/util/utils";
 import route from "custom/js/route/route"
 
 class Router {
-    #root = document.body;
+    #route;
+    #root;
     #path;
     #type = "hash";
 
     constructor() {
+        const { root = document.body } = { ...arguments };
+        this.#root = root;
         this.#init();
     }
     
@@ -32,9 +35,7 @@ class Router {
         } else {
             this.replaceRoute();
             
-            if (this.#type === "hash") {
-                url = `#${url}`
-            }
+            if (this.#type === "hash") url = `#${url}`;
             history.pushState(state, null, url);
         }
     }
@@ -46,7 +47,7 @@ class Router {
         const len = this.#path.length;
         let parent = this.#root;
 
-        idx;
+        let idx;
         for (idx = 0; idx < len; idx++) {
             const { name, view } = { ...this.#path[idx] };
 
@@ -60,12 +61,12 @@ class Router {
             }
         }
 
-        if (idx !== len) {
+        if (idx !== len || len === 0) {
             const newLen = path.length;
 
             for (let i = idx; i < newLen; i++) {
                 const name = path[i];
-                const p = path.toSpliced(0, i).join("/");
+                const p = path.toSpliced(i + 1, Infinity).join("/");
                 const component = this.getComponent(p);
 
                 if (util.CommonUtil.isNull(component)) {
@@ -86,7 +87,8 @@ class Router {
         let path;
 
         if (this.#type === "hash") {
-            location.hash.replace(/(?<=(^\#\W+)).*?(?=\?)/, (str) => (path = str));
+            // path = location.hash.replace(/(?<=(^\#\W+)).*?(?=\?)/, (str) => (path = str));
+            path = location.hash.replace(/^\#/, "").replace(/(?=\?).*$/, "")
         } else {
             path = location.pathname.replace(/(?<=(^\/+)).*/, (str) => (path = str));
         }
@@ -95,12 +97,13 @@ class Router {
     }
 
     getComponent(path) {
-        return route.getView(path);
+        return route[path];
     }
 }
 
 const router = new Router();
 
 export default {
-    route: (...args) => router.route(...args)
+    route: (...args) => router.route(...args),
+    getPath: () => router.getPath()
 };

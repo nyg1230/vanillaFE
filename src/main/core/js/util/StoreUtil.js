@@ -16,18 +16,6 @@ class Store {
         const [data, toStore = true] = [...arguments];
         this.#toStore = toStore;
 
-        // if (util.CommonUtil.isNull(data) || !util.CommonUtil.isObject(data) || this.#toStore === false) {
-        //     this.#data = data;
-        // } else {
-        //     const obj = util.CommonUtil.isArray(data) ? [] : {};
-
-        //     Object.entries(data).forEach(([k, v]) => {
-        //         obj[k] = new Store(v);
-        //     });
-
-        //     this.#data = obj;
-        // }
-
         if (!util.CommonUtil.isObject(data) || !util.CommonUtil.isArray(data)) {
             this.#data = data;
         } else {

@@ -1,7 +1,7 @@
-import { Component, define } from "core/js/customElement/Component";
+import { View, define } from "core/js/customElement/View";
 
-export default class NMMain extends Component {
-    static get observedAttributes() { return ["value", "class"]; }
+class NMMain extends View {
+    static get observedAttributes() { return []; }
 
     static get TAG_NAME() {
         return "nm-main";
@@ -16,27 +16,16 @@ export default class NMMain extends Component {
                 value: v => v
             },
             children: [
-                { tag: "nm-label" },
-                { tag: "nm-input" },
-                {
-                    tag: "div",
-                    attrs: {
-                        class: v => v,
-                        value: v => v
-                    },
-                    children: [
-                        {
-                            tag: "nm-input",
-                            attrs: {
-                                class: (v = "") => v,
-                                value: v => v
-                            }
-                        }
-                    ]
-                }
+                { tag: "slot", }
             ]
         }
+    }
+
+    get styles() {
+        return ``;
     }
 }
 
 define(NMMain);
+
+export { NMMain, define };

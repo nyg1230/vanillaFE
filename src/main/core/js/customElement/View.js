@@ -4,4 +4,4 @@ class View extends Component {
     static get TAG_NAME() { return "nm-view"; }
 }
 
-export default { View, define };
+export { View, define };
