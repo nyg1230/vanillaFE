@@ -80,7 +80,7 @@ class Component extends HTMLElement {
 
     #initProxy() {
         const proxy = this.initProxy() || {};
-        this.#o.proxy = proxy;
+        this.#o.proxy = util.ProxyUtil.create(proxy);
     }
 
     initProxy() {}

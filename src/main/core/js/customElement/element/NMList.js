@@ -24,6 +24,16 @@ class NMList extends Component {
         }
     };
 
+    initProxy() {
+        return {
+            list: ["test"],
+            test: {
+                aaa: 123,
+                bbb: [123, { aa: 1, b: [123, 123]}]
+            }
+        };
+    }
+
     afterRender() {
         !window.zzz && (window.zzz = this);
     }
