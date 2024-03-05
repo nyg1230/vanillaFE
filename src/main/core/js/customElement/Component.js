@@ -45,7 +45,7 @@ class Component extends HTMLElement {
 
     get $render() { return this.#o.render; }
 
-    get $tree() { return this.#o.tree; }
+    get $mapper() { return this.#o.mapper; }
 
     get $oid() { return this.#o.oid }
 

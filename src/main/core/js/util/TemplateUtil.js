@@ -20,7 +20,6 @@ const TemplateUtil = {
         }
 
         const _mapper = util.CommonUtil.deepCopy(mapper);
-        _mapper.template = template.template;
         return renderer.setElement(_mapper);
     },
     createMapper(template, createElement = false) {
@@ -29,7 +28,7 @@ const TemplateUtil = {
         let result;
 
         if (createElement === true) {
-            result = renderer.createElement(mapper);
+            result = renderer.setElement(mapper);
         } else {
             result = mapper;
         }
@@ -66,7 +65,8 @@ const renderer = {
                     [path]: {
                         element: tag
                     }
-                }
+                },
+                template: _template
             };
 
             if (util.CommonUtil.isNotEmpty(children)) {
@@ -90,7 +90,7 @@ const renderer = {
         setElement(mapper, rootSubscribe) {
             const frag = document.createDocumentFragment();
 
-            const { subscribe, attrs, tree } = mapper;
+            const { subscribe, attrs, tree, template } = mapper;
             const [treeRoot] = Object.entries(tree);
             const [path, root] = treeRoot;
             const { element, children } = root;
@@ -104,6 +104,7 @@ const renderer = {
             }
 
             root.element = elem;
+            elem.$template = template;
 
             const targetSubscribe = rootSubscribe || subscribe;
             const proxyKey = util.CommonUtil.find(targetSubscribe, ["proxy", path]);

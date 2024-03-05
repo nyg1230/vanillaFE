@@ -22,7 +22,11 @@ class NMMain extends View {
     }
 
     get styles() {
-        return ``;
+        return `
+            .${this.$name} {
+                height: 100%;
+            }
+        `;
     }
 }
 

@@ -13,7 +13,6 @@ class NMBody extends View {
             attrs: {
                 class: (v = "") => `${this.$name} ${v}`,
                 part: this.$name,
-                value: v => v
             },
             children: [
                 { tag: "nm-header", },
@@ -26,7 +25,37 @@ class NMBody extends View {
                         { tag: "slot" }
                     ]
                 },
-                { tag: "nm-side-bar", }
+                { tag: "nm-side-bar", },
+                {
+                    tag: "nm-list",
+                    template: {
+                        tag: "nm-row",
+                        children: [
+                            {
+                                tag: "div",
+                                children: [
+                                    {
+                                        tag: "div",
+                                        children: [
+                                            {
+                                                tag: "nm-label",
+                                                attrs: {
+                                                    value: "qqqqqq"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    tag: "nm-list",
+                    template: {
+                        tag: "input"
+                    }
+                }
             ]
         }
     }
