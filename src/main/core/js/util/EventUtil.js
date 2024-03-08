@@ -3,6 +3,12 @@ import * as util from "core/js/util/utils.js";
 const eventStore = util.StoreUtil.get("event");
 
 const EventUtil = {
+    dispatchEvent(target, eventName, detail) {
+        const e = new CustomEvent(eventName, {
+            detail: { ...detail }
+        });
+        target.dispatchEvent(e);
+    },
     bindEvent(target, eventName, fn, options) {
         let eid;
 

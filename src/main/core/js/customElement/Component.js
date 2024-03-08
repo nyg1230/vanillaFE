@@ -36,7 +36,8 @@ class Component extends HTMLElement {
     get $proxy() { return this.#o.proxy; }
 
     set $proxy(obj) {
-        this.#setProxy(obj);
+        this.#o.proxy = util.ProxyUtil.create(obj, this);
+        // this.changeChildProxy
     }
 
     get $options() { return this.#o.options; }
@@ -80,7 +81,7 @@ class Component extends HTMLElement {
 
     #initProxy() {
         const proxy = this.initProxy() || {};
-        this.#o.proxy = util.ProxyUtil.create(proxy);
+        this.#o.proxy = util.ProxyUtil.create(proxy, this);
     }
 
     initProxy() {}
@@ -217,14 +218,6 @@ class Component extends HTMLElement {
                 element.setAttribute(name, fn(newValue));
             });
         } catch {}
-    }
-
-    #setProxy(obj) {
-        this.#setSubscribeProxy();
-    }
-
-    #setSubscribeProxy() {
-
     }
 }
 

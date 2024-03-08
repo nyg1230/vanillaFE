@@ -73,4 +73,4 @@ class NMRow extends Component {
 define(NMList);
 define(NMRow)
 
-export default { NMList, define };
+export default { NMList, NMRow, define };

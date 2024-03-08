@@ -11,9 +11,8 @@ class NMMain extends View {
         return {
             tag: "div",
             attrs: {
-                class: (v = "") => `${this.$name} ${v}`,
-                part: this.$name,
-                value: v => v
+                class: this.$name,
+                part: this.$name
             },
             children: [
                 { tag: "slot", }

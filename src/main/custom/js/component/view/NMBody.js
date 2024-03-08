@@ -11,52 +11,9 @@ class NMBody extends View {
         return {
             tag: "div",
             attrs: {
-                class: (v = "") => `${this.$name} ${v}`,
+                class: this.$name,
                 part: this.$name,
-            },
-            children: [
-                { tag: "nm-header", },
-                {
-                    tag: "div",
-                    attrs: {
-                        class: "contents"
-                    },
-                    children: [
-                        { tag: "slot" }
-                    ]
-                },
-                { tag: "nm-side-bar", },
-                {
-                    tag: "nm-list",
-                    template: {
-                        tag: "nm-row",
-                        children: [
-                            {
-                                tag: "div",
-                                children: [
-                                    {
-                                        tag: "div",
-                                        children: [
-                                            {
-                                                tag: "nm-label",
-                                                attrs: {
-                                                    value: "qqqqqq"
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    tag: "nm-list",
-                    template: {
-                        tag: "input"
-                    }
-                }
-            ]
+            }
         }
     }
 
@@ -71,6 +28,16 @@ class NMBody extends View {
                 position: absolute;
             }
         `;
+    }
+
+    initProxy() {
+        window.qqq = this;
+        return {
+            test: 123,
+            qqq: {
+                asdf: [1, 2, 3]
+            }
+        }
     }
 }
 
