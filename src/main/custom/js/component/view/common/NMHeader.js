@@ -1,11 +1,10 @@
-/* inherit */
 import { View, define } from "core/js/customElement/View";
 
-class NMMain extends View {
+class NMHeader extends View {
     static get observedAttributes() { return []; }
 
     static get TAG_NAME() {
-        return "nm-main";
+        return "nm-header";
     }
 
     get template() {
@@ -24,12 +23,13 @@ class NMMain extends View {
     get styles() {
         return `
             .${this.$name} {
+                width: 100%;
                 height: 100%;
             }
         `;
     }
 }
 
-define(NMMain);
+define(NMHeader);
 
-export { NMMain, define };
+export { NMHeader, define };
