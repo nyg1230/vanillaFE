@@ -122,8 +122,7 @@ const renderer = {
 
             const isComponenet = elem instanceof Component;
 
-            if (util.CommonUtil.isNotEmpty(attrs) && !isComponenet) {
-
+            if (util.CommonUtil.isNotEmpty(attrs)) {
                 Object.entries(attrs).forEach(([k, v]) => {
                     let attr;
                     if (util.CommonUtil.isFunction(v)) {
