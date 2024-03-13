@@ -42,7 +42,6 @@ class Router {
                 this.replaceRoute();
             }
         } else {
-            console.log(this.#path)
             this.route(this.#defaultUrl, state, options);
         }
     }
