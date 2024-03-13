@@ -6,6 +6,7 @@ const ProxyUtil = {
 
         if (this.isProxy(data)) {
             proxy = data;
+            this.unsubscribe(comp);
             this.addRef(data, comp);
         } else if (util.CommonUtil.isObject(data)) {
             proxy = new ObjectProxy(data, comp);
@@ -37,6 +38,10 @@ const ProxyUtil = {
     },
     addRef(data, comp) {
         console.log(data, comp);
+    },
+    unsubscribe(comp) {
+        const proxy = comp.$proxy;
+        console.log(proxy);
     }
 };
 
@@ -67,6 +72,13 @@ class ObjectProxy {
     $addRef(cid) {
         this.#ref.push(cid);
     }
+
+    $removeRef(cid) {
+        const idx = this.#ref.findIndex((ref) => ref === cid);
+        idx > -1 && this.#ref.splice(idx);
+
+        Object.values(this).forEach((v) => (v.$removeRef(cid)));
+    }
 }
 
 class ArrayProxy extends Array {
@@ -93,6 +105,13 @@ class ArrayProxy extends Array {
 
     $addRef(cid) {
         this.#ref.push(cid);
+    }
+
+    $removeRef(cid) {
+        const idx = this.#ref.findIndex((ref) => ref === cid);
+        idx > -1 && this.#ref.splice(idx);
+
+        this.forEach((v) => (v.$removeRef(cid)));
     }
 }
 
@@ -127,6 +146,11 @@ class PrimitiveProxy {
 
     $addRef(cid) {
         this.#ref.push(cid);
+    }
+
+    $removeRef(cid) {
+        const idx = this.#ref.findIndex((ref) => ref === cid);
+        idx > -1 && this.#ref.splice(idx);
     }
 }
 

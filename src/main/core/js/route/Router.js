@@ -6,6 +6,7 @@ class Router {
     #root;
     #path;
     #type = "hash";
+    #defaultUrl = "main/body"
 
     constructor() {
         const { root = document.body } = { ...arguments };
@@ -20,23 +21,29 @@ class Router {
     }
 
     #setEvent() {
-        util.EventUtil.bindEvent(window, "popstate", this.onPopstate, {});
+        util.EventUtil.bindEvent(window, "popstate", this.onPopstate.bind(this), {});
     }
 
     onPopstate(e) {
-        console.log(e);
+        const pathName = this.getPath();
+        this.route(pathName);
     }
 
     route(url, state, options) {
         const { test = true } = { ...options };
 
-        if (test === false) {
-            this.addRoute(url);
+        if (url) {
+            if (test === false) {
+                this.addRoute(url);
+            } else {
+                if (this.#type === "hash") url = `#${url}`;
+                history.pushState(state, null, url);
+
+                this.replaceRoute();
+            }
         } else {
-            this.replaceRoute();
-            
-            if (this.#type === "hash") url = `#${url}`;
-            history.pushState(state, null, url);
+            console.log(this.#path)
+            this.route(this.#defaultUrl, state, options);
         }
     }
 
