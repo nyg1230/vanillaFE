@@ -18,26 +18,7 @@ class NMBody extends View {
     }
 
     get styles() {
-        return `
-            .${this.$name} {
-                height: 100%;
-            }
-
-            nm-side-bar {
-                height: 100%;
-                position: absolute;
-            }
-        `;
-    }
-
-    initProxy() {
-        window.qqq = this;
-        return {
-            test: 123,
-            qqq: {
-                asdf: [1, 2, 3]
-            }
-        }
+        return ``;
     }
 }
 
